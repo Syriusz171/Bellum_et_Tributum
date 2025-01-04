@@ -3,6 +3,7 @@ The world's worst turn-based strategy game!
 ## **WARMING**  
 The game is <ins>**not**</ins> completed!  
 It will be playable soon (or never)!   
+Requires Python and Pygame to be installed on your computer!
 ### Game modes:  
 - One computer multiplayer
   - Play on one computer with your friend (or someone else)!
