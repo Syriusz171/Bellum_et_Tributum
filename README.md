@@ -13,7 +13,7 @@ The game is about founding villages and conscripting armies(soon) and fighting u
 ### Known issues  
 - multi-army movement (and yes, it DOES excist) works badly when one army moves onto the tile where was another moving army  
 ### Plans (or rather dreams of mine):
-- Consription of armies (partially done but not completed
+- Consription of armies (partially done but not completed)
 - Mode to fight bots (a dream)
 - Water and water transport (another dream)
 - Alpine units (would be able to move thought mountains),(maybe?)
