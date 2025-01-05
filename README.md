@@ -22,7 +22,7 @@ The game is about founding villages and conscripting armies(soon) and fighting u
 - Unit upkeep (armies would need to be moved with supplies (dream)
 - No negative resourses (surprise! it is <ins>**not**</ins> a dream)
 ### Translations
-I **WILL NOT** translate this gameto other languages (except for Polish since I speak Polish)!  
+I **WILL NOT** translate this game to other languages (except for Polish since I speak Polish)!  
 But if you want to add translation for your language, you are welcome!
 
 More info you will be able to find under "wiki" tab!  
