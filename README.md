@@ -21,6 +21,9 @@ The game is about founding villages and conscripting armies(soon) and fighting u
 - Local resourses (that is resourses being stored in villages) and resourse trasport system(i guess it is a dream)
 - Unit upkeep (armies would need to be moved with supplies (dream)
 - No negative resourses (surprise! it is <ins>**not**</ins> a dream)
+### Translations
+I **WILL NOT** translate this gameto other languages (except for Polish since I speak Polish)!  
+But if you want to add translation for your language, you are welcome!
 
 More info you will be able to find under "wiki" tab!  
 I apologise for my English!
