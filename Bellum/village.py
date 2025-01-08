@@ -24,28 +24,28 @@ class Village(Unit,pygame.sprite.Sprite):
             self.p_lumber = 5
             self.p_food = -1
             self.p_bow = 0
-            self.p_gold = 0
+            self.p_gold = 0.1
             self.p_spear = 0
             self.banner = pygame.image.load("images/village_lumber.png")
         if vill_type == 2:
             self.p_lumber = 0
             self.p_food = 5
             self.p_bow = 0
-            self.p_gold = 0
+            self.p_gold = 0.1
             self.p_spear = 0
             self.banner = pygame.image.load("images/village_food.png")
         if vill_type == 3:
             self.p_lumber = -1
             self.p_food = -1
             self.p_bow = 0
-            self.p_gold = 0
+            self.p_gold = 0.15
             self.p_spear = 1
             self.banner = pygame.image.load("images/village_spear.png")
         if vill_type == 4:
             self.p_lumber = -2
             self.p_food = -1
             self.p_bow = 1
-            self.p_gold = 0
+            self.p_gold = 0.15
             self.p_spear = 0
             self.banner = pygame.image.load("images/village_bow.png")
         if vill_type == 5:

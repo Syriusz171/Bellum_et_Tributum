@@ -14,7 +14,7 @@ WIDHT = 839
 HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
-pygame.display.set_caption("Bellum, Bellum dev -1.0")
+pygame.display.set_caption("Bellum, Bellum dev -1.0 build 2")
 pygame.init()
 FPS = pygame.time.Clock()
 background_image = pygame.image.load("images/Background.png")
@@ -24,7 +24,7 @@ player2 = Player(2,"Player2")
 font = pygame.font.SysFont("Times New Roman",20)
 texts = pygame.sprite.Group()
 Text.init_texts(texts)
-version = font.render("version: dev -1.0",False,(160,200,200))
+version = font.render("version: dev -1.0 build 2",False,(160,200,200))
 #army = Army(2,1)
 buttons = pygame.sprite.Group()
 start_quick = Button(1,(12*32+16,12*32+18),True)
@@ -265,7 +265,7 @@ while game_on:
     Text.print_text(texts,screen)
     kliczek.draw_kliczek(screen)
     if menu == 1:
-        screen.blit(version,(661,750))
+        screen.blit(version,(610,750))
 
     pygame.display.flip()
     FPS.tick(40)
