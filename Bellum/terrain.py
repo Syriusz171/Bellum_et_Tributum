@@ -1,10 +1,14 @@
 import pygame
 import random
 class Terrain(pygame.sprite.Sprite):
-    def __init__(self,form,starting_rect) -> None:
+    def __init__(self,form,starting_rect,generation=7) -> None:
         super().__init__()
         self.form = form
-        self.rect = ((starting_rect),(32,31))
+        self.generation = generation
+        self.do_gen = True
+        self.x = starting_rect[0]
+        self.y = starting_rect[1]
+        self.rect = pygame.Rect(starting_rect[0],starting_rect[1],24,24)
         #Move type 0 = impassable, 1 = land unit passable, 2 = water, 5 = mountain
         if self.form == 1: #Woods, good for lumberjacks
             self.movement_cost = 1.5
@@ -40,6 +44,7 @@ class Terrain(pygame.sprite.Sprite):
                 self.look = pygame.image.load("images/track_SN3.png")
     def generate(type):
         terrain_list = pygame.sprite.Group()
+        """
         if type == "flats":
             for i in range(25):
                 for j in range(25):
@@ -58,26 +63,107 @@ class Terrain(pygame.sprite.Sprite):
                             new_terrain = Terrain(3,location)
                     if new_terrain is not None:
                         terrain_list.add(new_terrain)
-        elif type == "track":
+            return terrain_list"""
+        if False:
+            pass
+        elif type=="flats":
+            change_needed = True
+            terrain_list = pygame.sprite.Group()
             for i in range(25):
                 for j in range(25):
-                    location = (i*32,j*32+2)
+                    location = (i*32-1,j*32+2)
+                    number = random.randint(1,100)
+                    if j == 12 and i == 12:
+                        new_terrain = Terrain(4,location)
+                        terrain_list.add(new_terrain)
+                    else:
+                        if number < 62:
+                            new_terrain = None
+                        elif number < 76:
+                            new_terrain = Terrain(1,location,5)
+                        elif number < 89:
+                            new_terrain = Terrain(2,location,5)
+                        elif number >= 93:
+                            new_terrain = Terrain(3,location,5)
+                        if new_terrain is not None:
+                            terrain_list.add(new_terrain)
+                terrain_list_neo = terrain_list.copy()
+            while change_needed:
+                if len(terrain_list_neo) == 0:
+                    change_needed = False
+                for ter in terrain_list_neo:
+                    if ter.do_gen and ter.form != 3 and ter.form != 20 and ter.form != 4:
+                        neo_terrain = None
+                        #Check
+                        if ter.check_gen(terrain_list,0,32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.rect.y+32,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,-32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x-32,ter.y,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x+32,ter.y,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,0,-32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.y-32,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                    ter.gen = False
+                    terrain_list_neo.remove(ter)
+            return terrain_list
+        elif type=="track":
+            change_needed = True
+            terrain_list = pygame.sprite.Group()
+            for i in range(25):
+                for j in range(25):
+                    location = (i*32-1,j*32+2)
                     number = random.randint(1,100)
                     if i == 12:
                         new_terrain = Terrain(20,location)
-                    else:
-                        if number < 20:
-                            new_terrain = None
-                        elif number < 29:
-                            new_terrain = Terrain(4,location)
-                        elif number < 64:
-                            new_terrain = Terrain(1,location)
-                        elif number < 94:
-                            new_terrain = Terrain(2,location)
-                        elif number >= 94:
-                            new_terrain = Terrain(3,location)
-                    if new_terrain is not None:
                         terrain_list.add(new_terrain)
+                    else:
+                        if number < 62:
+                            new_terrain = None
+                        elif number < 69:
+                            new_terrain = Terrain(4,location,3)
+                        elif number < 79:
+                            new_terrain = Terrain(1,location,3)
+                        elif number < 90:
+                            new_terrain = Terrain(2,location,3)
+                        elif number >= 90:
+                            new_terrain = Terrain(3,location,3)
+                        if new_terrain is not None:
+                            terrain_list.add(new_terrain)
+                terrain_list_neo = terrain_list.copy()
+            while change_needed:
+                if len(terrain_list_neo) == 0:
+                    change_needed = False
+                for ter in terrain_list_neo:
+                    if ter.do_gen and ter.form != 3 and ter.form != 20:
+                        neo_terrain = None
+                        #Check
+                        if ter.check_gen(terrain_list,0,32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.rect.y+32,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,-32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x-32,ter.y,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x+32,ter.y,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,0,-32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.y-32,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                    ter.gen = False
+                    terrain_list_neo.remove(ter)
+            return terrain_list
         elif type == "Start_menu":
             for i in range(6):
                 for j in range(6):
@@ -95,6 +181,7 @@ class Terrain(pygame.sprite.Sprite):
                         new_terrain = Terrain(3,location)
                     if new_terrain is not None:
                         terrain_list.add(new_terrain)
+            return terrain_list
         elif type=="deserted":
             for i in range(25):
                 for j in range(25):
@@ -112,5 +199,101 @@ class Terrain(pygame.sprite.Sprite):
                         new_terrain = Terrain(3,location)
                     if new_terrain is not None:
                         terrain_list.add(new_terrain)
-        return terrain_list
-                        
+            return terrain_list
+        elif type=="better_gen": #Mk2 generation 8I2025
+            change_needed = True
+            for i in range(25):
+                for j in range(25):
+                    location = (i*32-1,j*32+2)
+                    number = random.randint(1,100)
+                    if number < 70:
+                        new_terrain = None
+                    elif number < 76:
+                        new_terrain = Terrain(4,location,3)
+                    elif number < 84:
+                        new_terrain = Terrain(1,location,3)
+                    elif number < 93:
+                        new_terrain = Terrain(2,location,3)
+                    elif number >= 93:
+                        new_terrain = Terrain(3,location,3)
+                    if new_terrain is not None:
+                        terrain_list.add(new_terrain)
+            terrain_list_neo = terrain_list.copy()
+            while change_needed:
+                if len(terrain_list_neo) == 0:
+                    change_needed = False
+                for ter in terrain_list_neo:
+                    if ter.do_gen and ter.form != 3 and ter.form != 20:
+                        neo_terrain = None
+                        #Check
+                        if ter.check_gen(terrain_list,0,32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.rect.y+32,32,32),ter.generation+1)
+                            print("dół")
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,-32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x-32,ter.y,32,32),ter.generation+1)
+                            print("lewo")
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x+32,ter.y,32,32),ter.generation+1)
+                            print("prawo")
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,0,-32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.y-32,32,32),ter.generation+1)
+                            print("góra")
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                    ter.gen = False
+                    terrain_list_neo.remove(ter)
+            return terrain_list
+        elif type=="test":
+            change_needed = True
+            new_terrain = Terrain(4,(12*32-2,12*32),0)
+            if new_terrain is not None:
+                terrain_list.add(new_terrain)
+            terrain_list_neo = terrain_list.copy()
+            while change_needed:
+                if len(terrain_list_neo) == 0:
+                    change_needed = False
+                for ter in terrain_list_neo:
+                    if ter.do_gen and ter.form != 3 and ter.form != 20:
+                        neo_terrain = None
+                        #Check
+                        if ter.check_gen(terrain_list,0,32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.rect.y+32,32,32),ter.generation+1)
+                            print("dół")
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,-32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x-32,ter.y,32,32),ter.generation+1)
+                            print("lewo")
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x+32,ter.y,32,32),ter.generation+1)
+                            print("prawo")
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,0,-32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.y-32,32,32),ter.generation+1)
+                            print("góra")
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        #Generation
+                    ter.gen = False
+                    terrain_list_neo.remove(ter)
+            return terrain_list
+    def check_gen(self,terrains,x_change,y_change):
+        if (0 > self.x+x_change or self.x+x_change > 780 or 0 > self.y+y_change or self.y+y_change > 800):
+            print("cha")
+            return False
+        for j in terrains:
+            if j.rect.colliderect((self.x+x_change,self.y+y_change+3,16,16)):
+                return False
+        if random.randint(1,100+self.generation*60) <= 100:
+            return True
+        else:
+            return False
