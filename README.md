@@ -1,4 +1,4 @@
-# Bellum_Proelium_Devicta_Tributum
+# Bellum Proelium Devicta Tributum
 The world's worst turn-based strategy game!  
 ## **WARMING**  
 The game is <ins>**not**</ins> completed!  
