@@ -1,4 +1,4 @@
-# Bellum
+# Bellum_Proelium_Devicta_Tributum
 The world's worst turn-based strategy game!  
 ## **WARMING**  
 The game is <ins>**not**</ins> completed!  
@@ -25,5 +25,5 @@ The game is about founding villages and conscripting armies(soon) and fighting u
 I **WILL NOT** translate this game to other languages (except for Polish since I speak Polish)!  
 But if you want to add translation for your language, you are welcome!
 
-More info you will be able to find under "wiki" tab!  
+More information under "wiki" tab!  
 I apologise for my English!
