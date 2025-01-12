@@ -24,11 +24,14 @@ class Turn(Army):
                             player1 = p
                             player1.activate()
                             armies_ = player1.armies.copy()
+                            villages_= player1.villages.copy()
                             Text.add_text(texts,f"{p.name} turn")
-                            return armies_
+                            return armies_, villages_
             elif p.active == False and activate_next:
                 p.activate()
                 Text.add_text(texts,f"{p.name} turn")
                 armies_ = p.armies.copy()
+                villages_ = p.villages.copy()
                 activate_next = False
-                return armies_
+                turn_return = [armies_,villages_]
+                return turn_return

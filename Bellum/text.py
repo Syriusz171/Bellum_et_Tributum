@@ -27,6 +27,8 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,"Mouse click ---> Select/Deselect army","keys",False,None,550,440)
         Text.add_text(texts,"Minus ---> Deselect player's armies","keys",False,None,540,480)
         Text.add_text(texts,"Enter ---> Turn","keys",False,None,550,520)
+        Text.add_text(texts,"O ---> Village ownership visibility","keys",False,None,550,560)
+        Text.add_text(texts,"P ---> Army ownership visibility","keys",False,None,550,600)
         Text.add_text(texts,"Village types:","vill_type",False,None,550,400)
         Text.add_text(texts,"1 -> Lumber:","vill_type",False,None,550,430)
         Text.add_text(texts,"2 -> Food:","vill_type",False,None,550,460)
@@ -35,6 +37,14 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,"5 -> Gold:","vill_type",False,None,550,560)
         Text.add_text(texts,"Press \'c\' to cancel;","vill_type",False,None,550,590)
         Text.add_text(texts,"Press \'Space\' to found village;","vill_type",False,None,550,620)
+        Text.add_text(texts,"Army types:","conscipt",False,None,550,400)
+        Text.add_text(texts,"1 -> Spearman","conscipt",False,None,550,430)
+        Text.add_text(texts,"2 -> Archer:","conscipt",False,None,550,460)
+        Text.add_text(texts,"3 -> Horseman:","conscipt",False,None,550,490)
+        Text.add_text(texts,"4 -> Catapult (WIP) ","conscipt",False,None,550,520)
+        Text.add_text(texts,"5 -> Settler:","conscipt",False,None,550,560)
+        Text.add_text(texts,"Press \'c\' to cancel;","conscipt",False,None,550,590)
+        Text.add_text(texts,"Press \'Space\' to conscipt army;","conscipt",False,None,550,620)
 
     def activate_text(texts,type_act):
         for t in texts:
