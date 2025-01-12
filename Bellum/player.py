@@ -10,6 +10,7 @@ class Player(pygame.sprite.Sprite):
         self.spear = 0
         self.bow = 0
         self.gold = 5
+        self.absolute_p_lumber = 0
         self.p_lumber = 0
         self.p_food = 0
         self.p_spear = 0
@@ -21,18 +22,28 @@ class Player(pygame.sprite.Sprite):
     def check_production(villages,players):
         Player.reset_production(players)
         for vil in villages:
-            vil.owner.p_gold += vil.p_gold
-            vil.owner.p_lumber += vil.p_lumber
-            vil.owner.p_food += vil.p_food
-            vil.owner.p_spear += vil.p_spear
-            vil.owner.p_bow += vil.p_bow
+            if vil.health < 0:
+                if vil.p_food <0:
+                    vil.owner.p_food += vil.p_food
+            else:
+                vil.owner.p_gold += vil.p_gold
+                vil.owner.absolute_p_lumber += vil.p_lumber
+                vil.owner.p_lumber += vil.p_lumber
+                vil.owner.p_food += vil.p_food
+                vil.owner.p_spear += vil.p_spear
+                vil.owner.p_bow += vil.p_bow
     def collect_global(players):
         for self in players:
-            self.lumber += self.p_lumber
+            if (self.lumber + self.p_lumber) < (self.p_bow * 1.05 + self.p_spear):
+                self.lumber += self.absolute_p_lumber
+            else:
+             self.lumber += self.p_lumber
+             self.spear += self.p_spear
+             self.bow += self.p_bow
             self.food += self.p_food
-            self.spear += self.p_spear
-            self.bow += self.p_bow
             self.gold += self.p_gold
+            if self.food < 0:
+                self.food = 0
     def reset_production(players):
         for self in players:
             self.p_lumber = 0
@@ -40,6 +51,7 @@ class Player(pygame.sprite.Sprite):
             self.p_spear = 0
             self.p_bow = 0
             self.p_gold = 0
+            self.absolute_p_lumber = 0
     def get_armied(self,army):
         self.armies.add(army)
     def get_villaged(self,village):

@@ -25,42 +25,77 @@ class Unit():
         self.in_village = None
         self.health = 75
         self.village_defence_bonus = None
-    def attack(self,enemy1,texts): # First unit killed 17XII Anno Domini 2024
+    def attack(self,enemy1,is_enemy_army,texts,town=None): # First unit killed 17XII Anno Domini 2024
         enemy = enemy1
+        kill_self = False
         if self.can_attack and self.march > 0:
             self.attack = self.base_attack
-            if enemy.formation == 1:
+            if enemy.formation == 1 or enemy.formation == 2 or enemy.formation == 0 or enemy.formation == 100:
                 self.attack += self.anti_infantry_bonus
-            if enemy.formation == 2:
-                self.attack += self.anti_infantry_bonus
-            if enemy.formation == 3:
+            elif enemy.formation == 3:
                 self.attack += self.anti_cav_bonus
             enemy.defence = enemy.base_defence
-            if enemy.in_village:
+            if self.owner.food == 0:
+                self.attack -= 3
+            if enemy.owner.food == 0:
+                enemy.defence -= 3
+            if town is not None:
                 self.attack += self.siege_bonus
-                enemy.attack += enemy.village_bonus
+                enemy.defence += enemy.village_bonus
+                enemy.defence += town.base_defence*0.5
+            if  self.health *2 < self.base_health:
+                self.attack -= 1
+            if  enemy.health *2 < enemy.base_health:
+                enemy.defence -= 1
             self.attack += random.randint(-2,2)
-            if self.formation == 1 or self.formation == 2:
+            if self.formation == 1 or self.formation == 2 or self.formation == 0 or self.formation == 100:
                 enemy.defence += enemy.anti_infantry_bonus
             if self.formation == 3:
                 enemy.defence += enemy.anti_cav_bonus
             enemy.defence += random.randint(-2,2)
-            damage_self = ((enemy.defence+1)-self.attack*0.60)+1
-            damage_enemy = ((self.attack+1)-enemy.defence*0.60)+1
+            damage_self = ((enemy.defence*1.1)-self.attack*0.60)+4
+            damage_enemy = ((self.attack*1.1)-enemy.defence*0.60)
+            if damage_self < 4:
+                damage_self = 4
+            if damage_enemy < 4:
+                damage_enemy = 4
             self.health -= damage_self
             enemy.health -= damage_enemy
+            if town is not None:
+                town.health -= damage_enemy * 0.5
+                Text.add_text(texts,f"Village health is {town.health}")
             Text.add_text(texts,f"Attacker health is {self.health}")
             Text.add_text(texts,f"Defender health is {enemy.health}")
             self.march = 0
             if self.health > 0:
                 pass
             else:
-                self.kill()
+                kill_self = True
             if enemy.health > 0:
+                if town is not None:
+                    if town.health < -10:
+                        town.health = -10
+                if kill_self:
+                    self.kill()
                 return False
             else:
-                enemy.kill()
-                return True
+                if is_enemy_army:
+                    enemy.kill()
+                    if town is not None:
+                        if town.health <= 0:
+                            town.change_owner(self.owner,texts)
+                            if kill_self:
+                                self.kill()
+                            return True
+                        else:
+                            if kill_self:
+                                self.kill()
+                            return False
+                elif town is None:
+                    enemy.change_owner(self.owner,texts)
+                    if kill_self:
+                        self.kill()
+                    return True
 
         else:
             pass
@@ -100,7 +135,7 @@ class Unit():
     """
     def update_color(self):
         color_mask = 0
-        if self.owner == 1:
+        if self.owner.number == 1:
             color_mask = 0
             if self.health == self.base_health:
                 color_mask = (128,0,0)
@@ -112,20 +147,22 @@ class Unit():
                 color_mask = (60,5,5)
             else:
                 color_mask = (55,1,1)
-        if self.owner == 2:
+        elif self.owner.number == 2:
             color_mask = 0
             if self.health == self.base_health:
-                color_mask = (0,0,128)
+                color_mask = (0,0,130)
             elif self.health >0.75*self.base_health:
-                color_mask = (0,0,105)
+                color_mask = (0,0,107)
             elif self.health > 0.50 *self.base_health:
-                color_mask = (0,0,80)
+                color_mask = (0,0,82)
             elif self.health > 0.25 *self.base_health:
-                color_mask = (5,5,60)
+                color_mask = (5,5,62)
             else:
-                color_mask = (1,1,55)
+                color_mask = (1,1,56)
+        if self.health <= 0:
+            color_mask = (60,60,60)
         self.new_banner = copy.copy(self.banner)
-        self.new_banner.fill(color_mask,special_flags=pygame.BLEND_ADD)
+        self.new_banner.fill(color_mask,special_flags=pygame.BLEND_RGB_ADD)
         #"""
     def add_group(added,group):
         if added is not None:
