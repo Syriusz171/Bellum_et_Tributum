@@ -17,7 +17,7 @@ The game is about founding villages and conscripting armies and fighting using t
 - Water and water transport (another dream)
 - Alpine units (would be able to move thought mountains),(maybe?)
 - More resourses like army-specific supplies, salt, stone etc(that has to be done, right? Right?)
-- Local resourses (that is resourses being stored in villages) and resourse trasport system(i guess it is a dream)
+- Local resourses (that is resourses being stored in villages) and resourse trasport system (i guess it is a dream)
 - Unit upkeep (armies would need to be moved with supplies (dream)
 - No negative resourses (partially done!)
 ### Translations
