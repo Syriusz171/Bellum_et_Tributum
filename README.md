@@ -10,13 +10,14 @@ Requires Python and Pygame to be installed on your computer!
   
 The game is about founding villages and conscripting armies and fighting using them!  
 ### Known issues  
-- multi-army movement (and yes, it DOES excist) works badly when one army moves onto the tile where was another moving army  
+- multi-army movement (and yes, it DOES excist) works badly when one army moves onto the tile where was another moving army
+- Game sometimes crashes when terrain is generated.
 ### Plans (or rather dreams of mine):
 - Consription of armies (has been done!)
 - Mode to fight bots (a dream)
 - Water and water transport (another dream)
-- Alpine units (would be able to move thought mountains),(maybe?)
-- More resourses like army-specific supplies, salt, stone etc(that has to be done, right? Right?)
+- Alpine units (would be able to move thought mountains), (maybe?)
+- More resourses like army-specific supplies, salt, stone etc (that has to be done, right? Right?)
 - Local resourses (that is resourses being stored in villages) and resourse trasport system (i guess it is a dream)
 - Unit upkeep (armies would need to be moved with supplies (dream)
 - No negative resourses (partially done!)
