@@ -16,7 +16,7 @@ HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 config = Config()
-pygame.display.set_caption("Bellum et Tributum dev -1.0 build 3")
+pygame.display.set_caption("Bellum et Tributum dev -1.0 build 3.1")
 pygame.init()
 FPS = pygame.time.Clock()
 background_image = pygame.image.load("images/Background.png")
@@ -27,7 +27,7 @@ font = pygame.font.SysFont("Times New Roman",20)
 font_big = pygame.font.SysFont("Segoe Print Bold",36)
 texts = pygame.sprite.Group()
 Text.init_texts(texts)
-version = font.render("version: dev -1.0 build 3",False,(160,200,200))
+version = font.render("version: dev -1.0 build 3.1",False,(160,200,200))
 #army = Army(2,1)
 visible_village_owner = False
 visible_army_owner = True
@@ -220,7 +220,7 @@ while game_on:
                                         Text.deactivate_text(texts,"conscript")
                                         Village.unselect_villages(villages,texts)
                                         Player.get_armied(vil.owner,new_army)
-                                        vil.can_consript_turns = 4
+                                        vil.can_conscript_turns = 4
             #=====================================================#
             elif event.key == pygame.K_c:
                 selected_type = 0

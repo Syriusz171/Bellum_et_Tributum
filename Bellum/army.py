@@ -288,6 +288,7 @@ class Army(Unit,pygame.sprite.Sprite):
             return new_army
         else:
             Text.add_text(texts,"Army cannot be conscripted!")
+            return None
 
     def draw_armies(self,screen,armies): #DEPRACADED!
         for army in armies:
