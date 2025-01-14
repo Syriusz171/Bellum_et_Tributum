@@ -256,10 +256,10 @@ class Army(Unit,pygame.sprite.Sprite):
                 else:
                     constription_possible = False
             elif type == 3:
-                if player.gold >= 10 and player.food >= 10 and player.spear >= 2:
+                if player.gold >= 10 and player.food >= 10 and player.spear >= 3:
                     player.gold -= 10
                     player.food -= 10
-                    player.spear -= 2
+                    player.spear -= 3
                     constription_possible = True
                 else:
                     constription_possible = False

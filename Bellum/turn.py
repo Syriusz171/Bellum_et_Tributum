@@ -19,6 +19,7 @@ class Turn(Army):
                     Army.reset_march(armies)
                     Player.check_production(villages,players)
                     Player.collect_global(players)
+                    Village.turns_left_change(villages)
                     for p in players:
                         if p.number == 1:
                             player1 = p
