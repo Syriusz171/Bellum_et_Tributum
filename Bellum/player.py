@@ -10,6 +10,7 @@ class Player(pygame.sprite.Sprite):
         self.spear = 0
         self.bow = 0
         self.gold = 5
+        self.gold_handicap = 0
         self.absolute_p_lumber = 0
         self.p_lumber = 0
         self.p_food = 0
@@ -52,6 +53,7 @@ class Player(pygame.sprite.Sprite):
             self.p_bow = 0
             self.p_gold = 0
             self.absolute_p_lumber = 0
+            self.p_gold += self.gold_handicap
     def get_armied(self,army):
         self.armies.add(army)
     def get_villaged(self,village):

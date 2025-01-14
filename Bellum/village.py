@@ -9,6 +9,7 @@ class Village(Unit,pygame.sprite.Sprite):
         self.owner = owner1
         self.vill_type = vill_type
         self.selected = False
+        self.can_conscript_turns = 4
         #self.rect = starting_rect.copy()
         if vill_type == 60:
             self.base_health = 225
@@ -58,7 +59,9 @@ class Village(Unit,pygame.sprite.Sprite):
             self.p_spear = 0
             self.banner = pygame.image.load("images/village_gold.png")
         self.health = self.base_health
-        self.rect = self.banner.get_rect(center=starting_rect)
+        self.rect = self.banner.get_rect(bottomleft=starting_rect)
+        self.x = starting_rect[0]
+        self.y = starting_rect[1]
         self.new_banner = self.banner
         #TEMPORARY!
         self.anti_infantry_bonus = 0
@@ -117,6 +120,10 @@ class Village(Unit,pygame.sprite.Sprite):
             vil.owner.p_food += vil.p_food
             vil.owner.p_spear += vil.p_spear
             vil.owner.p_bow += vil.p_bow"""
+    def turns_left_change(villages):
+        for vil in villages:
+            if vil.can_conscript_turns > 0:
+                vil.can_conscript_turns -= 1
     def change_owner(self,new_owner,texts):
         self.owner.villages.remove(self)
         self.owner = new_owner

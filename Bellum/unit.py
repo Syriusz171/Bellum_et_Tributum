@@ -21,7 +21,7 @@ class Unit():
         self.anti_cav_bonus = None
         self.anti_infantry_bonus = None
         self.wall = None
-        self.morale = None
+        self.morale = 10
         self.in_village = None
         self.health = 75
         self.village_defence_bonus = None
@@ -39,6 +39,24 @@ class Unit():
                 self.attack -= 3
             if enemy.owner.food == 0:
                 enemy.defence -= 3
+                #Morale
+            if enemy.morale >= 12 and enemy.morale <20:
+                enemy.defence += 1
+            elif enemy.morale > 20:
+                enemy.defence += 2
+            elif enemy.morale <= 8 and enemy.morale > 0:
+                enemy.defence -= 1
+            elif enemy.morale < 0:
+                enemy.defence -= 2
+            if self.morale >= 12 and self.morale <20:
+                self.defence += 1
+            elif self.morale > 20:
+                self.defence += 2
+            elif self.morale <= 8 and self.morale > 0:
+                self.defence -= 1
+            elif self.morale < 0:
+                self.defence -= 2
+            
             if town is not None:
                 self.attack += self.siege_bonus
                 enemy.defence += enemy.village_bonus
@@ -53,8 +71,8 @@ class Unit():
             if self.formation == 3:
                 enemy.defence += enemy.anti_cav_bonus
             enemy.defence += random.randint(-2,2)
-            damage_self = ((enemy.defence*1.1)-self.attack*0.60)+4
-            damage_enemy = ((self.attack*1.1)-enemy.defence*0.60)
+            damage_self = (1.5*((enemy.defence*1.1+1)-self.attack*0.60))+4
+            damage_enemy = (1.5*((self.attack*1.1+1)-enemy.defence*0.60))
             if damage_self < 4:
                 damage_self = 4
             if damage_enemy < 4:
@@ -71,6 +89,8 @@ class Unit():
                 pass
             else:
                 kill_self = True
+                Unit.morale_change(enemy.owner.armies,self.owner.armies,self.rect.bottomleft)
+                enemy.morale += 1
             if enemy.health > 0:
                 if town is not None:
                     if town.health < -10:
@@ -79,6 +99,8 @@ class Unit():
                     self.kill()
                 return False
             else:
+                Unit.morale_change(self.owner.armies,enemy.owner.armies,enemy.rect.bottomleft)
+                self.morale += 1
                 if is_enemy_army:
                     enemy.kill()
                     if town is not None:
@@ -91,7 +113,9 @@ class Unit():
                             if kill_self:
                                 self.kill()
                             return False
-                elif town is None:
+                    if kill_self:
+                        self.kill()
+                elif town is None: # Territory of Player2 conquered 12I2025
                     enemy.change_owner(self.owner,texts)
                     if kill_self:
                         self.kill()
@@ -167,3 +191,12 @@ class Unit():
     def add_group(added,group):
         if added is not None:
             group.add(added)
+    def morale_change(army,enemy,location):
+        x = location[0]
+        y = location[1]
+        for me in army:
+            if me.rect.colliderect((x-64,y-64,x+64,y+64)):
+                me.morale += 1
+        for me in enemy:
+            if me.rect.colliderect((x-64,y-64,x+64,y+64)):
+                me.morale -= 1

@@ -32,6 +32,10 @@ class Terrain(pygame.sprite.Sprite):
                 self.look = pygame.image.load("images/mountain1.png")
             else:
                 self.look = pygame.image.load("images/mountain2.png")
+        elif self.form == 5:
+            self.movement_cost = 1
+            self.move_type = 1
+            self.look = pygame.image.load("images/salt_deposit.png")
         elif self.form == 20: #Road, player builded construction that allows you and your enemy to march faster
             self.movement_cost = 0.5
             self.move_type = 1
