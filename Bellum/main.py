@@ -220,7 +220,7 @@ while game_on:
                                         Text.deactivate_text(texts,"conscript")
                                         Village.unselect_villages(villages,texts)
                                         Player.get_armied(vil.owner,new_army)
-                                        vil.can_consript_turns = 4
+                                        vil.can_conscript_turns = 4
             #=====================================================#
             elif event.key == pygame.K_c:
                 selected_type = 0
