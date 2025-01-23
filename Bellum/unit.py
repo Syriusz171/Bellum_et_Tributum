@@ -49,17 +49,18 @@ class Unit():
             elif enemy.morale < 0:
                 enemy.defence -= 2
             if self.morale >= 12 and self.morale <20:
-                self.defence += 1
+                self.attack += 1
             elif self.morale > 20:
-                self.defence += 2
+                self.attack += 2
             elif self.morale <= 8 and self.morale > 0:
-                self.defence -= 1
+                self.attack -= 1
             elif self.morale < 0:
-                self.defence -= 2
+                self.attack -= 2
             
             if town is not None:
                 self.attack += self.siege_bonus
-                enemy.defence += enemy.village_bonus
+                if town.health > 0:
+                    enemy.defence += enemy.village_bonus
                 enemy.defence += town.base_defence*0.5
             if  self.health *2 < self.base_health:
                 self.attack -= 1

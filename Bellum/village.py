@@ -58,6 +58,13 @@ class Village(Unit,pygame.sprite.Sprite):
             self.p_gold = 10
             self.p_spear = 0
             self.banner = pygame.image.load("images/village_gold.png")
+        if vill_type == 6:
+            self.p_lumber = -0.75
+            self.p_food = -1.15
+            self.p_bow = 0
+            self.p_gold = 6
+            self.p_spear = 0
+            self.banner = pygame.image.load("images/village_salt.png")
         self.health = self.base_health
         self.rect = self.banner.get_rect(bottomleft=starting_rect)
         self.x = starting_rect[0]
@@ -85,11 +92,15 @@ class Village(Unit,pygame.sprite.Sprite):
         location_possible = False
         new_village = None
         if free_location == False:
-            if type != 5:
+            if type in [2,3,4]:
                 if player.gold >= 2 and player.lumber >= 5:
                     location_possible = True
                     player.gold -= 2
                     player.lumber -= 5
+            elif type == 1:
+                if player.gold >= 3:
+                    location_possible = True
+                    player.gold -= 3
                 else:
                     if texts is not None:
                         Text.add_text(texts,"Our stocks are too low!")
@@ -97,6 +108,15 @@ class Village(Unit,pygame.sprite.Sprite):
                 if player.gold >= 10 and player.lumber >= 8 and player.food >= 1:
                     player.gold -= 10
                     player.lumber -= 8
+                    player.food -= 1
+                    location_possible = True
+                else:
+                    if texts is not None:
+                        Text.add_text(texts,"Our stocks are too low!")
+            elif type == 6:
+                if player.gold >= 4 and player.lumber >= 6 and player.food >= 1:
+                    player.gold -= 4
+                    player.lumber -= 6
                     player.food -= 1
                     location_possible = True
                 else:

@@ -23,7 +23,7 @@ class Player(pygame.sprite.Sprite):
     def check_production(villages,players):
         Player.reset_production(players)
         for vil in villages:
-            if vil.health < 0:
+            if vil.health <= 0:
                 if vil.p_food <0:
                     vil.owner.p_food += vil.p_food
             else:
@@ -35,12 +35,12 @@ class Player(pygame.sprite.Sprite):
                 vil.owner.p_bow += vil.p_bow
     def collect_global(players):
         for self in players:
-            if (self.lumber + self.p_lumber) < (self.p_bow * 1.05 + self.p_spear):
+            if self.lumber + self.p_lumber < (self.p_bow * 1.05 + self.p_spear):
                 self.lumber += self.absolute_p_lumber
             else:
-             self.lumber += self.p_lumber
-             self.spear += self.p_spear
-             self.bow += self.p_bow
+                self.lumber += self.p_lumber
+                self.spear += self.p_spear
+                self.bow += self.p_bow
             self.food += self.p_food
             self.gold += self.p_gold
             if self.food < 0:

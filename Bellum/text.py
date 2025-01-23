@@ -34,7 +34,7 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,"2 -> Food:","vill_type",False,None,550,460)
         Text.add_text(texts,"3 -> Spear:","vill_type",False,None,550,490)
         Text.add_text(texts,"4 -> Bows:","vill_type",False,None,550,520)
-        Text.add_text(texts,"5 -> Gold:","vill_type",False,None,550,560)
+        Text.add_text(texts,"5 -> Mining:","vill_type",False,None,550,560)
         Text.add_text(texts,"Press \'c\' to cancel;","vill_type",False,None,550,590)
         Text.add_text(texts,"Press \'Space\' to found village;","vill_type",False,None,550,620)
         Text.add_text(texts,"Army types:","conscipt",False,None,550,400)

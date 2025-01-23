@@ -27,7 +27,7 @@ class Army(Unit,pygame.sprite.Sprite):
         """
         if self.formation == 1:
             self.base_march = 3
-            self.base_attack = 20
+            self.base_attack = 20.5
             self.base_defence = 25
             self.base_health = 100
             self.village_bonus = 2
@@ -42,16 +42,16 @@ class Army(Unit,pygame.sprite.Sprite):
             self.base_defence = 26
             self.base_health = 110
             self.village_bonus = 2
-            self.siege_bonus = 0
+            self.siege_bonus = -1
             self.anti_infantry_bonus = 2
             self.anti_cav_bonus = 0
             self.movement_type = 1
             self.banner = pygame.image.load("images/guard.png")
         elif self.formation == 2:
             self.base_march = 3
-            self.base_attack = 15
+            self.base_attack = 19
             self.base_defence = 27
-            self.base_health = 75
+            self.base_health = 78
             self.village_bonus = 5
             self.siege_bonus = -3
             self.anti_infantry_bonus = 2
@@ -196,10 +196,9 @@ class Army(Unit,pygame.sprite.Sprite):
                     if battle == False:
                         can_move = False
                         #"""
-                if arm.rect.top <0 or arm.rect.top >= 800:
+                if x >= 800 or y > 800 or x <0 or y<=0:
                     can_move = False
-                if arm.rect.left <0 or arm.rect.left >= 800:
-                    can_move = False
+                    Text.add_text(texts,"You cannot leave the map!")
                 if can_move:
                     if arm.direction == Direction.UP:
                         arm.rect.move_ip(0,-32)

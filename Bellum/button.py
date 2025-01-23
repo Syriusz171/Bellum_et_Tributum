@@ -25,6 +25,9 @@ class Button(pygame.sprite.Sprite):
         elif type == 12:
             self.picture = pygame.image.load("images/flats_map_icon.png")
             self.rect = self.picture.get_rect(center=center)
+        elif type == 13:
+            self.picture = pygame.image.load("images/rich_center_icon.png")
+            self.rect = self.picture.get_rect(center=center)
     def update_button(self):
         if self.type == 6 or self.type == 5:
             if self.checked == False:

@@ -73,6 +73,7 @@ class Terrain(pygame.sprite.Sprite):
         elif type=="flats":
             change_needed = True
             terrain_list = pygame.sprite.Group()
+            new_terrain = None
             for i in range(25):
                 for j in range(25):
                     location = (i*32,j*32+2)
@@ -81,13 +82,15 @@ class Terrain(pygame.sprite.Sprite):
                         new_terrain = Terrain(4,location)
                         terrain_list.add(new_terrain)
                     else:
-                        if number < 62:
+                        if number < 60:
                             new_terrain = None
-                        elif number < 76:
+                        elif number < 74:
                             new_terrain = Terrain(1,location,5)
-                        elif number < 89:
+                        elif number < 87:
                             new_terrain = Terrain(2,location,5)
-                        elif number >= 93:
+                        elif number < 98:
+                            new_terrain = Terrain(5,location,5)
+                        else:
                             new_terrain = Terrain(3,location,5)
                         if new_terrain is not None:
                             terrain_list.add(new_terrain)
@@ -96,7 +99,7 @@ class Terrain(pygame.sprite.Sprite):
                 if len(terrain_list_neo) == 0:
                     change_needed = False
                 for ter in terrain_list_neo:
-                    if ter.do_gen and ter.form != 3 and ter.form != 20 and ter.form != 4:
+                    if ter.do_gen and ter.form != 3 and ter.form != 20 and ter.form != 4 and ter.form != 5:
                         neo_terrain = None
                         #Check
                         if ter.check_gen(terrain_list,0,32):
@@ -138,7 +141,10 @@ class Terrain(pygame.sprite.Sprite):
                         elif number < 90:
                             new_terrain = Terrain(2,location,3)
                         elif number >= 90:
-                            new_terrain = Terrain(3,location,3)
+                            if random.randint(1,13) == 1:
+                                new_terrain = Terrain(3,location,3)
+                            else:
+                             new_terrain = Terrain(5,location,3)
                         if new_terrain is not None:
                             terrain_list.add(new_terrain)
             terrain_list_neo = terrain_list.copy()
@@ -146,7 +152,7 @@ class Terrain(pygame.sprite.Sprite):
                 if len(terrain_list_neo) == 0:
                     change_needed = False
                 for ter in terrain_list_neo:
-                    if ter.do_gen and ter.form != 3 and ter.form != 20:
+                    if ter.do_gen and ter.form != 3 and ter.form != 20 and ter.form != 5:
                         neo_terrain = None
                         #Check
                         if ter.check_gen(terrain_list,0,32):
@@ -281,6 +287,31 @@ class Terrain(pygame.sprite.Sprite):
                         #Generation
                     ter.gen = False
                     terrain_list_neo.remove(ter)
+            return terrain_list
+        elif type == "rich_center":
+            terrain_list = pygame.sprite.Group()
+            for i in range(25):
+                for j in range(25):
+                    new_terrain = None
+                    location = (i*32,j*32+2)
+                    number = random.randint(1,100)
+                    if i in [3,21] and j != 12:
+                        if number > 50:
+                            new_terrain = Terrain(4,location)
+                    elif i >= 9 and i <= 15:
+                        if number < 46:
+                            new_terrain = Terrain(1,location)
+                        elif number < 90:
+                            new_terrain = Terrain(2,location)
+                        else:
+                            if random.randint(1,12) == 1:
+                                new_terrain = Terrain(3,location)
+                            else:
+                                new_terrain = Terrain(5,location)
+                    elif i in [0,1,23,24] and j == 12:
+                        new_terrain = Terrain(2,location)
+                    if new_terrain is not None:
+                        terrain_list.add(new_terrain)
             return terrain_list
     def check_gen(self,terrains,x_change,y_change):
         if (0 > self.x+x_change or self.x+x_change > 780 or 0 > self.y+y_change or self.y+y_change > 800):

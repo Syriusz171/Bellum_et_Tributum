@@ -16,7 +16,9 @@ HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 config = Config()
-pygame.display.set_caption("Bellum et Tributum dev -1.0 build 3.1")
+pygame.display.set_caption("Bellum et Tributum dev -1.0 build 4")
+icon_of_BeT = pygame.image.load("images/city.png")
+pygame.display.set_icon(icon_of_BeT)
 pygame.init()
 FPS = pygame.time.Clock()
 background_image = pygame.image.load("images/Background.png")
@@ -27,7 +29,7 @@ font = pygame.font.SysFont("Times New Roman",20)
 font_big = pygame.font.SysFont("Segoe Print Bold",36)
 texts = pygame.sprite.Group()
 Text.init_texts(texts)
-version = font.render("version: dev -1.0 build 3.1",False,(160,200,200))
+version = font.render("version: dev -1.0 build 4",False,(160,200,200))
 #army = Army(2,1)
 visible_village_owner = False
 visible_army_owner = True
@@ -37,6 +39,7 @@ show_production = Button(2,(819,740),False)
 keys_button = Button(3,(819,740),True)
 flats_button = Button(12,(14*32+16,10*32+18),False)
 track_map_button = Button(11,(14*32+16,14*32+18),False)
+rich_center_button = Button(13,(18*32+16,10*32+18),False)
 small_input = Button(1,(12*32+16,12*32+18),False)
 handicap1 = Button(5,(22*32+16,12*32+18),False)
 handicap2 = Button(6,(2*32+16,12*32+18),False)
@@ -48,6 +51,7 @@ buttons.add(track_map_button)
 buttons.add(small_input)
 buttons.add(handicap2)
 buttons.add(handicap1)
+buttons.add(rich_center_button)
 do_input = False
 special_input = None
 input_text = 'Player1'
@@ -182,14 +186,22 @@ while game_on:
                         can_found_village = True
                         army_collide = pygame.sprite.spritecollideany(arm,villages)#Village foundation system 2I2025
                         army_terrain_collide = pygame.sprite.spritecollideany(arm,terrains)
+                        spawn_type = selected_type
                         if army_collide is None:
                             if selected_type != 0:
                                 if army_terrain_collide is not None:
-                                    if selected_type == 1 and army_terrain_collide.form != 1 or (selected_type == 2 and army_terrain_collide.form != 2) or (selected_type == 5 and army_terrain_collide.form != 3) or False:
+                                    if selected_type == 1 and army_terrain_collide.form != 1 or (selected_type == 2 and army_terrain_collide.form != 2) or (selected_type == 5 and army_terrain_collide.form not in [3,5]) or False:
                                         Text.add_text(texts,"Invalid terrain type! ")
                                         can_found_village = False
+                                    elif selected_type == 5:
+                                        if army_terrain_collide.form == 5:
+                                            spawn_type = 6
+                                        else:
+                                            spawn_type = 5
+                                elif selected_type in [1,2,5]:
+                                    can_found_village = False
                                 if can_found_village:
-                                    new_village = Village.locate_village(selected_type,arm.owner,arm.rect.bottomleft,False,texts)
+                                    new_village = Village.locate_village(spawn_type,arm.owner,arm.rect.bottomleft,False,texts)
                                     if new_village is not None:
                                         villages.add(new_village)
                                         villages_.add(new_village)
@@ -295,6 +307,7 @@ while game_on:
                     start_quick.activate_button(False)
                     flats_button.activate_button(True)
                     track_map_button.activate_button(True)
+                    rich_center_button.activate_button(True)
                     small_input.activate_button(True)
                     handicap2.activate_button(True)
                     handicap1.activate_button(True)
@@ -311,11 +324,13 @@ while game_on:
                             player1.gold_handicap = 0
 
 
-                if kliczek_button.type == 11 or kliczek_button.type == 12 and menu == 1:
+                if kliczek_button.type in [11,12,13] and menu == 1:
                     menu = 0
                     terrains.empty()
                     if kliczek_button.type == 12: #Map selection 3 I AD 2025 19:40
                         terrains = Terrain.generate("flats")
+                    elif kliczek_button.type == 13:
+                        terrains = Terrain.generate("rich_center")
                     else:
                         terrains = Terrain.generate("track")
                     #start_quick.activate_button(False)
@@ -323,6 +338,7 @@ while game_on:
                     keys_button.activate_button(False)
                     show_production.activate_button(True)
                     flats_button.activate_button(False)
+                    rich_center_button.activate_button(False)
                     track_map_button.activate_button(False)
                     handicap2.activate_button(False)
                     handicap1.activate_button(False)
@@ -363,16 +379,16 @@ while game_on:
             input_text_render = font.render(input_text,True,(25,25,25),(181,123,76))
             screen.blit(input_text_render,(small_input.rect.left+8,small_input.rect.centery-10))
     if REAL_show_production:
-        gold_text = font.render(f"Gold:{round(player1.gold,2)}+{player1.p_gold};{round(player2.gold,2)}+{player2.p_gold}",False,(160,200,200))
-        lumber_text = font.render(f"Lumber:{player1.lumber}+{player1.p_lumber};{player2.lumber}+{player2.p_lumber}",False,(160,200,200))
-        food_text = font.render(f"Food:{player1.food}+{player1.p_food};{player2.food}+{player2.p_food}",False,(160,200,200))
+        gold_text = font.render(f"Gold:{round(player1.gold,2)}+{round(player1.p_gold,2)};{round(player2.gold,2)}+{player2.p_gold}",False,(160,200,200))
+        lumber_text = font.render(f"Lumber:{round(player1.lumber)}+{round(player1.p_lumber,2)};{player2.lumber}+{player2.p_lumber}",False,(160,200,200))
+        food_text = font.render(f"Food:{round(player1.food,2)}+{round(player1.p_food,2)};{round(player2.food,2)}+{player2.p_food}",False,(160,200,200))
         spear_text = font.render(f"Sprears:{player1.spear}+{player1.p_spear};{player2.spear}+{player2.p_spear}",False,(160,200,200))
         bow_text = font.render(f"Bows:{player1.bow}+{player1.p_bow};{player2.bow}+{player2.p_bow}",False,(160,200,200))
-        screen.blit(gold_text,(648,40))
-        screen.blit(lumber_text,(648,60))
-        screen.blit(food_text,(648,80))
-        screen.blit(spear_text,(648,100))
-        screen.blit(bow_text,(648,120))
+        screen.blit(gold_text,(631,40))
+        screen.blit(lumber_text,(631,60))
+        screen.blit(food_text,(631,80))
+        screen.blit(spear_text,(631,100))
+        screen.blit(bow_text,(631,120))
     Text.print_text(texts,screen)
     if was_defeated != False:
         defeated_text = font_big.render(f"{was_defeated.name} has been defeated!",False,(150,31,30))
