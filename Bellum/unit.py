@@ -10,6 +10,7 @@ class Unit():
         self.new_banner = None
         self.type = None
         self.owner = None
+        self.on_boat = False
         self.formation = None
         self.base_attack = None
         self.base_defence = None
@@ -20,14 +21,20 @@ class Unit():
         self.march = None
         self.anti_cav_bonus = None
         self.anti_infantry_bonus = None
+        self.anti_transport_bonus = 0
+        self.anti_ram_bonus = 0
+        self.units_boat = pygame.sprite.Group()
         self.wall = None
         self.morale = 10
         self.in_village = None
         self.health = 75
+        self.is_boat = False
         self.village_defence_bonus = None
-    def attack(self,enemy1,is_enemy_army,texts,town=None): # First unit killed 17XII Anno Domini 2024
+    def attack(self,enemy1,is_enemy_army,texts,town=None,boat=None,enemy_boat=None): # First unit killed 17XII Anno Domini 2024
         enemy = enemy1
         kill_self = False
+        there_self_units = False
+        there_enemy_units = False
         if self.can_attack and self.march > 0:
             self.attack = self.base_attack
             if enemy.formation == 1 or enemy.formation == 2 or enemy.formation == 0 or enemy.formation == 100:
@@ -56,12 +63,34 @@ class Unit():
                 self.attack -= 1
             elif self.morale < 0:
                 self.attack -= 2
-            
+            if self.is_boat:
+                if enemy.formation in [202]:
+                    self.attack += self.anti_ram_bonus
+                if enemy.formation in [201]:
+                    self.attack += self.anti_transport_bonus
+            if enemy.is_boat:
+                if self.formation in [202]:
+                    enemy.defence += enemy.anti_ram_bonus
+                if self.formation in [201]:
+                    enemy.defence += enemy.anti_transport_bonus
+                pass
+                #Finish here!
             if town is not None:
                 self.attack += self.siege_bonus
                 if town.health > 0:
                     enemy.defence += enemy.village_bonus
                 enemy.defence += town.base_defence*0.5
+            #===== BOAT =====#
+            if self.is_boat:
+                if len(self.units_boat) > 0:
+                    there_self_units = True
+                    for unit in self.units_boat:
+                        self.attack += unit.base_attack * 0.65
+            if enemy.is_boat:
+                if len(enemy.units_boat) > 0:
+                    there_enemy_units = True
+                    for unit in enemy.units_boat:
+                        enemy.attack += enemy.base_attack * 0.65
             if  self.health *2 < self.base_health:
                 self.attack -= 1
             if  enemy.health *2 < enemy.base_health:
@@ -83,6 +112,22 @@ class Unit():
             if town is not None:
                 town.health -= damage_enemy * 0.5
                 Text.add_text(texts,f"Village health is {town.health}")
+            if there_self_units:
+                for unit in self.units_boat:
+                    damage_unit = damage_self
+                    if enemy.anti_transport_bonus > 0:
+                        damage_unit = enemy.anti_transport_bonus * (random.randint(0,4) *0,30 + 1)
+                    unit.health -= damage_unit
+                    Text.add_text(texts,f"Attacker passager health is {unit.health}!")
+                    unit.check_if_die()
+            if there_enemy_units:
+                for unit in enemy.units_boat:
+                    damage_unit = damage_enemy
+                    if self.anti_transport_bonus > 0:
+                        damage_unit = self.anti_transport_bonus * (random.randint(0,4) *0,30 + 1)
+                    unit.health -= damage_unit
+                    Text.add_text(texts,f"Attacker passager health is {unit.health}!")
+                    unit.check_if_die()
             Text.add_text(texts,f"Attacker health is {self.health}")
             Text.add_text(texts,f"Defender health is {enemy.health}")
             self.march = 0
@@ -201,3 +246,6 @@ class Unit():
         for me in enemy:
             if me.rect.colliderect((x-64,y-64,x+64,y+64)):
                 me.morale -= 1
+    def check_if_die(self):
+        if self.health <= 0:
+            self.kill()

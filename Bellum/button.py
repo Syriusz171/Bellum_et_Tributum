@@ -28,6 +28,9 @@ class Button(pygame.sprite.Sprite):
         elif type == 13:
             self.picture = pygame.image.load("images/rich_center_icon.png")
             self.rect = self.picture.get_rect(center=center)
+        elif type == 14:
+            self.picture = pygame.image.load("images/test_map_icon.png")
+            self.rect = self.picture.get_rect(center=center)
     def update_button(self):
         if self.type == 6 or self.type == 5:
             if self.checked == False:
@@ -42,4 +45,7 @@ class Button(pygame.sprite.Sprite):
                 return False
     def activate_button(self,activator):
         self.active = activator
+    def activate_group(buttons,state):
+        for button in buttons:
+            button.active = state
         

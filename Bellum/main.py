@@ -16,7 +16,7 @@ HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 config = Config()
-pygame.display.set_caption("Bellum et Tributum dev -1.0 build 4")
+pygame.display.set_caption("Bellum et Tributum dev -1.0 build 5")
 icon_of_BeT = pygame.image.load("images/city.png")
 pygame.display.set_icon(icon_of_BeT)
 pygame.init()
@@ -29,11 +29,12 @@ font = pygame.font.SysFont("Times New Roman",20)
 font_big = pygame.font.SysFont("Segoe Print Bold",36)
 texts = pygame.sprite.Group()
 Text.init_texts(texts)
-version = font.render("version: dev -1.0 build 4",False,(160,200,200))
+version = font.render("version: dev -1.0 build 5",False,(160,200,200))
 #army = Army(2,1)
 visible_village_owner = False
 visible_army_owner = True
 buttons = pygame.sprite.Group()
+map_buttons = pygame.sprite.Group()
 start_quick = Button(1,(12*32+16,12*32+18),True)
 show_production = Button(2,(819,740),False)
 keys_button = Button(3,(819,740),True)
@@ -43,6 +44,10 @@ rich_center_button = Button(13,(18*32+16,10*32+18),False)
 small_input = Button(1,(12*32+16,12*32+18),False)
 handicap1 = Button(5,(22*32+16,12*32+18),False)
 handicap2 = Button(6,(2*32+16,12*32+18),False)
+if config.developer_mode:
+    test_map_button = Button(14,(8*32+16,3*32+18),False)
+    buttons.add(test_map_button)
+    map_buttons.add(test_map_button)
 buttons.add(start_quick)
 buttons.add(show_production)
 buttons.add(keys_button)
@@ -63,7 +68,7 @@ villages = pygame.sprite.Group()
 villages_ = pygame.sprite.Group()
 #----
 armies_ = pygame.sprite.Group()   #armies_ is sprites that belong to the player that has a turn now
-def start(terrains,bonus_starting_gold):
+def start(terrains,bonus_starting_gold,modes):
     army1 = Army.conscript(0,player2,(2*32,13*32),False,texts)
     #armies1 = pygame.sprite.Group()
     #armies1.add(army1)
@@ -71,6 +76,14 @@ def start(terrains,bonus_starting_gold):
     print(army1.x/32,army1.y/32,army2.x/32,army2.y/32)
     #armies2 = pygame.sprite.Group()
     #armies2.add(army1)
+    for mode in modes:
+        if mode =="Dev":
+            army = Army.conscript(201,player1,(13*32,7*32),False,texts)
+            armies.add(army)
+            player1.get_armied(army)
+            army = Army.conscript(201,player2,(11*32,7*32),False,texts)
+            armies.add(army)
+            player2.get_armied(army)
     for p in players:
         p.gold += bonus_starting_gold
     player1.get_armied(army2)
@@ -190,7 +203,7 @@ while game_on:
                         if army_collide is None:
                             if selected_type != 0:
                                 if army_terrain_collide is not None:
-                                    if selected_type == 1 and army_terrain_collide.form != 1 or (selected_type == 2 and army_terrain_collide.form != 2) or (selected_type == 5 and army_terrain_collide.form not in [3,5]) or False:
+                                    if selected_type == 1 and army_terrain_collide.form != 1 or (selected_type == 2 and army_terrain_collide.form != 2) or (selected_type == 5 and army_terrain_collide.form not in [3,5]) or army_terrain_collide.form in [10,11]:
                                         Text.add_text(texts,"Invalid terrain type! ")
                                         can_found_village = False
                                     elif selected_type == 5:
@@ -280,11 +293,15 @@ while game_on:
                 for p in players:
                     if len(p.armies) == 0 and len(p.villages) == 0 and menu == 0:
                         was_defeated = p
+                        p.defeted = True
         elif event.type == pygame.MOUSEBUTTONUP:
+            #===== Kliczek collides here =====#
             kliczek_button = pygame.sprite.spritecollideany(kliczek,buttons)
             clicked_village = pygame.sprite.spritecollideany(kliczek,villages)
-            kliczek_collide = pygame.sprite.spritecollideany(kliczek,armies)
-            if clicked_village is not None and kliczek_collide is None:
+            #kliczek_collide = pygame.sprite.spritecollideany(kliczek,armies)
+            kliczek_collide = pygame.sprite.spritecollide(kliczek,armies,False)
+
+            if clicked_village is not None and len(kliczek_collide) == 0:
                 clicked_village.select_village(villages,texts)
                 Text.activate_text(texts,"conscipt")
                     
@@ -308,6 +325,7 @@ while game_on:
                     flats_button.activate_button(True)
                     track_map_button.activate_button(True)
                     rich_center_button.activate_button(True)
+                    Button.activate_group(map_buttons,True)
                     small_input.activate_button(True)
                     handicap2.activate_button(True)
                     handicap1.activate_button(True)
@@ -324,16 +342,21 @@ while game_on:
                             player1.gold_handicap = 0
 
 
-                if kliczek_button.type in [11,12,13] and menu == 1:
+                if kliczek_button.type in [11,12,13,14] and menu == 1:
                     menu = 0
                     terrains.empty()
+                    modes = [1]
                     if kliczek_button.type == 12: #Map selection 3 I AD 2025 19:40
                         terrains = Terrain.generate("flats")
                     elif kliczek_button.type == 13:
                         terrains = Terrain.generate("rich_center")
+                    elif kliczek_button.type == 14:
+                        terrains = Terrain.generate("coast")
+                        modes.append("Dev")
                     else:
                         terrains = Terrain.generate("track")
                     #start_quick.activate_button(False)
+                    Button.activate_group(map_buttons,False)
                     small_input.activate_button(False)
                     keys_button.activate_button(False)
                     show_production.activate_button(True)
@@ -342,16 +365,28 @@ while game_on:
                     track_map_button.activate_button(False)
                     handicap2.activate_button(False)
                     handicap1.activate_button(False)
-                    start(terrains,50)
+                    start(terrains,config.starting_gold,modes)
                     Text.deactivate_text(texts,"keys")
-            if kliczek_collide is not None:
-                kliczek_collide.selection(texts)
-                if config.debug_mode and kliczek_collide.selected:
-                    Text.add_text(texts,f"Morale is {kliczek_collide.morale}")
-                    Text.add_text(texts,f"Health is {kliczek_collide.health}")
-                print(kliczek_collide.selected)
-                if kliczek_collide.formation == 100:
-                    Text.activate_text(texts,"vill_type")
+            if len(kliczek_collide) != 0:
+                for kliczek_collide2 in kliczek_collide:
+                    kliczek_collide2.selection(texts)
+                    if kliczek_collide2.is_boat:
+                        kliczek_collide2.units_boat.empty()
+                        kliczek_collide.remove(kliczek_collide2)
+                        for kli in kliczek_collide:
+                            kliczek_collide2.units_boat.add(kli)
+                            if kli.selected:
+                                kli.selected = False
+                            else:
+                                kli.selected = True
+                            #kli.unselect_me(texts)
+                        break
+                    if config.debug_mode and kliczek_collide2.selected:
+                        Text.add_text(texts,f"Morale is {kliczek_collide2.morale}")
+                        Text.add_text(texts,f"Health is {kliczek_collide2.health}")
+                    print(kliczek_collide2.selected)
+                    if kliczek_collide2.formation == 100:
+                        Text.activate_text(texts,"vill_type")
     if menu != 1:
         screen.blit(background_image, (0,0))
     else:

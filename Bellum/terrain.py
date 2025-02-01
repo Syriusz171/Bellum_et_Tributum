@@ -36,6 +36,19 @@ class Terrain(pygame.sprite.Sprite):
             self.movement_cost = 1
             self.move_type = 1
             self.look = pygame.image.load("images/salt_deposit.png")
+        elif self.form == 10:
+            self.movement_cost = 1
+            self.move_type = 2
+            random_int = random.randint(0,1)
+            if random_int == 0:
+                self.look1 = pygame.image.load("images/water1.png")
+            elif random_int == 1:
+                self.look1 = pygame.image.load("images/water2.png")
+            random_int = random.randint(0,1)
+            if random_int != 1:
+                self.look = pygame.transform.rotate(self.look1,90)
+            else:
+                self.look = self.look1
         elif self.form == 20: #Road, player builded construction that allows you and your enemy to march faster
             self.movement_cost = 0.5
             self.move_type = 1
@@ -88,10 +101,11 @@ class Terrain(pygame.sprite.Sprite):
                             new_terrain = Terrain(1,location,5)
                         elif number < 87:
                             new_terrain = Terrain(2,location,5)
-                        elif number < 98:
-                            new_terrain = Terrain(5,location,5)
                         else:
-                            new_terrain = Terrain(3,location,5)
+                            if random.randint(1,13) <= 2:
+                                new_terrain = Terrain(3,location,5)
+                            else:
+                                new_terrain = Terrain(5,location,5)
                         if new_terrain is not None:
                             terrain_list.add(new_terrain)
             terrain_list_neo = terrain_list.copy()
@@ -141,7 +155,7 @@ class Terrain(pygame.sprite.Sprite):
                         elif number < 90:
                             new_terrain = Terrain(2,location,3)
                         elif number >= 90:
-                            if random.randint(1,13) == 1:
+                            if random.randint(1,13) <= 2:
                                 new_terrain = Terrain(3,location,3)
                             else:
                              new_terrain = Terrain(5,location,3)
@@ -174,6 +188,106 @@ class Terrain(pygame.sprite.Sprite):
                     ter.gen = False
                     terrain_list_neo.remove(ter)
             return terrain_list
+
+        elif type=="coast":
+            change_needed = True
+            terrain_list = pygame.sprite.Group()
+            waters = pygame.sprite.Group()
+            for a in range(4):
+                new_terrain = Terrain(10,(12*32-1,(5+a)*32+1),0)
+                terrain_list.add(new_terrain)
+                waters.add(new_terrain)
+            terrain_list_neo = terrain_list.copy()
+            while change_needed:
+                if len(terrain_list_neo) == 0:
+                    change_needed = False
+                for ter in terrain_list_neo:
+                    if ter.do_gen:
+                        neo_terrain = None
+                        #Check
+                        if ter.check_gen(terrain_list,0,32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.rect.y+32,32,32),ter.generation+0.5)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                            waters.add(neo_terrain)
+                        if ter.check_gen(terrain_list,-32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x-32,ter.y,32,32),ter.generation+0.5)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                            waters.add(neo_terrain)
+                        if ter.check_gen(terrain_list,32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x+32,ter.y,32,32),ter.generation+0.5)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                            waters.add(neo_terrain)
+                        if ter.check_gen(terrain_list,0,-32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.y-32,32,32),ter.generation+0.5)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                            waters.add(neo_terrain)
+                    ter.gen = False
+                    terrain_list_neo.remove(ter)
+                    #"""
+            bingo = False
+            for i in range(25):
+                for j in range(25):
+                    location = (i*32-1,j*32+1)
+                    number = random.randint(1,100)
+                    for terrain_checked in waters:
+                        bingo = terrain_checked.rect.colliderect((location[0]+10,location[1]-10,16,16))
+                        if bingo:
+                            break
+                    
+                    if bingo == False:
+                        if number < 61:
+                            new_terrain = None
+                        elif number < 68:
+                            new_terrain = Terrain(4,location,3)
+                        elif number < 78:
+                            new_terrain = Terrain(1,location,3)
+                        elif number < 89:
+                            new_terrain = Terrain(2,location,3)
+                        elif number <100:
+                            if random.randint(1,13) <= 2:
+                                new_terrain = Terrain(3,location,3)
+                            else:
+                                new_terrain = Terrain(5,location,3)
+                        else:
+                            new_terrain = Terrain(10,location,2.5)
+                        if new_terrain is not None:
+                            terrain_list.add(new_terrain)
+            terrain_list_neo = terrain_list.copy()
+            for water in waters:
+                terrain_list_neo.remove(water)
+            change_needed = True
+            while change_needed:
+                if len(terrain_list_neo) == 0:
+                    change_needed = False
+                for ter in terrain_list_neo:
+                    if ter.do_gen and ter.form not in [3,5,20]:
+                        neo_terrain = None
+                        #Check
+                        if ter.check_gen(terrain_list,0,32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.rect.y+32,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,-32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x-32,ter.y,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x+32,ter.y,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,0,-32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.y-32,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                    else:
+                        print("ME")
+                    ter.gen = False
+                    terrain_list_neo.remove(ter)#"""
+            return terrain_list
         elif type == "Start_menu":
             for i in range(6):
                 for j in range(6):
@@ -188,7 +302,10 @@ class Terrain(pygame.sprite.Sprite):
                     elif number < 94:
                         new_terrain = Terrain(2,location)
                     elif number >= 94:
-                        new_terrain = Terrain(3,location)
+                        if random.randint(1,13) <= 2:
+                            new_terrain = Terrain(3,location)
+                        else:
+                            new_terrain = Terrain(5,location)
                     if new_terrain is not None:
                         terrain_list.add(new_terrain)
             return terrain_list
@@ -304,7 +421,7 @@ class Terrain(pygame.sprite.Sprite):
                         elif number < 90:
                             new_terrain = Terrain(2,location)
                         else:
-                            if random.randint(1,12) == 1:
+                            if random.randint(1,13) <= 2:
                                 new_terrain = Terrain(3,location)
                             else:
                                 new_terrain = Terrain(5,location)
@@ -314,7 +431,7 @@ class Terrain(pygame.sprite.Sprite):
                         terrain_list.add(new_terrain)
             return terrain_list
     def check_gen(self,terrains,x_change,y_change):
-        if (0 > self.x+x_change or self.x+x_change > 780 or 0 > self.y+y_change or self.y+y_change > 800):
+        if (0 > self.x+x_change or self.x+x_change > 780 or -10 > self.y+y_change or self.y+y_change > 800):
             return False
         for j in terrains:
             if j.rect.colliderect((self.x+x_change,self.y+y_change+3,16,16)):

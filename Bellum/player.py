@@ -4,12 +4,13 @@ class Player(pygame.sprite.Sprite):
     def __init__(self,number,name):
         super(Player,self).__init__()
         self.number = number
+        self.defeted = False
         self.name = name
         self.lumber = 50
         self.food = 50
         self.spear = 0
         self.bow = 0
-        self.gold = 5
+        self.gold = 0
         self.gold_handicap = 0
         self.absolute_p_lumber = 0
         self.p_lumber = 0
