@@ -27,7 +27,7 @@ class Terrain(pygame.sprite.Sprite):
             self.look = pygame.image.load("images/gold_deposit.png")
         elif self.form == 4: # Mountain
             self.move_type = 5
-            self.movement_cost = 2
+            self.movement_cost = 3.5
             if random.randint(0,1) == 0:
                 self.look = pygame.image.load("images/mountain1.png")
             else:
@@ -59,6 +59,10 @@ class Terrain(pygame.sprite.Sprite):
                 self.look = pygame.image.load("images/track_SN.png")
             else:
                 self.look = pygame.image.load("images/track_SN3.png")
+        elif self.form == 40:
+            self.movement_cost = 5
+            self.move_type = 6
+            self.look = pygame.image.load("images/mountain_high.png")
     def generate(type):
         terrain_list = pygame.sprite.Group()
         """
@@ -169,6 +173,7 @@ class Terrain(pygame.sprite.Sprite):
                     if ter.do_gen and ter.form != 3 and ter.form != 20 and ter.form != 5:
                         neo_terrain = None
                         #Check
+                        form = ter.form
                         if ter.check_gen(terrain_list,0,32):
                             neo_terrain = Terrain(ter.form,(ter.x,ter.rect.y+32,32,32),ter.generation+1)
                             terrain_list.add(neo_terrain)
@@ -242,7 +247,10 @@ class Terrain(pygame.sprite.Sprite):
                         if number < 61:
                             new_terrain = None
                         elif number < 68:
-                            new_terrain = Terrain(4,location,3)
+                            if random.randint(1,13) != 1:
+                                new_terrain = Terrain(4,location,3)
+                            else:
+                                new_terrain = Terrain(40,location,2.9)
                         elif number < 78:
                             new_terrain = Terrain(1,location,3)
                         elif number < 89:
@@ -266,21 +274,23 @@ class Terrain(pygame.sprite.Sprite):
                 for ter in terrain_list_neo:
                     if ter.do_gen and ter.form not in [3,5,20]:
                         neo_terrain = None
+                        form = ter.form
+                        form = Terrain.similar_terrains_check(form)
                         #Check
                         if ter.check_gen(terrain_list,0,32):
-                            neo_terrain = Terrain(ter.form,(ter.x,ter.rect.y+32,32,32),ter.generation+1)
+                            neo_terrain = Terrain(form,(ter.x,ter.rect.y+32,32,32),ter.generation+1)
                             terrain_list.add(neo_terrain)
                             terrain_list_neo.add(neo_terrain)
                         if ter.check_gen(terrain_list,-32,0):
-                            neo_terrain = Terrain(ter.form,(ter.x-32,ter.y,32,32),ter.generation+1)
+                            neo_terrain = Terrain(form,(ter.x-32,ter.y,32,32),ter.generation+1)
                             terrain_list.add(neo_terrain)
                             terrain_list_neo.add(neo_terrain)
                         if ter.check_gen(terrain_list,32,0):
-                            neo_terrain = Terrain(ter.form,(ter.x+32,ter.y,32,32),ter.generation+1)
+                            neo_terrain = Terrain(form,(ter.x+32,ter.y,32,32),ter.generation+1)
                             terrain_list.add(neo_terrain)
                             terrain_list_neo.add(neo_terrain)
                         if ter.check_gen(terrain_list,0,-32):
-                            neo_terrain = Terrain(ter.form,(ter.x,ter.y-32,32,32),ter.generation+1)
+                            neo_terrain = Terrain(form,(ter.x,ter.y-32,32,32),ter.generation+1)
                             terrain_list.add(neo_terrain)
                             terrain_list_neo.add(neo_terrain)
                     else:
@@ -440,3 +450,11 @@ class Terrain(pygame.sprite.Sprite):
             return True
         else:
             return False
+    def similar_terrains_check(terrain):
+        if terrain in [4,40]:
+            if random.randint(1,13) == 1:
+                return 40
+            else:
+                return 4
+        else:
+            return terrain

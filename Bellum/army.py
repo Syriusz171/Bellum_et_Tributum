@@ -117,6 +117,19 @@ class Army(Unit,pygame.sprite.Sprite):
             self.anti_transport_bonus = 4
             self.movement_type = 2
             self.banner = pygame.image.load("images/Ram_boat.png")
+        elif self.formation == 400:
+            self.base_march = 3.5
+            self.base_attack = 20
+            self.base_defence = 15
+            self.base_health = 46
+            self.village_bonus = 1
+            self.siege_bonus = -3
+            self.anti_infantry_bonus = -1
+            self.anti_cav_bonus = -3
+            self.anti_ram_bonus = 0
+            self.anti_transport_bonus = 0
+            self.movement_type = 1
+            self.banner = pygame.image.load("images/Alpinist.png")
         self.health = self.base_health
         self.hurt = 0
         self.rect = self.banner.get_rect(bottomleft=starting_rect)
@@ -167,9 +180,11 @@ class Army(Unit,pygame.sprite.Sprite):
                 collider_enemy = False
                 collider_terrain = None
                 collision_enemy = False
+                collision_enemy = False
                 collision_terrain = None
                 collider_village = None
                 collision_village = False
+                collision1_village = False
                 boat_enemy = None
                 for army in armies_testing: 
                     collision1 = army.rect.collidepoint(x+16,y-16)
@@ -177,8 +192,9 @@ class Army(Unit,pygame.sprite.Sprite):
                         collision = True
                         colliders.add(army)
                 for army in enemy_armies: 
-                    collision_enemy = army.rect.collidepoint(x+20,y-16)
-                    if collision_enemy:
+                    collision1_enemy = army.rect.collidepoint(x+20,y-16)
+                    if collision1_enemy:
+                        collision_enemy = True
                         collider_enemy = army
                         if collider_enemy.is_boat:
                             boat_enemy = army
@@ -191,23 +207,34 @@ class Army(Unit,pygame.sprite.Sprite):
                             Text.add_text(texts,collider_terrain.form)
                         break
                 for vil in villages1: 
-                    collision_village = vil.rect.collidepoint(x+16,y-16)
-                    if collision_village:
+                    collision1_village = vil.rect.collidepoint(x+16,y-16)
+                    if collision1_village:
+                        collision_village = True
                         collider_village = vil
                         break
                 if collision == False:
                     if collision_terrain:
-                        if collider_terrain.move_type == arm.movement_type:
-                            left = arm.march - collider_terrain.movement_cost
-                            cost = collider_terrain.movement_cost
+                        if collider_terrain.move_type == 5 and arm.formation == 400:
+                            terrain_exception = True
+                            cost = 3.5
+                            left = arm.march - cost
                             if left < 0:
                                 can_move = False
                                 Text.add_text(texts,"Not enough movement!")
                             else:
                                 can_move = True
                         else:
-                            can_move = False
-                            Text.add_text(texts,"Cannot move: Wrong terrain type!")
+                            if collider_terrain.move_type == arm.movement_type:
+                                left = arm.march - collider_terrain.movement_cost
+                                cost = collider_terrain.movement_cost
+                                if left < 0:
+                                    can_move = False
+                                    Text.add_text(texts,"Not enough movement!")
+                                else:
+                                    can_move = True
+                            else:
+                                can_move = False
+                                Text.add_text(texts,"Cannot move: Wrong terrain type!")
                     else:
                         if arm.is_boat == False:
                             if arm.march >= 1:
@@ -249,21 +276,22 @@ class Army(Unit,pygame.sprite.Sprite):
                     if collider_terrain.move_type != 2:
                         can_move = False
                         Text.add_text(texts,"Cannot move: Wrong terrain type!")
-                if collider_enemy:
+                        continue
+                if collision_enemy:
                     if boat_enemy is not None:
                         collider_enemy = boat_enemy
-                    if collision_enemy and can_move and (collision_village == False):
-                        battle = Unit.attack(arm,collider_enemy,True,texts)
-                        if battle == False:
-                            can_move = False
-                    elif collision_enemy == False and can_move and collider_village:
-                        battle = Unit.attack(arm,collider_village,False,texts)
-                        if battle == False:
-                            can_move = False
-                    elif collision_enemy and can_move and collider_village:
-                        battle = Unit.attack(arm,collider_enemy,True,texts,collider_village)
-                        if battle == False:
-                            can_move = False
+                if collision_enemy and can_move and collision_village == False:
+                    battle = Unit.attack(arm,collider_enemy,True,texts)
+                    if battle == False:
+                        can_move = False
+                elif collision_enemy == False and can_move and collision_village:
+                    battle = Unit.attack(arm,collider_village,False,texts)
+                    if battle == False:
+                        can_move = False
+                elif collision_enemy and can_move and collision_village:
+                    battle = Unit.attack(arm,collider_enemy,True,texts,collider_village)
+                    if battle == False:
+                        can_move = False
                         #"""
                 if arm.on_boat and arm.is_boat == False:
                     cost = 0
@@ -357,12 +385,18 @@ class Army(Unit,pygame.sprite.Sprite):
                     Text.add_text(texts,constription_possible)
                 else:
                     constription_possible = False
+            elif type == 400:
+                if player.gold >= 40 and player.food >= 15 and player.lumber >= 5:
+                    player.gold -= 40
+                    player.food -= 15
+                    player.lumber -= 5
+                    constription_possible = True
         else:
             constription_possible = True
         if constription_possible:
             new_army = Army(type,owner,starting_rect)
             #self.armies.append(new_army)
-            if normal_hire == False:
+            if normal_hire:
                 Text.add_text(texts,"Army conscripted!")
             return new_army
         else:

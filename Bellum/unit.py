@@ -175,6 +175,8 @@ class Unit():
             entities.add(v)
         for e in entities:
             e.health += 2
+            if pygame.sprite.spritecollideany(e,villages) is not None:
+                e.health += 0.5
             if e.health > e.base_health:
                 e.health = e.base_health
                 """

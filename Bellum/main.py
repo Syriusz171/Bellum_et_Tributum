@@ -91,7 +91,7 @@ def start(terrains,bonus_starting_gold,modes):
     armies.add(army1)
     armies.add(army2)
     city1 = Village.locate_village(60,player1,(22*32,13*32),True)
-    city2 = Village.locate_village(60,player2,(2*32,13*32),True)
+    city2 = Village.locate_village(60,player2,(20*32,13*32),True)
     collider3 = pygame.sprite.spritecollideany(city1,terrains)
     if collider3 is not None:
         collider3.kill()
@@ -201,7 +201,7 @@ while game_on:
                         army_terrain_collide = pygame.sprite.spritecollideany(arm,terrains)
                         spawn_type = selected_type
                         if army_collide is None:
-                            if selected_type != 0:
+                            if selected_type != 0 and selected_type != 6:
                                 if army_terrain_collide is not None:
                                     if selected_type == 1 and army_terrain_collide.form != 1 or (selected_type == 2 and army_terrain_collide.form != 2) or (selected_type == 5 and army_terrain_collide.form not in [3,5]) or army_terrain_collide.form in [10,11]:
                                         Text.add_text(texts,"Invalid terrain type! ")
@@ -236,6 +236,8 @@ while game_on:
                                 else:
                                     if selected_type == 5:
                                         type1 = 100
+                                    elif selected_type == 6:
+                                        type1 = 400
                                     else:
                                         type1 = selected_type
                                     new_army = Army.conscript(type1,vil.owner,vil.rect.bottomleft,True,texts)
@@ -265,6 +267,8 @@ while game_on:
                 selected_type = 4
             elif event.key == pygame.K_5:
                 selected_type = 5
+            elif event.key == pygame.K_6:
+                selected_type = 6
             elif event.key == pygame.K_o:
                 if visible_village_owner:
                     visible_village_owner = False

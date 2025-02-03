@@ -43,8 +43,9 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,"3 -> Horseman:","conscipt",False,None,550,490)
         Text.add_text(texts,"4 -> Catapult:","conscipt",False,None,550,520)
         Text.add_text(texts,"5 -> Settler:","conscipt",False,None,550,560)
-        Text.add_text(texts,"Press \'c\' to cancel;","conscipt",False,None,550,590)
-        Text.add_text(texts,"Press \'Space\' to conscipt army;","conscipt",False,None,550,620)
+        Text.add_text(texts,"6 -> Alpinist:","conscipt",False,None,550,590)
+        Text.add_text(texts,"Press \'c\' to cancel;","conscipt",False,None,550,620)
+        Text.add_text(texts,"Press \'Space\' to conscipt army;","conscipt",False,None,550,650)
 
     def activate_text(texts,type_act):
         for t in texts:
