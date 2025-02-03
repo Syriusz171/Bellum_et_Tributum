@@ -91,7 +91,7 @@ def start(terrains,bonus_starting_gold,modes):
     armies.add(army1)
     armies.add(army2)
     city1 = Village.locate_village(60,player1,(22*32,13*32),True)
-    city2 = Village.locate_village(60,player2,(20*32,13*32),True)
+    city2 = Village.locate_village(60,player2,(2*32,13*32),True)
     collider3 = pygame.sprite.spritecollideany(city1,terrains)
     if collider3 is not None:
         collider3.kill()
