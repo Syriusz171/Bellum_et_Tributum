@@ -10,60 +10,64 @@ class Village(Unit,pygame.sprite.Sprite):
         self.vill_type = vill_type
         self.selected = False
         self.can_conscript_turns = 4
+        
+        self.tax = 0
+        self.p_gold = 0
+        self.p_spear = 0
+        self.p_food = 0
+        self.food_usage = 0
+        self.p_bow = 0
+        self.p_lumber = 0
+        self.lumber_usage_for_spear = 0
+        self.lumber_usage_for_bow = 0
+        self.lumber_usage_for_mining = 0
+        self.gold_usage = 0
         #self.rect = starting_rect.copy()
         if vill_type == 60:
             self.base_health = 225
             self.base_defence = 30
-            self.p_gold = 5
-            self.p_spear = 2
-            self.p_food = -3
+            self.tax = 5
+            self.p_spear = 10
+            self.food_usage = 3
             self.p_bow = 0
-            self.p_lumber = -2
+            self.lumber_usage_for_spear = 2
             self.banner = pygame.image.load("images/city.png")
         else:
             self.base_health = 33
             self.base_defence = 6
         if vill_type == 1:
             self.p_lumber = 5
-            self.p_food = -1
-            self.p_bow = 0
-            self.p_gold = 0.1
-            self.p_spear = 0
+            self.food_usage = 1
+            self.tax = 0.1
             self.banner = pygame.image.load("images/village_lumber.png")
         if vill_type == 2:
-            self.p_lumber = 0
-            self.p_food = 5
-            self.p_bow = 0
-            self.p_gold = 0.1
-            self.p_spear = 0
+            self.p_food = 6
+            self.food_usage = 1
+            self.tax = 0.1
             self.banner = pygame.image.load("images/village_food.png")
         if vill_type == 3:
-            self.p_lumber = -1
-            self.p_food = -1
-            self.p_bow = 0
-            self.p_gold = 0.15
+            self.lumber_usage_for_spear = 5
+            self.food_usage = 1
+            self.tax = 0.15
             self.p_spear = 1
             self.banner = pygame.image.load("images/village_spear.png")
         if vill_type == 4:
-            self.p_lumber = -1.05
-            self.p_food = -1
+            self.lumber_usage_for_bow = 1.05
+            self.food_usage = 1
             self.p_bow = 1
-            self.p_gold = 0.15
-            self.p_spear = 0
+            self.tax = 0.15
             self.banner = pygame.image.load("images/village_bow.png")
         if vill_type == 5:
-            self.p_lumber = -1
-            self.p_food = -2
-            self.p_bow = 0
+            self.lumber_usage_for_mining = 1
+            self.food_usage = 2
             self.p_gold = 10
-            self.p_spear = 0
+            self.tax = 0.2
             self.banner = pygame.image.load("images/village_gold.png")
         if vill_type == 6:
-            self.p_lumber = -0.75
-            self.p_food = -1.15
-            self.p_bow = 0
+            self.lumber_usage_for_mining = 0.75
+            self.food_usage = 1.15
             self.p_gold = 6
-            self.p_spear = 0
+            self.tax = 0.15
             self.banner = pygame.image.load("images/village_salt.png")
         self.health = self.base_health
         self.rect = self.banner.get_rect(bottomleft=starting_rect)
@@ -97,6 +101,9 @@ class Village(Unit,pygame.sprite.Sprite):
                     location_possible = True
                     player.gold -= 2
                     player.lumber -= 5
+                else:
+                    if texts is not None:
+                        Text.add_text(texts,"Our stocks are too low!")
             elif type == 1:
                 if player.gold >= 3:
                     location_possible = True

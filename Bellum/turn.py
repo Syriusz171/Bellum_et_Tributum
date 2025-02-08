@@ -10,6 +10,10 @@ class Turn(Army):
     def turn(players,armies,villages,texts):
         activate_next = False
         armies_ = None
+        #for arm in armies:
+            #if arm.is_boat:
+            #    arm.units_boat.empty()
+            #    arm.units_boat = pygame.sprite.spritecollide(arm,armies,False)
         for p in players:
             if p.active:
                 activate_next = True
@@ -18,7 +22,7 @@ class Turn(Army):
                     Army.heal(armies,villages)
                     Army.reset_march(armies)
                     Player.check_production(villages,players)
-                    Player.collect_global(players)
+                    Player.mk2_collect_global(players)
                     Village.turns_left_change(villages)
                     for p in players:
                         if p.number == 1:

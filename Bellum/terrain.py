@@ -174,20 +174,21 @@ class Terrain(pygame.sprite.Sprite):
                         neo_terrain = None
                         #Check
                         form = ter.form
+                        form = Terrain.similar_terrains_check(form)
                         if ter.check_gen(terrain_list,0,32):
-                            neo_terrain = Terrain(ter.form,(ter.x,ter.rect.y+32,32,32),ter.generation+1)
+                            neo_terrain = Terrain(form,(ter.x,ter.rect.y+32,32,32),ter.generation+1)
                             terrain_list.add(neo_terrain)
                             terrain_list_neo.add(neo_terrain)
                         if ter.check_gen(terrain_list,-32,0):
-                            neo_terrain = Terrain(ter.form,(ter.x-32,ter.y,32,32),ter.generation+1)
+                            neo_terrain = Terrain(form,(ter.x-32,ter.y,32,32),ter.generation+1)
                             terrain_list.add(neo_terrain)
                             terrain_list_neo.add(neo_terrain)
                         if ter.check_gen(terrain_list,32,0):
-                            neo_terrain = Terrain(ter.form,(ter.x+32,ter.y,32,32),ter.generation+1)
+                            neo_terrain = Terrain(form,(ter.x+32,ter.y,32,32),ter.generation+1)
                             terrain_list.add(neo_terrain)
                             terrain_list_neo.add(neo_terrain)
                         if ter.check_gen(terrain_list,0,-32):
-                            neo_terrain = Terrain(ter.form,(ter.x,ter.y-32,32,32),ter.generation+1)
+                            neo_terrain = Terrain(form,(ter.x,ter.y-32,32,32),ter.generation+1)
                             terrain_list.add(neo_terrain)
                             terrain_list_neo.add(neo_terrain)
                     ter.gen = False
@@ -199,7 +200,7 @@ class Terrain(pygame.sprite.Sprite):
             terrain_list = pygame.sprite.Group()
             waters = pygame.sprite.Group()
             for a in range(4):
-                new_terrain = Terrain(10,(12*32-1,(5+a)*32+1),0)
+                new_terrain = Terrain(10,(12*32-1,(5+a)*32),0)
                 terrain_list.add(new_terrain)
                 waters.add(new_terrain)
             terrain_list_neo = terrain_list.copy()
@@ -236,7 +237,7 @@ class Terrain(pygame.sprite.Sprite):
             bingo = False
             for i in range(25):
                 for j in range(25):
-                    location = (i*32-1,j*32+1)
+                    location = (i*32-1,j*32)
                     number = random.randint(1,100)
                     for terrain_checked in waters:
                         bingo = terrain_checked.rect.colliderect((location[0]+10,location[1]-10,16,16))

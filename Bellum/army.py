@@ -346,10 +346,10 @@ class Army(Unit,pygame.sprite.Sprite):
         constription_possible = None
         if normal_hire == True: #Normal hire is units that cost, if False units will be free
             if type == 1:
-                if player.gold >= 3 and player.food >= 7 and player.spear >= 4:
+                if player.gold >= 3 and player.food >= 7 and player.spear >= 20:
                     player.gold -= 3
                     player.food -= 7
-                    player.spear -= 4
+                    player.spear -= 20
                     constription_possible = True
                 else:
                     constription_possible = False
@@ -363,10 +363,10 @@ class Army(Unit,pygame.sprite.Sprite):
                 else:
                     constription_possible = False
             elif type == 3:
-                if player.gold >= 10 and player.food >= 10 and player.spear >= 3:
+                if player.gold >= 10 and player.food >= 10 and player.spear >= 16:
                     player.gold -= 10
                     player.food -= 10
-                    player.spear -= 3
+                    player.spear -= 16
                     constription_possible = True
                 else:
                     constription_possible = False
@@ -386,10 +386,11 @@ class Army(Unit,pygame.sprite.Sprite):
                 else:
                     constription_possible = False
             elif type == 400:
-                if player.gold >= 40 and player.food >= 15 and player.lumber >= 5:
-                    player.gold -= 40
-                    player.food -= 15
-                    player.lumber -= 5
+                if player.gold >= 30 and player.food >= 12 and player.lumber >= 6 and player.bow >= 2:
+                    player.gold -= 30
+                    player.food -= 12
+                    player.lumber -= 6
+                    player.bow -= 2
                     constription_possible = True
         else:
             constription_possible = True

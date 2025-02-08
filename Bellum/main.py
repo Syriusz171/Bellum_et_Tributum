@@ -16,7 +16,7 @@ HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 config = Config()
-pygame.display.set_caption("Bellum et Tributum dev -1.0 build 5")
+pygame.display.set_caption("Bellum et Tributum Dev -0.9 Tested Build 2T1")
 icon_of_BeT = pygame.image.load("images/city.png")
 pygame.display.set_icon(icon_of_BeT)
 pygame.init()
@@ -29,10 +29,11 @@ font = pygame.font.SysFont("Times New Roman",20)
 font_big = pygame.font.SysFont("Segoe Print Bold",36)
 texts = pygame.sprite.Group()
 Text.init_texts(texts)
-version = font.render("version: dev -1.0 build 5",False,(160,200,200))
+version = font.render("version: Dev -0.9 Tested Build 2",False,(160,200,200))
 #army = Army(2,1)
 visible_village_owner = False
 visible_army_owner = True
+enable_alpinist = True
 buttons = pygame.sprite.Group()
 map_buttons = pygame.sprite.Group()
 start_quick = Button(1,(12*32+16,12*32+18),True)
@@ -44,11 +45,15 @@ rich_center_button = Button(13,(18*32+16,10*32+18),False)
 small_input = Button(1,(12*32+16,12*32+18),False)
 handicap1 = Button(5,(22*32+16,12*32+18),False)
 handicap2 = Button(6,(2*32+16,12*32+18),False)
+alpinist_off = Button(400,(17*32+1,12*32+16),False)
+generate_map = Button(20,(20*32+1,12*32+16),False)
 if config.developer_mode:
     test_map_button = Button(14,(8*32+16,3*32+18),False)
     buttons.add(test_map_button)
     map_buttons.add(test_map_button)
+buttons.add(generate_map)
 buttons.add(start_quick)
+buttons.add(alpinist_off)
 buttons.add(show_production)
 buttons.add(keys_button)
 buttons.add(flats_button)
@@ -60,6 +65,8 @@ buttons.add(rich_center_button)
 do_input = False
 special_input = None
 input_text = 'Player1'
+map = None
+gen_button_text = font.render("Begin",False,(35,35,36))
 was_defeated = False
 kliczek = Kliczek()
 armies = pygame.sprite.Group()
@@ -68,7 +75,7 @@ villages = pygame.sprite.Group()
 villages_ = pygame.sprite.Group()
 #----
 armies_ = pygame.sprite.Group()   #armies_ is sprites that belong to the player that has a turn now
-def start(terrains,bonus_starting_gold,modes):
+def start(bonus_starting_gold,modes,map):
     army1 = Army.conscript(0,player2,(2*32,13*32),False,texts)
     #armies1 = pygame.sprite.Group()
     #armies1.add(army1)
@@ -76,6 +83,7 @@ def start(terrains,bonus_starting_gold,modes):
     print(army1.x/32,army1.y/32,army2.x/32,army2.y/32)
     #armies2 = pygame.sprite.Group()
     #armies2.add(army1)
+    terrains = Terrain.generate(map)
     for mode in modes:
         if mode =="Dev":
             army = Army.conscript(201,player1,(13*32,7*32),False,texts)
@@ -111,6 +119,7 @@ def start(terrains,bonus_starting_gold,modes):
     for vil in player1.villages:
         villages_.add(vil)
     Text.add_text(texts,(f"{player1.name} turn"))
+    return terrains
 # ------------------ Terrain
 terrains = Terrain.generate("Start_menu")
 #-------------------
@@ -228,6 +237,9 @@ while game_on:
                     if vil.selected:
                         village_collision = pygame.sprite.spritecollideany(vil,armies)
                         if village_collision is None:
+                            if selected_type == 6 and enable_alpinist == False:
+                                Text.add_text(texts,"Cannot create army! Alpinists are turned off!")
+                                continue
                             if selected_type != 0:
                                 if vil.vill_type != 60 and vil.can_conscript_turns > 0:
                                     Text.add_text(texts,f"This village cannot create army in the next {vil.can_conscript_turns} turns!")
@@ -326,6 +338,8 @@ while game_on:
                             else:
                                 do_input = True
                     start_quick.activate_button(False)
+                    generate_map.activate_button(True)
+                    alpinist_off.activate_button(True)
                     flats_button.activate_button(True)
                     track_map_button.activate_button(True)
                     rich_center_button.activate_button(True)
@@ -344,33 +358,45 @@ while game_on:
                             player2.gold_handicap = 0
                         else:
                             player1.gold_handicap = 0
-
-
-                if kliczek_button.type in [11,12,13,14] and menu == 1:
-                    menu = 0
-                    terrains.empty()
+                elif kliczek_button.type == 400 and menu == 1:
+                    enable_alpinist = alpinist_off.update_button()
+                if kliczek_button.type in [11,12,13,14] and kliczek_button.active:
                     modes = [1]
                     if kliczek_button.type == 12: #Map selection 3 I AD 2025 19:40
-                        terrains = Terrain.generate("flats")
+                        map = "flats"
                     elif kliczek_button.type == 13:
-                        terrains = Terrain.generate("rich_center")
+                        map = "rich_center"
                     elif kliczek_button.type == 14:
-                        terrains = Terrain.generate("coast")
+                        map = "coast"
                         modes.append("Dev")
                     else:
-                        terrains = Terrain.generate("track")
+                        map = "track"
+                    Text.add_text(texts,f"Selected \'{map}\' map!")
+                if kliczek_button.type == 20 and menu == 1:
+                    if map is not None or input_text.lower() == "map":
                     #start_quick.activate_button(False)
-                    Button.activate_group(map_buttons,False)
-                    small_input.activate_button(False)
-                    keys_button.activate_button(False)
-                    show_production.activate_button(True)
-                    flats_button.activate_button(False)
-                    rich_center_button.activate_button(False)
-                    track_map_button.activate_button(False)
-                    handicap2.activate_button(False)
-                    handicap1.activate_button(False)
-                    start(terrains,config.starting_gold,modes)
-                    Text.deactivate_text(texts,"keys")
+                        terrains.empty()
+                        menu = 0
+                        Button.activate_group(map_buttons,False)
+                        generate_map.activate_button(False)
+                        small_input.activate_button(False)
+                        keys_button.activate_button(False)
+                        show_production.activate_button(True)
+                        flats_button.activate_button(False)
+                        rich_center_button.activate_button(False)
+                        track_map_button.activate_button(False)
+                        handicap2.activate_button(False)
+                        handicap1.activate_button(False)
+                        alpinist_off.activate_button(False)
+                        if input_text.lower() == "map":
+                            map = "deserted"
+                            modes = [1]
+                        elif input_text.lower() == "dallas": # Respect paid 8 II AD 2025
+                            Text.add_text(texts,"Rest in peace president Kennedy!")
+                        terrains = start(config.starting_gold,modes,map)
+                        Text.deactivate_text(texts,"keys")
+                    else:
+                        Text.add_text(texts,"Select a map!") 
             if len(kliczek_collide) != 0:
                 for kliczek_collide2 in kliczek_collide:
                     kliczek_collide2.selection(texts)
@@ -414,6 +440,8 @@ while game_on:
             screen.blit(b.picture,b.rect)
     if start_quick.active:
         screen.blit(quick_text,(12*32,12*32+2))
+    if generate_map.active:
+        screen.blit(gen_button_text,(generate_map.rect.left+8,generate_map.rect.centery-10))
     if small_input.active:
             input_text_render = font.render(input_text,True,(25,25,25),(181,123,76))
             screen.blit(input_text_render,(small_input.rect.left+8,small_input.rect.centery-10))
@@ -434,7 +462,7 @@ while game_on:
         screen.blit(defeated_text,(320,180))
     kliczek.draw_kliczek(screen)
     if menu == 1:
-        screen.blit(version,(610,750))
+        screen.blit(version,(570,750))
 
     pygame.display.flip()
     FPS.tick(40)

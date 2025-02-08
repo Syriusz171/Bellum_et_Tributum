@@ -1,4 +1,5 @@
 import pygame
+import copy
 class Button(pygame.sprite.Sprite):
     def __init__(self,type,center,active=False):
         super().__init__()
@@ -31,6 +32,16 @@ class Button(pygame.sprite.Sprite):
         elif type == 14:
             self.picture = pygame.image.load("images/test_map_icon.png")
             self.rect = self.picture.get_rect(center=center)
+        elif type == 20:
+            self.picture = pygame.image.load("images/stone_button.png")
+            self.rect = self.picture.get_rect(center=center)
+        elif type == 400:
+            self.picture = pygame.image.load("images/alpinist_off.png")
+            self.rect = self.picture.get_rect(center=center)
+            self.checked = True
+        self.og_picture = self.picture
+        if type == 400:
+            self.mask_self()
     def update_button(self):
         if self.type == 6 or self.type == 5:
             if self.checked == False:
@@ -43,9 +54,26 @@ class Button(pygame.sprite.Sprite):
                 self.picture = pygame.image.load("images/gold_handicap_button.png")
                 self.rect = self.picture.get_rect(center=self.center)
                 return False
+        else:
+            if self.type == 400:
+                if self.checked:
+                    self.checked = False
+                    self.mask_self()
+                    return False
+                else:
+                    self.checked = True
+                    self.mask_self()
+                    return True
     def activate_button(self,activator):
         self.active = activator
     def activate_group(buttons,state):
         for button in buttons:
             button.active = state
+    def mask_self(self):
+        if self.checked:
+            color_mask = (5,79,20)
+        else:
+            color_mask = (79,5,20)
+        self.picture = copy.copy(self.og_picture)
+        self.picture.fill(color_mask,special_flags=pygame.BLEND_RGB_ADD)
         
