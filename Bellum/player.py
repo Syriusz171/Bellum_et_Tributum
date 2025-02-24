@@ -1,7 +1,7 @@
 import pygame
 #from config import Config
 class Player(pygame.sprite.Sprite):
-    def __init__(self,number,name):
+    def __init__(self,number,name,AI=0):
         super(Player,self).__init__()
         self.number = number
         self.defeted = False
@@ -21,6 +21,7 @@ class Player(pygame.sprite.Sprite):
         self.active = False
         self.armies = pygame.sprite.Group()
         self.villages = pygame.sprite.Group()
+        self.is_AI = AI
     def check_production(villages,players):
         Player.reset_production(players)
         for vil in villages:
@@ -58,35 +59,38 @@ class Player(pygame.sprite.Sprite):
                 self.food = 0
     def mk2_collect_global(players):
         for self in players:
-            for vil in self.villages:
-                if vil.health > 0:
-                    if self.food > 0:
-                        efficiency = 1
-                        self.gold += vil.tax
+            if self.is_AI != 1:
+                for vil in self.villages:
+                    if vil.health > 0:
+                        if self.food > 0:
+                            efficiency = 1
+                            self.gold += vil.tax
+                        else:
+                            efficiency = 0.5
+                            if vil.vill_type == 60:
+                                self.gold += 3
+                        if vil.p_spear > 0:
+                            if vil.lumber_usage_for_spear * efficiency <= self.lumber:
+                                self.spear += vil.p_spear * efficiency
+                                self.lumber -= vil.lumber_usage_for_spear * efficiency
+                        if vil.p_bow > 0:
+                            if vil.lumber_usage_for_bow * efficiency <= self.lumber:
+                                self.bow += vil.p_bow * efficiency
+                                self.lumber -= vil.lumber_usage_for_bow * efficiency
+                        if vil.p_food > 0:
+                            self.food += vil.p_food * efficiency
+                        if vil.p_lumber > 0:
+                            self.lumber += vil.p_lumber * efficiency
+                        if vil.p_gold > 0:
+                            if self.lumber >= vil.lumber_usage_for_mining * efficiency:
+                                self.lumber -= vil.lumber_usage_for_mining * efficiency
+                                self.gold += vil.p_gold *efficiency
+                        self.food -= vil.food_usage
+                            
                     else:
-                        efficiency = 0.5
-                    if vil.p_spear > 0:
-                        if vil.lumber_usage_for_spear * efficiency <= self.lumber:
-                            self.spear += vil.p_spear * efficiency
-                            self.lumber -= vil.lumber_usage_for_spear * efficiency
-                    if vil.p_bow > 0:
-                        if vil.lumber_usage_for_bow * efficiency <= self.lumber:
-                            self.bow += vil.p_bow * efficiency
-                            self.lumber -= vil.lumber_usage_for_bow * efficiency
-                    if vil.p_food > 0:
-                        self.food += vil.p_food * efficiency
-                    if vil.p_lumber > 0:
-                        self.lumber += vil.p_lumber * efficiency
-                    if vil.p_gold > 0:
-                        if self.lumber >= vil.lumber_usage_for_mining * efficiency:
-                            self.lumber -= vil.lumber_usage_for_mining * efficiency
-                            self.gold += vil.p_gold *efficiency
-                    self.food -= vil.food_usage
-                        
-                else:
-                    self.food -= vil.food_usage * 0.9
-            if self.food < 0:
-                self.food = 0
+                        self.food -= vil.food_usage * 0.9
+                if self.food < 0:
+                    self.food = 0
     def reset_production(players):
         for self in players:
             self.p_lumber = 0

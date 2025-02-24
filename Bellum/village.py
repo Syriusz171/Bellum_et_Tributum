@@ -3,6 +3,8 @@ from unit import Unit
 #from copy import deepcopy
 from player import Player
 from text import Text
+from army import Army
+import random
 class Village(Unit,pygame.sprite.Sprite):
     def __init__(self,owner1,vill_type,starting_rect) -> None:   #if type is 60 village is a city, owner 0 is no one's villge
         super(Village,self).__init__()
@@ -46,10 +48,10 @@ class Village(Unit,pygame.sprite.Sprite):
             self.tax = 0.1
             self.banner = pygame.image.load("images/village_food.png")
         if vill_type == 3:
-            self.lumber_usage_for_spear = 5
+            self.lumber_usage_for_spear = 1
             self.food_usage = 1
             self.tax = 0.15
-            self.p_spear = 1
+            self.p_spear = 5
             self.banner = pygame.image.load("images/village_spear.png")
         if vill_type == 4:
             self.lumber_usage_for_bow = 1.05
@@ -156,3 +158,4 @@ class Village(Unit,pygame.sprite.Sprite):
         self.owner = new_owner
         new_owner.get_villaged(self)
         Text.add_text(texts,f"Village conquered by {new_owner.name}!")
+                                

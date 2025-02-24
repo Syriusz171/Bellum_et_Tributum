@@ -11,6 +11,7 @@ from village import Village
 from turn import Turn
 from text import Text
 from config import Config
+from particle import Particle
 WIDHT = 839
 HEIGHT = 800
 game_on = True
@@ -27,7 +28,9 @@ player1 = Player(1,"Player1")
 player2 = Player(2,config.playerNr2Name)
 font = pygame.font.SysFont("Times New Roman",20)
 font_big = pygame.font.SysFont("Segoe Print Bold",36)
+font_small = pygame.font.SysFont("Times New Roman",12)
 texts = pygame.sprite.Group()
+particles = pygame.sprite.Group()
 Text.init_texts(texts)
 version = font.render("version: Dev -0.9 Tested Build 2",False,(160,200,200))
 #army = Army(2,1)
@@ -75,15 +78,32 @@ villages = pygame.sprite.Group()
 villages_ = pygame.sprite.Group()
 #----
 armies_ = pygame.sprite.Group()   #armies_ is sprites that belong to the player that has a turn now
-def start(bonus_starting_gold,modes,map):
-    army1 = Army.conscript(0,player2,(2*32,13*32),False,texts)
-    #armies1 = pygame.sprite.Group()
-    #armies1.add(army1)
-    army2 = Army.conscript(0,player1,(22*32,13*32),False,texts)
-    print(army1.x/32,army1.y/32,army2.x/32,army2.y/32)
-    #armies2 = pygame.sprite.Group()
-    #armies2.add(army1)
-    terrains = Terrain.generate(map)
+def start(bonus_starting_gold,modes,map,map_name=None):
+    if map != "manual":
+        terrains = Terrain.generate(map)
+    else:
+        return_list = Terrain.generate(map,map_name)
+        villages_return = return_list[1]
+        terrains = return_list[0]
+        armies_return = return_list[2]
+        for vil in villages_return:
+            if vil[3] == 1:
+                owner = player1
+            elif vil[3] == 2:
+                owner = player2
+            village = Village.locate_village(vil[2],owner,(vil[0]*32,vil[1]*32+32),True)
+            villages.add(village)
+            owner.get_villaged(village)
+        for arm in armies_return:
+            if arm[3] == 1:
+                owner = player1
+            elif arm[3] == 2:
+                owner = player2
+            army = Army.conscript(arm[2],owner,(arm[0]*32,arm[1]*32+32),False)
+            armies.add(army)
+            owner.get_armied(army)
+    #===== AI TEST =====#
+    player2.is_AI = config.playerNr2AI
     for mode in modes:
         if mode =="Dev":
             army = Army.conscript(201,player1,(13*32,7*32),False,texts)
@@ -94,24 +114,64 @@ def start(bonus_starting_gold,modes,map):
             player2.get_armied(army)
     for p in players:
         p.gold += bonus_starting_gold
-    player1.get_armied(army2)
-    player2.get_armied(army1)
-    armies.add(army1)
-    armies.add(army2)
-    city1 = Village.locate_village(60,player1,(22*32,13*32),True)
-    city2 = Village.locate_village(60,player2,(2*32,13*32),True)
-    collider3 = pygame.sprite.spritecollideany(city1,terrains)
-    if collider3 is not None:
-        collider3.kill()
-    collider1 = pygame.sprite.spritecollideany(city2,terrains)
-    if collider1 is not None:
-        collider1.kill()
-        
-    print(city1)
-    villages.add(city1)
-    villages.add(city2)
-    player1.get_villaged(city1)
-    player2.get_villaged(city2)
+    if map != "manual":
+        army1 = Army.conscript(0,player2,(2*32,13*32),False,texts)
+        #armies1 = pygame.sprite.Group()
+        #armies1.add(army1)
+        army2 = Army.conscript(0,player1,(22*32,13*32),False,texts)
+        print(army1.x/32,army1.y/32,army2.x/32,army2.y/32)
+        #armies2 = pygame.sprite.Group()
+        #armies2.add(army1)
+        player1.get_armied(army2)
+        player2.get_armied(army1)
+        armies.add(army1)
+        armies.add(army2)
+        city1 = Village.locate_village(60,player1,(22*32,13*32),True)
+        city2 = Village.locate_village(60,player2,(2*32,13*32),True)
+        collider3 = pygame.sprite.spritecollideany(city1,terrains)
+        if collider3 is not None:
+            collider3.kill()
+        collider1 = pygame.sprite.spritecollideany(city2,terrains)
+        if collider1 is not None:
+            collider1.kill()
+        #===== AI bonus =====#
+        if player2.is_AI:
+            village = Village.locate_village(3,player2,(10*32,14*32),True)
+            player2.get_villaged(village)
+            villages.add(village)
+            collision = pygame.sprite.spritecollideany(village,terrains)
+            if collision is not None:
+                collision.kill()
+            village = Village.locate_village(3,player2,(2*32,12*32),True)
+            player2.get_villaged(village)
+            villages.add(village)
+            collision = pygame.sprite.spritecollideany(village,terrains)
+            if collision is not None:
+                collision.kill()
+            village = Village.locate_village(3,player2,(1*32,12*32),True)
+            player2.get_villaged(village)
+            villages.add(village)
+            collision = pygame.sprite.spritecollideany(village,terrains)
+            if collision is not None:
+                collision.kill()
+            village = Village.locate_village(3,player2,(10*32,15*32),True)
+            player2.get_villaged(village)
+            villages.add(village)
+            collision = pygame.sprite.spritecollideany(village,terrains)
+            if collision is not None:
+                collision.kill()
+            army = Army.conscript(1,player2,(10*32,14*32),False,texts)
+            player2.get_armied(army)
+            armies.add(army)
+            army = Army.conscript(1,player2,(2*32,12*32),False,texts)
+            player2.get_armied(army)
+            armies.add(army)
+            
+        print(city1)
+        villages.add(city1)
+        villages.add(city2)
+        player1.get_villaged(city1)
+        player2.get_villaged(city2)
     player1.name = input_text
     print(player1.name)
     for arm in player1.armies:
@@ -137,6 +197,7 @@ REFRESH = pygame.USEREVENT + 1
 CHECK_VICTORY = pygame.USEREVENT + 2
 pygame.time.set_timer(CHECK_VICTORY,2500)
 pygame.time.set_timer(REFRESH,5000)
+game_turn = 1
 while game_on:
     """
     while menu == 1:
@@ -175,9 +236,11 @@ while game_on:
                 #========================TURN========================#
             elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                 if menu == 0:
-                    turn_return = Turn.turn(players,armies,villages,texts)
+                    particles.empty()
+                    turn_return = Turn.turn(players,armies,villages,texts,terrains,particles,config,game_turn)
                     armies_ = turn_return[0]
                     villages_ = turn_return[1]
+                    game_turn = turn_return[2]
                     selected_type = 0
                     Village.unselect_villages(villages,texts)
                     Text.deactivate_text(texts,"vill_type")
@@ -200,6 +263,9 @@ while game_on:
                 if do_input:
 
                     special_input = 'backspace'
+            elif event.key == pygame.K_RSHIFT:
+                texts.empty()
+                Text.add_text(texts,"Chat cleared!")
             elif event.key == pygame.K_SPACE:
                 print(selected_type)
                 new_village = None
@@ -362,10 +428,12 @@ while game_on:
                     enable_alpinist = alpinist_off.update_button()
                 if kliczek_button.type in [11,12,13,14] and kliczek_button.active:
                     modes = [1]
+                    map_name = None
                     if kliczek_button.type == 12: #Map selection 3 I AD 2025 19:40
                         map = "flats"
                     elif kliczek_button.type == 13:
                         map = "rich_center"
+                        map_name = "yorktown"
                     elif kliczek_button.type == 14:
                         map = "coast"
                         modes.append("Dev")
@@ -393,7 +461,7 @@ while game_on:
                             modes = [1]
                         elif input_text.lower() == "dallas": # Respect paid 8 II AD 2025
                             Text.add_text(texts,"Rest in peace president Kennedy!")
-                        terrains = start(config.starting_gold,modes,map)
+                        terrains = start(config.starting_gold,modes,map,map_name)
                         Text.deactivate_text(texts,"keys")
                     else:
                         Text.add_text(texts,"Select a map!") 
@@ -456,10 +524,15 @@ while game_on:
         screen.blit(food_text,(631,80))
         screen.blit(spear_text,(631,100))
         screen.blit(bow_text,(631,120))
+    #Particle.decay(particles)
+    Particle.render_particles(particles,screen)
     Text.print_text(texts,screen)
     if was_defeated != False:
         defeated_text = font_big.render(f"{was_defeated.name} has been defeated!",False,(150,31,30))
         screen.blit(defeated_text,(320,180))
+    if menu == 0:
+        turn_text = font_small.render(f"Turn {game_turn}",False,(33,33,220))
+        screen.blit(turn_text,(800,655))
     kliczek.draw_kliczek(screen)
     if menu == 1:
         screen.blit(version,(570,750))

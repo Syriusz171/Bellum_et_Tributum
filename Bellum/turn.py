@@ -7,7 +7,7 @@ from text import Text
 class Turn(Army):
     def __init__() -> None:
         super().__init__()
-    def turn(players,armies,villages,texts):
+    def turn(players,armies,villages,texts,terrains,particles,config,game_turn):
         activate_next = False
         armies_ = None
         #for arm in armies:
@@ -24,6 +24,14 @@ class Turn(Army):
                     Player.check_production(villages,players)
                     Player.mk2_collect_global(players)
                     Village.turns_left_change(villages)
+                    Army.summon_militia_global(players,armies,texts,config)
+                    #Army.pathfind(p,armies,villages,terrains,particles)
+                    game_turn += 1
+                    if p.is_AI == 1:
+                        for army in p.armies:
+                            for i in range(3):
+                                direction = army.drunk_move_army(terrains,armies,villages)
+                                Army.move_only_self(army,direction,p.armies,terrains,armies,texts,villages)
                     for p in players:
                         if p.number == 1:
                             if p.defeted == False:
@@ -32,7 +40,7 @@ class Turn(Army):
                                 armies_ = player1.armies.copy()
                                 villages_= player1.villages.copy()
                                 Text.add_text(texts,f"{p.name} turn")
-                                return armies_, villages_
+                                return armies_, villages_,game_turn
             elif p.active == False and activate_next:
                 if p.defeted == False:
                     p.activate()
@@ -40,5 +48,5 @@ class Turn(Army):
                     armies_ = p.armies.copy()
                     villages_ = p.villages.copy()
                     activate_next = False
-                    turn_return = [armies_,villages_]
+                    turn_return = [armies_,villages_,game_turn]
                     return turn_return

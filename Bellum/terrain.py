@@ -1,7 +1,8 @@
 import pygame
 import random
+from maps import yorktown
 class Terrain(pygame.sprite.Sprite):
-    def __init__(self,form,starting_rect,generation=7) -> None:
+    def __init__(self,form,starting_rect,generation=7,fixed_textute=None) -> None:
         super().__init__()
         self.form = form
         self.generation = generation
@@ -17,10 +18,15 @@ class Terrain(pygame.sprite.Sprite):
         elif self.form == 2: # Fertile land, good for farms
             self.movement_cost = 1
             self.move_type = 1
-            if random.randint(0,3) == 0:
-                self.look = pygame.image.load("images/fertile_land.png")
-            else:
+            if fixed_textute is None:
+                if random.randint(0,3) == 0:
+                    self.look = pygame.image.load("images/fertile_land.png")
+                else:
+                    self.look = pygame.image.load("images/fertile_land2.png")
+            elif fixed_textute == 2.5:
                 self.look = pygame.image.load("images/fertile_land2.png")
+            else:
+                self.look = pygame.image.load("images/fertile_land.png")
         elif self.form == 3: # Gold deposit, there is a lot of gold here
             self.movement_cost = 1
             self.move_type = 1
@@ -63,7 +69,11 @@ class Terrain(pygame.sprite.Sprite):
             self.movement_cost = 5
             self.move_type = 6
             self.look = pygame.image.load("images/mountain_high.png")
-    def generate(type):
+        elif self.form == 41:
+            self.movement_cost = 4
+            self.move_type = 6
+            self.look = pygame.image.load("images/enemy_spawn_tile.png")
+    def generate(type,map_name = None):
         terrain_list = pygame.sprite.Group()
         """
         if type == "flats":
@@ -441,6 +451,27 @@ class Terrain(pygame.sprite.Sprite):
                     if new_terrain is not None:
                         terrain_list.add(new_terrain)
             return terrain_list
+        elif type == "manual":
+            returned = Terrain.get_map(map_name)
+            villages = returned[1]
+            map_terrain = returned[0]
+            armies = returned[2]
+            terrain_list = pygame.sprite.Group()
+            for a in range(25):
+                for b in range(25):
+                    location = (a*32-1,b*32)
+                    if map_terrain[b][a] == 0:
+                        new_terrain = None
+                    elif map_terrain[b][a] in [2.5,2.6]:
+                        new_terrain = Terrain(2,location,1,map_terrain[b][a])
+                    else:
+                        new_terrain = Terrain(map_terrain[b][a],location)
+                    if new_terrain is not None:
+                        terrain_list.add(new_terrain)
+            return [terrain_list, villages, armies]
+                    
+            
+            # FINISH IT
     def check_gen(self,terrains,x_change,y_change):
         if (0 > self.x+x_change or self.x+x_change > 780 or -10 > self.y+y_change or self.y+y_change > 800):
             return False
@@ -451,6 +482,13 @@ class Terrain(pygame.sprite.Sprite):
             return True
         else:
             return False
+    def get_map(name):
+        name = name.lower()
+        if name == "yorktown":
+            map_terrain_data = yorktown.terrain_map
+            map_village_data = yorktown.villages
+            map_army_data = yorktown.armies
+        return [map_terrain_data, map_village_data, map_army_data]
     def similar_terrains_check(terrain):
         if terrain in [4,40]:
             if random.randint(1,13) == 1:

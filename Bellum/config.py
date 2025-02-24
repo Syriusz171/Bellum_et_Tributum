@@ -10,3 +10,9 @@ class Config():
         self.developer_mode = True
         # Starting gold
         self.starting_gold = 55
+        # Pseudo AI! Allows to automate player's 2 turns! Change it to 1 to enable!
+        self.playerNr2AI = 0
+        # Difficulty, requires player2 to be AI! Max value is 7. Controls how often AI spawns troops. Default value is 2.
+        self.difficulty = 2
+        # Controls if the AI has small chance of spawning spearman instead of militia.
+        self.allow_AI_spearman = True
