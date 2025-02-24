@@ -17,7 +17,7 @@ HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 config = Config()
-pygame.display.set_caption("Bellum et Tributum Dev -0.9 Tested Build 2T1")
+pygame.display.set_caption("Bellum et Tributum Dev -0.9 Build 3")
 icon_of_BeT = pygame.image.load("images/city.png")
 pygame.display.set_icon(icon_of_BeT)
 pygame.init()
@@ -32,7 +32,7 @@ font_small = pygame.font.SysFont("Times New Roman",12)
 texts = pygame.sprite.Group()
 particles = pygame.sprite.Group()
 Text.init_texts(texts)
-version = font.render("version: Dev -0.9 Tested Build 2",False,(160,200,200))
+version = font.render("version: Dev -0.9 Build 3",False,(160,200,200))
 #army = Army(2,1)
 visible_village_owner = False
 visible_army_owner = True
