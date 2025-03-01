@@ -482,6 +482,23 @@ class Terrain(pygame.sprite.Sprite):
             return True
         else:
             return False
+    def check_for_water(x,y,terrains):
+        for ter in terrains:
+            if ter.rect.colliderect((x+32,y,19,19)):
+                if ter.move_type == 2:
+                    return True
+            elif ter.rect.colliderect((x-32,y,19,19)):
+                if ter.move_type == 2:
+                    return True
+            elif ter.rect.colliderect((x,y+32,19,19)):
+                if ter.move_type == 2:
+                    return True
+            elif ter.rect.colliderect((x,y-32,19,19)):
+                if ter.move_type == 2:
+                    return True
+        return False
+            
+
     def get_map(name):
         name = name.lower()
         if name == "yorktown":

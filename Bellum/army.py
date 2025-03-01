@@ -8,7 +8,7 @@ from particle import Particle
 from random import choice
 import random
 class Army(Unit,pygame.sprite.Sprite):
-    def __init__(self,formation,owner,starting_rect,x=None,y=None) -> None:
+    def __init__(self,formation,owner,starting_rect,x=None,y=None,is_defending=False) -> None:
         super(Army,self).__init__()
         self.formation = formation
         self.owner = owner
@@ -21,6 +21,7 @@ class Army(Unit,pygame.sprite.Sprite):
         self.in_village = None
         self.target_location = [0,0]
         self.distance = 90000000
+        self.is_defending = is_defending
         """
         Formations:
         0 - elite
@@ -89,7 +90,7 @@ class Army(Unit,pygame.sprite.Sprite):
         elif self.formation == 7:
             self.base_march = 3.5
             self.base_attack = 16.5
-            self.base_defence = 12.5
+            self.base_defence = 13
             self.base_health = 52
             self.village_bonus = 1
             self.siege_bonus = -3
@@ -155,6 +156,8 @@ class Army(Unit,pygame.sprite.Sprite):
         self.march = self.base_march
         self.last_rect = self.rect
         self.new_banner = self.banner
+        self.def_x = self.x
+        self.def_y = self.y
         if self.formation > 200 and self.formation < 300:
             self.is_boat = True
     def move_self(direction,armies,terrains,all_armies,texts,villages,debug=False):
@@ -203,6 +206,16 @@ class Army(Unit,pygame.sprite.Sprite):
                 collision_village = False
                 collision1_village = False
                 boat_enemy = None
+                if_on_boat = pygame.sprite.spritecollide(arm,armies,False)
+                for me in if_on_boat:
+                    if me.is_boat:
+                        me.on_boat = True
+                        me.units_boat.add(arm)
+                    else:
+                        me.on_boat = False
+                # TEST
+                if arm.on_boat and arm.is_boat == False:
+                    continue
                 for army in armies_testing: 
                     collision1 = army.rect.collidepoint(x+16,y-16)
                     if collision1:
@@ -261,7 +274,7 @@ class Army(Unit,pygame.sprite.Sprite):
                                 Text.add_text(texts,"Cannot move: Not enough movement!")
                                 can_move = False
                         else:
-                            Text.add_text(texts,"Cannot drive using boat!")
+                            Text.add_text(texts,"Cannot use boat as car!")
                             can_move = False
                             #"""
                 else:
@@ -324,6 +337,10 @@ class Army(Unit,pygame.sprite.Sprite):
                         arm.rect.move_ip(-32,0)
                     elif arm.direction == Direction.RIGHT:
                         arm.rect.move_ip(32,0)
+                    if arm.is_boat:
+                         for army in arm.units_boat:
+                            if army != arm:
+                                Army.move_only_self(army,arm.direction,armies,terrains,all_armies,texts,villages)
                     arm.march -= cost
                     arm.x = x
                     arm.y = y
@@ -358,7 +375,7 @@ class Army(Unit,pygame.sprite.Sprite):
     def reset_march(armies):
         for army in armies:
             army.march = army.base_march
-    def conscript(type,owner,starting_rect,normal_hire,texts=None):
+    def conscript(type,owner,starting_rect,normal_hire,texts=None,is_defending=False):
         player = owner
         constription_possible = None
         if normal_hire == True: #Normal hire is units that cost, if False units will be free
@@ -399,9 +416,23 @@ class Army(Unit,pygame.sprite.Sprite):
                 if player.gold >= 10:
                     player.gold -= 10
                     constription_possible = True
-                    Text.add_text(texts,constription_possible)
+                    #Text.add_text(texts,constription_possible)
                 else:
                     constription_possible = False
+            elif type == 201:
+                if player.gold >= 22 and player.food >= 4 and player.lumber >= 20:
+                    player.gold -= 22
+                    player.food -= 4
+                    player.lumber -= 20
+                    constription_possible = True
+            elif type == 202:
+                if player.gold >= 32 and player.food >= 10 and player.lumber >= 30 and player.bow >= 1 and player.spear >= 2:
+                    player.gold -= 32
+                    player.food -= 10
+                    player.lumber -= 30
+                    player.bow -= 1
+                    player.spear -= 2
+                    constription_possible = True
             elif type == 400:
                 if player.gold >= 30 and player.food >= 12 and player.lumber >= 6 and player.bow >= 2:
                     player.gold -= 30
@@ -412,7 +443,9 @@ class Army(Unit,pygame.sprite.Sprite):
         else:
             constription_possible = True
         if constription_possible:
-            new_army = Army(type,owner,starting_rect)
+            new_army = Army(type,owner,starting_rect,is_defending=is_defending)
+            if is_defending:
+                pass
             #self.armies.append(new_army)
             if normal_hire:
                 Text.add_text(texts,"Army conscripted!")
@@ -529,6 +562,16 @@ class Army(Unit,pygame.sprite.Sprite):
                 can_move_north = False
             elif y + 32<0:
                 can_move_south = False
+            if self.is_defending:
+                if x-self.def_x >=64:
+                    can_move_east = False
+                elif -x+self.def_x >= 32:
+                    can_move_west = False
+                if y-self.def_y >=32:
+                    can_move_south = False
+                elif -y+self.def_y >= 64:
+                    can_move_north = False
+
             if len(priorities) != 0:
                 if random.randint(1,5) == 1:
                     pass
@@ -550,7 +593,10 @@ class Army(Unit,pygame.sprite.Sprite):
                 direction_of_move = choice(directions)
                 return direction_of_move
             else:
-                return Direction.RIGHT
+                if self.is_defending:
+                    return
+                else:
+                    return Direction.RIGHT
     def move_only_self(army,direction,armies,terrains,all_armies,texts,villages,debug=False): #The first multiplayer victory at 23 II AD 2025 18:10.
         enemy_armies = all_armies.copy()
         villages1 = villages.copy()

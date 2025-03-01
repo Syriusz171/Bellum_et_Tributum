@@ -34,6 +34,9 @@ class Village(Unit,pygame.sprite.Sprite):
             self.p_bow = 0
             self.lumber_usage_for_spear = 2
             self.banner = pygame.image.load("images/city.png")
+        elif vill_type == 20:
+            self.base_health = 60
+            self.base_defence = 13.5
         else:
             self.base_health = 33
             self.base_defence = 6
@@ -53,24 +56,32 @@ class Village(Unit,pygame.sprite.Sprite):
             self.tax = 0.15
             self.p_spear = 5
             self.banner = pygame.image.load("images/village_spear.png")
-        if vill_type == 4:
+        elif vill_type == 4:
             self.lumber_usage_for_bow = 1.05
             self.food_usage = 1
             self.p_bow = 1
             self.tax = 0.15
             self.banner = pygame.image.load("images/village_bow.png")
-        if vill_type == 5:
+        elif vill_type == 5:
             self.lumber_usage_for_mining = 1
             self.food_usage = 2
             self.p_gold = 10
             self.tax = 0.2
             self.banner = pygame.image.load("images/village_gold.png")
-        if vill_type == 6:
+        elif vill_type == 6:
             self.lumber_usage_for_mining = 0.75
             self.food_usage = 1.15
             self.p_gold = 6
             self.tax = 0.15
             self.banner = pygame.image.load("images/village_salt.png")
+        elif vill_type == 20:
+            self.lumber_usage_for_bow = 0.525
+            self.p_bow = 0.5
+            self.lumber_usage_for_spear = 0.2
+            self.p_spear = 1
+            self.tax = 2.9
+            self.food_usage = 2
+            self.banner = pygame.image.load("images/port_town.png")
         self.health = self.base_health
         self.rect = self.banner.get_rect(bottomleft=starting_rect)
         self.x = starting_rect[0]
@@ -79,6 +90,11 @@ class Village(Unit,pygame.sprite.Sprite):
         #TEMPORARY!
         self.anti_infantry_bonus = 0
         self.anti_cav_bonus = 0
+        #===== AI =====#
+        if self.owner.is_AI == 1 and self.vill_type != 60:
+            self.base_health += 4
+            self.base_defence += 2
+            print(self.base_defence)
     def select_village(self,villages,texts):
         for vil in villages:
             vil.selected = False
@@ -127,6 +143,15 @@ class Village(Unit,pygame.sprite.Sprite):
                     player.gold -= 4
                     player.lumber -= 6
                     player.food -= 1
+                    location_possible = True
+                else:
+                    if texts is not None:
+                        Text.add_text(texts,"Our stocks are too low!")
+            elif type == 20:
+                if player.gold >= 40 and player.lumber >= 22 and player.food >= 10:
+                    player.gold -= 40
+                    player.lumber -= 22
+                    player.food -= 10
                     location_possible = True
                 else:
                     if texts is not None:

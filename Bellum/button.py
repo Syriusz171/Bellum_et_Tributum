@@ -32,6 +32,9 @@ class Button(pygame.sprite.Sprite):
         elif type == 14:
             self.picture = pygame.image.load("images/test_map_icon.png")
             self.rect = self.picture.get_rect(center=center)
+        elif type == 15:
+            self.picture = pygame.image.load("images/yorktown_icon.png")
+            self.rect = self.picture.get_rect(center=center)
         elif type == 20:
             self.picture = pygame.image.load("images/stone_button.png")
             self.rect = self.picture.get_rect(center=center)

@@ -17,7 +17,7 @@ HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 config = Config()
-pygame.display.set_caption("Bellum et Tributum Dev -0.9 Build 3")
+pygame.display.set_caption("Bellum et Tributum Dev -0.9 Build 4")
 icon_of_BeT = pygame.image.load("images/city.png")
 pygame.display.set_icon(icon_of_BeT)
 pygame.init()
@@ -32,7 +32,7 @@ font_small = pygame.font.SysFont("Times New Roman",12)
 texts = pygame.sprite.Group()
 particles = pygame.sprite.Group()
 Text.init_texts(texts)
-version = font.render("version: Dev -0.9 Build 3",False,(160,200,200))
+version = font.render("version: Dev -0.9 Build 4",False,(160,200,200))
 #army = Army(2,1)
 visible_village_owner = False
 visible_army_owner = True
@@ -50,6 +50,9 @@ handicap1 = Button(5,(22*32+16,12*32+18),False)
 handicap2 = Button(6,(2*32+16,12*32+18),False)
 alpinist_off = Button(400,(17*32+1,12*32+16),False)
 generate_map = Button(20,(20*32+1,12*32+16),False)
+yorktown_map = Button(15,(18*32+16,14*32+18),False)
+map_buttons.add(yorktown_map)
+buttons.add(yorktown_map)
 if config.developer_mode:
     test_map_button = Button(14,(8*32+16,3*32+18),False)
     buttons.add(test_map_button)
@@ -160,10 +163,10 @@ def start(bonus_starting_gold,modes,map,map_name=None):
             collision = pygame.sprite.spritecollideany(village,terrains)
             if collision is not None:
                 collision.kill()
-            army = Army.conscript(1,player2,(10*32,14*32),False,texts)
+            army = Army.conscript(1,player2,(10*32,14*32),False,texts,True)
             player2.get_armied(army)
             armies.add(army)
-            army = Army.conscript(1,player2,(2*32,12*32),False,texts)
+            army = Army.conscript(1,player2,(2*32,12*32),False,texts,is_defending=True)
             player2.get_armied(army)
             armies.add(army)
             
@@ -264,7 +267,9 @@ while game_on:
 
                     special_input = 'backspace'
             elif event.key == pygame.K_RSHIFT:
-                texts.empty()
+                for text in texts:
+                    if text.type == "chat":
+                        text.kill()
                 Text.add_text(texts,"Chat cleared!")
             elif event.key == pygame.K_SPACE:
                 print(selected_type)
@@ -277,8 +282,13 @@ while game_on:
                         spawn_type = selected_type
                         if army_collide is None:
                             if selected_type != 0 and selected_type != 6:
+                                #===== Port town =====#
+                                if selected_type == 8:
+                                    if Terrain.check_for_water(arm.rect.centerx,arm.rect.centery,terrains) == False:
+                                        can_found_village = False
+                                        Text.add_text(texts,"Must be build on coast! ")
                                 if army_terrain_collide is not None:
-                                    if selected_type == 1 and army_terrain_collide.form != 1 or (selected_type == 2 and army_terrain_collide.form != 2) or (selected_type == 5 and army_terrain_collide.form not in [3,5]) or army_terrain_collide.form in [10,11]:
+                                    if selected_type == 1 and army_terrain_collide.form != 1 or (selected_type == 2 and army_terrain_collide.form != 2) or (selected_type == 5 and army_terrain_collide.form not in [3,5]) or (selected_type == 8 and army_terrain_collide.form in [2,5]) or army_terrain_collide.form in [10,11]:
                                         Text.add_text(texts,"Invalid terrain type! ")
                                         can_found_village = False
                                     elif selected_type == 5:
@@ -288,6 +298,8 @@ while game_on:
                                             spawn_type = 5
                                 elif selected_type in [1,2,5]:
                                     can_found_village = False
+                                if selected_type == 8:
+                                    spawn_type = 20
                                 if can_found_village:
                                     new_village = Village.locate_village(spawn_type,arm.owner,arm.rect.bottomleft,False,texts)
                                     if new_village is not None:
@@ -316,8 +328,16 @@ while game_on:
                                         type1 = 100
                                     elif selected_type == 6:
                                         type1 = 400
+                                    elif selected_type == 7:
+                                        type1 = 201
+                                    elif selected_type == 8: #The first builded boats at 1 III AD 2025 19:39
+                                        type1 = 202
                                     else:
                                         type1 = selected_type
+                                    if type1 >= 200 and type1 <= 250:
+                                        if vil.vill_type != 20:
+                                            Text.add_text(texts,"Must be build in port town!")
+                                            continue
                                     new_army = Army.conscript(type1,vil.owner,vil.rect.bottomleft,True,texts)
                                     if new_army is not None:
                                         armies.add(new_army)
@@ -347,6 +367,10 @@ while game_on:
                 selected_type = 5
             elif event.key == pygame.K_6:
                 selected_type = 6
+            elif event.key == pygame.K_7:
+                selected_type = 7
+            elif event.key == pygame.K_8:
+                selected_type = 8
             elif event.key == pygame.K_o:
                 if visible_village_owner:
                     visible_village_owner = False
@@ -426,13 +450,15 @@ while game_on:
                             player1.gold_handicap = 0
                 elif kliczek_button.type == 400 and menu == 1:
                     enable_alpinist = alpinist_off.update_button()
-                if kliczek_button.type in [11,12,13,14] and kliczek_button.active:
+                if kliczek_button.type in [11,12,13,14,15] and kliczek_button.active:
                     modes = [1]
                     map_name = None
                     if kliczek_button.type == 12: #Map selection 3 I AD 2025 19:40
                         map = "flats"
                     elif kliczek_button.type == 13:
                         map = "rich_center"
+                    elif kliczek_button.type == 15:
+                        map = "manual"
                         map_name = "yorktown"
                     elif kliczek_button.type == 14:
                         map = "coast"
@@ -471,12 +497,12 @@ while game_on:
                     if kliczek_collide2.is_boat:
                         kliczek_collide2.units_boat.empty()
                         kliczek_collide.remove(kliczek_collide2)
-                        for kli in kliczek_collide:
+                        """for kli in kliczek_collide:
                             kliczek_collide2.units_boat.add(kli)
                             if kli.selected:
                                 kli.selected = False
                             else:
-                                kli.selected = True
+                                kli.selected = True"""
                             #kli.unselect_me(texts)
                         break
                     if config.debug_mode and kliczek_collide2.selected:

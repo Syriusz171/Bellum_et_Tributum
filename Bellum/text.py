@@ -36,8 +36,9 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,"3 -> Spear:","vill_type",False,None,550,490)
         Text.add_text(texts,"4 -> Bows:","vill_type",False,None,550,520)
         Text.add_text(texts,"5 -> Mining:","vill_type",False,None,550,560)
-        Text.add_text(texts,"Press \'c\' to cancel;","vill_type",False,None,550,590)
-        Text.add_text(texts,"Press \'Space\' to found village;","vill_type",False,None,550,620)
+        Text.add_text(texts,"8 -> Port town:","vill_type",False,None,550,596)
+        Text.add_text(texts,"Press \'c\' to cancel;","vill_type",False,None,550,615)
+        Text.add_text(texts,"Press \'Space\' to found village;","vill_type",False,None,550,637)
         Text.add_text(texts,"Army types:","conscipt",False,None,550,400)
         Text.add_text(texts,"1 -> Spearman","conscipt",False,None,550,430)
         Text.add_text(texts,"2 -> Archer:","conscipt",False,None,550,460)
@@ -45,8 +46,10 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,"4 -> Catapult:","conscipt",False,None,550,520)
         Text.add_text(texts,"5 -> Settler:","conscipt",False,None,550,560)
         Text.add_text(texts,"6 -> Alpinist:","conscipt",False,None,550,590)
-        Text.add_text(texts,"Press \'c\' to cancel;","conscipt",False,None,550,620)
-        Text.add_text(texts,"Press \'Space\' to conscipt army;","conscipt",False,None,550,650)
+        Text.add_text(texts,"7 -> Transport boat:","conscipt",False,None,550,620)
+        Text.add_text(texts,"8 -> Ram boat:","conscipt",False,None,550,650)
+        Text.add_text(texts,"Press \'c\' to cancel;","conscipt",False,None,550,680)
+        Text.add_text(texts,"Press \'Space\' to conscipt army;","conscipt",False,None,550,706)
 
     def activate_text(texts,type_act):
         for t in texts:

@@ -1,0 +1,4 @@
+- Added defending mode for AnI armies
+- Changed AnI villages (not cities) to be slightly stronger.
+- Added port villages that can build ships.
+- Changed militia's defence from 12.5 to 13.

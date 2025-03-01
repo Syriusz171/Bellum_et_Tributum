@@ -5,8 +5,6 @@ from village import Village
 from unit import Unit
 from text import Text
 class Turn(Army):
-    def __init__() -> None:
-        super().__init__()
     def turn(players,armies,villages,texts,terrains,particles,config,game_turn):
         activate_next = False
         armies_ = None
@@ -29,7 +27,7 @@ class Turn(Army):
                     game_turn += 1
                     if p.is_AI == 1:
                         for army in p.armies:
-                            for i in range(3):
+                            for i in range(1):
                                 direction = army.drunk_move_army(terrains,armies,villages)
                                 Army.move_only_self(army,direction,p.armies,terrains,armies,texts,villages)
                     for p in players:
