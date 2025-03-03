@@ -478,7 +478,7 @@ class Terrain(pygame.sprite.Sprite):
         for j in terrains:
             if j.rect.colliderect((self.x+x_change,self.y+y_change+3,16,16)):
                 return False
-        if random.randint(1,100+self.generation*60) <= 100:
+        if random.randint(1,100+int(self.generation)*60) <= 100:
             return True
         else:
             return False

@@ -2,6 +2,7 @@ import pygame
 import random
 import copy
 from text import Text
+from Direction import Direction
 class Unit():
     def __init__(self) -> None:
         super().__init__()
@@ -90,7 +91,7 @@ class Unit():
                 if len(enemy.units_boat) > 0:
                     there_enemy_units = True
                     for unit in enemy.units_boat:
-                        enemy.attack += enemy.base_attack * 0.65
+                        enemy.defence += enemy.base_defence * 0.65
             if  self.health *2 < self.base_health:
                 self.attack -= 1
             if  enemy.health *2 < enemy.base_health:
@@ -253,3 +254,16 @@ class Unit():
     def check_if_die(self):
         if self.health <= 0:
             self.kill()
+    def just_move(unit,direction,texts):
+        unit.direction = direction
+        if unit.direction == Direction.UP:
+            unit.rect.move_ip(0,-32)
+        elif unit.direction == Direction.BOTTOM:
+            unit.rect.move_ip(0,32)
+        elif unit.direction == Direction.LEFT:
+            unit.rect.move_ip(-32,0)
+        elif unit.direction == Direction.RIGHT:
+            unit.rect.move_ip(32,0)
+        else:
+            if unit.owner.is_AI != 1:
+                Text.add_text(texts,"No direction given! Report it to Syriusz171")

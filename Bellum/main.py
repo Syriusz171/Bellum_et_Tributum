@@ -497,9 +497,12 @@ while game_on:
                     if kliczek_collide2.is_boat:
                         kliczek_collide2.units_boat.empty()
                         kliczek_collide.remove(kliczek_collide2)
-                        """for kli in kliczek_collide:
+                        for kli in kliczek_collide:
                             kliczek_collide2.units_boat.add(kli)
-                            if kli.selected:
+                            kli.on_boat = True
+                            kli.unselect_me(texts)
+                            #kli.selection(texts)
+                            """if kli.selected:
                                 kli.selected = False
                             else:
                                 kli.selected = True"""

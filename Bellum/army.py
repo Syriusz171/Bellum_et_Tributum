@@ -3,7 +3,7 @@ from unit import Unit
 from Direction import Direction
 from player import Player
 from text import Text
-from copy import copy
+import copy
 from particle import Particle
 from random import choice
 import random
@@ -158,9 +158,15 @@ class Army(Unit,pygame.sprite.Sprite):
         self.new_banner = self.banner
         self.def_x = self.x
         self.def_y = self.y
-        if self.formation > 200 and self.formation < 300:
+        if self.formation >= 200 and self.formation < 300:
             self.is_boat = True
     def move_self(direction,armies,terrains,all_armies,texts,villages,debug=False):
+        for arm in all_armies:
+            if arm.is_boat:
+                arm.units_boat.empty()
+                to_boat = pygame.sprite.spritecollide(arm,armies,False)
+                for boat in to_boat:
+                    arm.units_boat.add(boat)
         enemy_armies = all_armies.copy()
         villages1 = villages.copy()
         iterated = False
@@ -206,21 +212,22 @@ class Army(Unit,pygame.sprite.Sprite):
                 collision_village = False
                 collision1_village = False
                 boat_enemy = None
-                if_on_boat = pygame.sprite.spritecollide(arm,armies,False)
+                """if_on_boat = pygame.sprite.spritecollide(arm,armies,False)
+                if len(if_on_boat) == 0:
+                    arm.on_boat = False
                 for me in if_on_boat:
-                    if me.is_boat:
-                        me.on_boat = True
-                        me.units_boat.add(arm)
-                    else:
-                        me.on_boat = False
+                    if arm.is_boat != True:
+                     me.units_boat.add(arm)
+                     arm.on_boat = True"""
                 # TEST
                 if arm.on_boat and arm.is_boat == False:
                     continue
                 for army in armies_testing: 
                     collision1 = army.rect.collidepoint(x+16,y-16)
-                    if collision1:
-                        collision = True
-                        colliders.add(army)
+                    if army != arm:
+                        if collision1:
+                            collision = True
+                            colliders.add(army)
                 for army in enemy_armies: 
                     collision1_enemy = army.rect.collidepoint(x+20,y-16)
                     if collision1_enemy:
@@ -285,7 +292,7 @@ class Army(Unit,pygame.sprite.Sprite):
                             can_move = False
                             break
                         else:
-                            if collider.is_boat == False and arm.is_boat == False:
+                            if collider.is_boat == False and arm.is_boat == False and collider != arm:
                                 Text.add_text(texts,"Cannot move: other unit already there!")
                                 can_move = False
                             else:
@@ -340,7 +347,8 @@ class Army(Unit,pygame.sprite.Sprite):
                     if arm.is_boat:
                          for army in arm.units_boat:
                             if army != arm:
-                                Army.move_only_self(army,arm.direction,armies,terrains,all_armies,texts,villages)
+                                #Army.move_only_self(army,arm.direction,arm.owner.armies,terrains,all_armies,texts,villages)
+                                Unit.just_move(army,direction,texts)
                     arm.march -= cost
                     arm.x = x
                     arm.y = y
@@ -349,12 +357,6 @@ class Army(Unit,pygame.sprite.Sprite):
                     if arm.is_boat:
                         for boat in arm.units_boat:
                             boat.march = arm.march
-                if_on_boat = pygame.sprite.spritecollide(arm,armies,False)
-                for me in if_on_boat:
-                    if me.is_boat:
-                        me.on_boat = True
-                    else:
-                        me.on_boat = False
     def selection(self,texts):
         if self.selected:
             self.selected = False
@@ -529,10 +531,10 @@ class Army(Unit,pygame.sprite.Sprite):
                         can_move_south = False
                     else:
                         priorities.append(Direction.BOTTOM)
-            for arm in villages:
-                collision1 = arm.rect.collidepoint(x+32,y)
+            for vill in villages:
+                collision1 = vill.rect.collidepoint(x+32,y)
                 if collision1:
-                    if arm.owner == self.owner:
+                    if vill.owner == self.owner:
                         pass
                     else:
                         priorities.append(Direction.RIGHT)
@@ -610,7 +612,8 @@ class Army(Unit,pygame.sprite.Sprite):
         x = army.x
         y = army.y
         arm = army
-        armies_testing.remove(arm)
+        armies_testing.remove(army)
+        print(f"{arm.formation} rusza się!")
         for vil in villages:
             if vil.owner == arm.owner:
                 villages1.remove(vil)
@@ -627,22 +630,25 @@ class Army(Unit,pygame.sprite.Sprite):
             elif arm.direction == Direction.RIGHT:
                 x = arm.x+32
                 y = arm.y
+            else:
+                if arm.owner.is_AI != 1:
+                    Text.add_text(texts,"No direction given! Report it to Syriusz171")
             colliders = pygame.sprite.Group()
             collision = False
             collision1 = False
             cost = 0
-            collider_enemy = False
+            collider_enemy = None
             collider_terrain = None
             collision_enemy = False
             collision_enemy = False
-            collision_terrain = None
+            collision_terrain = False
             collider_village = None
             collision_village = False
             collision1_village = False
             boat_enemy = None
             for army2 in armies_testing: 
                 collision1 = army2.rect.collidepoint(x+16,y-16)
-                if collision1:
+                if collision1 and army2 != arm:
                     collision = True
                     colliders.add(army)
             for army2 in enemy_armies: 
@@ -703,7 +709,7 @@ class Army(Unit,pygame.sprite.Sprite):
                             can_move = False
                     else:
                         if arm.owner.is_AI != True:
-                            Text.add_text(texts,"Cannot drive using boat!")
+                            Text.add_text(texts,"print(\"Car!=boat!\")!")
                         can_move = False
                         #"""
             else:
@@ -716,8 +722,10 @@ class Army(Unit,pygame.sprite.Sprite):
                         break
                     else:
                         if collider.is_boat == False and arm.is_boat == False:
-                            if arm.owner.is_AI != True:
-                                Text.add_text(texts,"Cannot move: other unit already there!")
+                            if collider != arm:
+                                can_move = False
+                                if arm.owner.is_AI != True:
+                                    Text.add_text(texts,"Cannot move: other unit already there!")
                             can_move = False
                         else:
                             if arm.is_boat:
@@ -771,6 +779,9 @@ class Army(Unit,pygame.sprite.Sprite):
                     arm.rect.move_ip(-32,0)
                 elif arm.direction == Direction.RIGHT:
                     arm.rect.move_ip(32,0)
+                else:
+                    if arm.owner.is_AI != 1:
+                        Text.add_text(texts,"No direction given! Report it to Syriusz171")
                 arm.march -= cost
                 arm.x = x
                 arm.y = y
@@ -780,9 +791,3 @@ class Army(Unit,pygame.sprite.Sprite):
                 if arm.is_boat:
                     for boat in arm.units_boat:
                         boat.march = arm.march
-            if_on_boat = pygame.sprite.spritecollide(arm,armies,False)
-            for me in if_on_boat:
-                if me.is_boat:
-                    me.on_boat = True
-                else:
-                    me.on_boat = False
