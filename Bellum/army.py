@@ -161,12 +161,17 @@ class Army(Unit,pygame.sprite.Sprite):
         if self.formation >= 200 and self.formation < 300:
             self.is_boat = True
     def move_self(direction,armies,terrains,all_armies,texts,villages,debug=False):
+        not_boated = all_armies.copy()
         for arm in all_armies:
             if arm.is_boat:
+                not_boated.remove(arm)
                 arm.units_boat.empty()
                 to_boat = pygame.sprite.spritecollide(arm,armies,False)
                 for boat in to_boat:
                     arm.units_boat.add(boat)
+                    not_boated.remove(boat)
+        for not_boat in not_boated:
+            not_boat.on_boat = False
         enemy_armies = all_armies.copy()
         villages1 = villages.copy()
         iterated = False
@@ -313,7 +318,6 @@ class Army(Unit,pygame.sprite.Sprite):
                     if collider_terrain.move_type != 2:
                         can_move = False
                         Text.add_text(texts,"Cannot move: Wrong terrain type!")
-                        continue
                 if collision_enemy:
                     if boat_enemy is not None:
                         collider_enemy = boat_enemy
@@ -357,6 +361,14 @@ class Army(Unit,pygame.sprite.Sprite):
                     if arm.is_boat:
                         for boat in arm.units_boat:
                             boat.march = arm.march
+                else:
+                    if arm.is_boat:
+                        for army in arm.units_boat:
+                            if collision_terrain:
+                                if collider_terrain.move_type == 2:
+                                    break
+                            if army != arm:
+                                Army.move_only_self(army,arm.direction,arm.owner.armies,terrains,all_armies,texts,villages)
     def selection(self,texts):
         if self.selected:
             self.selected = False
@@ -613,7 +625,6 @@ class Army(Unit,pygame.sprite.Sprite):
         y = army.y
         arm = army
         armies_testing.remove(army)
-        print(f"{arm.formation} rusza się!")
         for vil in villages:
             if vil.owner == arm.owner:
                 villages1.remove(vil)
