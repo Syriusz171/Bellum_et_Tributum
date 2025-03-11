@@ -12,6 +12,7 @@ from turn import Turn
 from text import Text
 from config import Config
 from particle import Particle
+import datetime
 WIDHT = 839
 HEIGHT = 800
 game_on = True
@@ -82,6 +83,16 @@ villages_ = pygame.sprite.Group()
 #----
 armies_ = pygame.sprite.Group()   #armies_ is sprites that belong to the player that has a turn now
 def start(bonus_starting_gold,modes,map,map_name=None):
+    #===== AI TEST =====#
+    player2.is_AI = config.playerNr2AI
+    if map_name in ["yorktown"]:
+        date_of_today = datetime.datetime.now()
+        if date_of_today.month == 4 and date_of_today.day == 1:
+            player_bandit = Player(3,"Germans")
+        else:
+            player_bandit = Player(3,"Bandits")
+        player_bandit.is_AI = True
+        players.add(player_bandit)
     if map != "manual":
         terrains = Terrain.generate(map)
     else:
@@ -94,19 +105,41 @@ def start(bonus_starting_gold,modes,map,map_name=None):
                 owner = player1
             elif vil[3] == 2:
                 owner = player2
-            village = Village.locate_village(vil[2],owner,(vil[0]*32,vil[1]*32+32),True)
-            villages.add(village)
-            owner.get_villaged(village)
+            elif vil[3] == 3:
+                owner = player_bandit
+            if len(vil) > 4:
+                if vil[4]:
+                    only_for_AnI = True
+                else:
+                    only_for_AnI = False
+            else:
+                only_for_AnI = False
+            if owner.is_AI == False and only_for_AnI:
+                pass
+            else:
+                village = Village.locate_village(vil[2],owner,(vil[0]*32,vil[1]*32+32),True)
+                villages.add(village)
+                owner.get_villaged(village)
         for arm in armies_return:
             if arm[3] == 1:
                 owner = player1
             elif arm[3] == 2:
                 owner = player2
-            army = Army.conscript(arm[2],owner,(arm[0]*32,arm[1]*32+32),False)
-            armies.add(army)
-            owner.get_armied(army)
-    #===== AI TEST =====#
-    player2.is_AI = config.playerNr2AI
+            elif arm[3] == 3:
+                owner = player_bandit
+            if len(arm) > 4:
+                if arm[4]:
+                    only_for_AnI = True
+                else:
+                    only_for_AnI = False
+            else:
+                only_for_AnI = False
+            if owner.is_AI == False and only_for_AnI:
+                pass
+            else:
+                army = Army.conscript(arm[2],owner,(arm[0]*32,arm[1]*32+32),False)
+                armies.add(army)
+                owner.get_armied(army)
     for mode in modes:
         if mode =="Dev":
             army = Army.conscript(201,player1,(13*32,7*32),False,texts)
@@ -199,7 +232,7 @@ quick_text = font.render("Start",False,(35,35,36))
 REFRESH = pygame.USEREVENT + 1
 CHECK_VICTORY = pygame.USEREVENT + 2
 pygame.time.set_timer(CHECK_VICTORY,2500)
-pygame.time.set_timer(REFRESH,5000)
+pygame.time.set_timer(REFRESH,4000)
 game_turn = 1
 while game_on:
     """
@@ -245,19 +278,35 @@ while game_on:
                     villages_ = turn_return[1]
                     game_turn = turn_return[2]
                     selected_type = 0
+                    not_boated = armies.copy()
+                    for arm in armies:
+                        armies1 = armies.copy()
+                        armies1.remove(arm)
+                        if arm.is_boat and arm.formation not in [201,202,203]:
+                            arm.is_boat = False
+                        elif arm.formation in [201,202,203]:
+                            arm.units_boat.empty()
+                            arm.is_boat = True
+                            collision_during_turn = pygame.sprite.spritecollideany(arm,armies1)
+                            if collision_during_turn is not None:
+                                not_boated.remove(collision_during_turn)
+                                arm.units_boat.add(not_boated)
+                    for army in not_boated:
+                        army.on_boat = False
                     Village.unselect_villages(villages,texts)
                     Text.deactivate_text(texts,"vill_type")
                 do_input = False
                 special_input = 'return'
                 #====Moving====#
             elif event.key == pygame.K_a:
-                Army.move_self(Direction.LEFT,armies_,terrains,armies,texts,villages)
+                #Army.move_self(Direction.LEFT,armies_,terrains,armies,texts,villages)
+                Army.move_all(players,armies,villages,terrains,Direction.LEFT,texts)
             elif event.key == pygame.K_d:
-                Army.move_self(Direction.RIGHT,armies_,terrains,armies,texts,villages)
+                Army.move_all(players,armies,villages,terrains,Direction.RIGHT,texts)
             elif event.key == pygame.K_w:
-                Army.move_self(Direction.UP,armies_,terrains,armies,texts,villages) #Multi army movement 11 XII Anno Domeni 2024
+                Army.move_all(players,armies,villages,terrains,Direction.UP,texts) #Multi army movement 11 XII Anno Domeni 2024
             elif event.key == pygame.K_s:
-                Army.move_self(Direction.BOTTOM,armies_,terrains,armies,texts,villages)
+                Army.move_all(players,armies,villages,terrains,Direction.BOTTOM,texts)
             elif event.key == pygame.K_MINUS or event.key == pygame.K_KP_MINUS:
                 Army.unselect(armies_,texts)
                 Village.unselect_villages(villages,texts)
@@ -394,10 +443,34 @@ while game_on:
             game_on = False
         elif event.type == REFRESH:
             Player.check_production(villages,players)
+            for arm in armies_:
+                if arm.owner.is_AI > 0:
+                    particles.empty()
+                    turn_return = Turn.turn(players,armies,villages,texts,terrains,particles,config,game_turn)
+                    armies_ = turn_return[0]
+                    villages_ = turn_return[1]
+                    game_turn = turn_return[2]
+                    selected_type = 0
+                    Village.unselect_villages(villages,texts)
+                    Text.deactivate_text(texts,"vill_type")
+                    break
+                break
+            for arm in armies:
+                armies1 = armies.copy()
+                armies1.remove(arm)
+                if arm.is_boat and arm.formation not in [201,202,203]:
+                    arm.is_boat = False
+                elif arm.formation in [201,202,203]:
+                    arm.units_boat.empty()
+                    arm.is_boat = True
+                    collision_during_turn = pygame.sprite.spritecollideany(arm,armies1)
+                    if collision_during_turn is not None:
+                        not_boated.remove(collision_during_turn)
+                        arm.units_boat.add(not_boated)
         elif event.type == CHECK_VICTORY:
             if was_defeated == False:
                 for p in players:
-                    if len(p.armies) == 0 and len(p.villages) == 0 and menu == 0:
+                    if len(p.armies) == 0 and len(p.villages) == 0 and menu == 0 and p.defeted_tell_not == False:
                         was_defeated = p
                         p.defeted = True
         elif event.type == pygame.MOUSEBUTTONUP:
@@ -520,18 +593,18 @@ while game_on:
         screen.blit(background_image2, (0,0))
     for ter in terrains:
         screen.blit(ter.look,ter.rect)
-    for arm in armies:
-        if visible_army_owner:
-            arm.update_color()#Fixed 11.01.2025
-            screen.blit(arm.new_banner,arm.rect)
-        else:
-            screen.blit(arm.banner,arm.rect)
     for vil in villages:
         if visible_village_owner:
             vil.update_color()
             screen.blit(vil.new_banner,vil.rect)
         else:
             screen.blit(vil.banner,vil.rect)
+    for arm in armies:
+        if visible_army_owner:
+            arm.update_color()#Fixed 11.01.2025
+            screen.blit(arm.new_banner,arm.rect)
+        else:
+            screen.blit(arm.banner,arm.rect)
     for b in buttons:
         if b.active:
             screen.blit(b.picture,b.rect)
@@ -557,8 +630,9 @@ while game_on:
     Particle.render_particles(particles,screen)
     Text.print_text(texts,screen)
     if was_defeated != False:
-        defeated_text = font_big.render(f"{was_defeated.name} has been defeated!",False,(150,31,30))
-        screen.blit(defeated_text,(320,180))
+        if was_defeated.defeted_tell_not != True:
+            defeated_text = font_big.render(f"{was_defeated.name} has been defeated!",False,(150,31,30))
+            screen.blit(defeated_text,(320,180))
     if menu == 0:
         turn_text = font_small.render(f"Turn {game_turn}",False,(33,33,220))
         screen.blit(turn_text,(800,655))

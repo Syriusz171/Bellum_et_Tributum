@@ -31,6 +31,7 @@ class Unit():
         self.health = 75
         self.is_boat = False
         self.village_defence_bonus = None
+        self.moved = False
     def attack(self,enemy1,is_enemy_army,texts,town=None,boat=None,enemy_boat=None): # First unit killed 17XII Anno Domini 2024
         enemy = enemy1
         kill_self = False
@@ -132,6 +133,7 @@ class Unit():
             Text.add_text(texts,f"Attacker health is {self.health}")
             Text.add_text(texts,f"Defender health is {enemy.health}")
             self.march = 0
+            attacking_player = self.owner
             if self.health > 0:
                 pass
             else:
@@ -152,7 +154,10 @@ class Unit():
                     enemy.kill()
                     if town is not None:
                         if town.health <= 0:
-                            town.change_owner(self.owner,texts)
+                            if town.vill_type != 30:
+                                town.change_owner(self.owner,texts)
+                            else:
+                               Unit.bandit_get_killed(enemy,attacking_player)
                             if kill_self:
                                 self.kill()
                             return True
@@ -163,7 +168,10 @@ class Unit():
                     if kill_self:
                         self.kill()
                 elif town is None: # Territory of Player2 conquered 12I2025
-                    enemy.change_owner(self.owner,texts)
+                    if enemy.vill_type != 30:
+                        enemy.change_owner(self.owner,texts)
+                    else:
+                        Unit.bandit_get_killed(enemy,attacking_player)
                     if kill_self:
                         self.kill()
                     return True
@@ -234,6 +242,18 @@ class Unit():
                 color_mask = (5,5,62)
             else:
                 color_mask = (1,1,56)
+        elif self.owner.number == 3:
+            color_mask = 0
+            if self.health == self.base_health:
+                color_mask = (0,130,2)
+            elif self.health >0.75*self.base_health:
+                color_mask = (0,107,3)
+            elif self.health > 0.50 *self.base_health:
+                color_mask = (0,82,4)
+            elif self.health > 0.25 *self.base_health:
+                color_mask = (2,62,6)
+            else:
+                color_mask = (1,1,56)
         if self.health <= 0:
             color_mask = (60,60,60)
         self.new_banner = copy.copy(self.banner)
@@ -267,3 +287,9 @@ class Unit():
         else:
             if unit.owner.is_AI != 1:
                 Text.add_text(texts,"No direction given! Report it to Syriusz171")
+    def bandit_get_killed(town,killer):
+        town.kill()
+        killer.gold += random.randint(20,25)
+        killer.bow += 1
+        killer.spear += random.randint(5,16)
+        killer.food += random.randint(5,6)

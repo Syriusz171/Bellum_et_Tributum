@@ -13,6 +13,9 @@ class Turn(Army):
             #    arm.units_boat.empty()
             #    arm.units_boat = pygame.sprite.spritecollide(arm,armies,False)
         for p in players:
+            if p.defeted:
+                p.defeted_tell_not = True
+        for p in players:
             if p.active:
                 activate_next = True
                 p.activate()
@@ -25,11 +28,12 @@ class Turn(Army):
                     Army.summon_militia_global(players,armies,texts,config)
                     #Army.pathfind(p,armies,villages,terrains,particles)
                     game_turn += 1
-                    if p.is_AI == 1:
-                        for army in p.armies:
-                            for i in range(1):
-                                direction = army.drunk_move_army(terrains,armies,villages)
-                                Army.move_only_self(army,direction,p.armies,terrains,armies,texts,villages)
+                    for p in players:
+                        if p.is_AI == 1:
+                            for army in p.armies:
+                                for i in range(1):
+                                    direction = army.drunk_move_army(terrains,armies,villages)
+                                    Army.move_only_self(army,direction,p.armies,terrains,armies,texts,villages)
                     for p in players:
                         if p.number == 1:
                             if p.defeted == False:

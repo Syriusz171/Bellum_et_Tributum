@@ -3,7 +3,7 @@ from unit import Unit
 #from copy import deepcopy
 from player import Player
 from text import Text
-from army import Army
+import army
 import random
 class Village(Unit,pygame.sprite.Sprite):
     def __init__(self,owner1,vill_type,starting_rect) -> None:   #if type is 60 village is a city, owner 0 is no one's villge
@@ -13,6 +13,8 @@ class Village(Unit,pygame.sprite.Sprite):
         self.selected = False
         self.can_conscript_turns = 4
         
+        self.is_village = True
+
         self.tax = 0
         self.p_gold = 0
         self.p_spear = 0
@@ -37,6 +39,10 @@ class Village(Unit,pygame.sprite.Sprite):
         elif vill_type == 20:
             self.base_health = 60
             self.base_defence = 13.5
+        elif vill_type == 30:
+            self.base_health = 62
+            self.base_defence = 15.5
+            self.banner = pygame.image.load("images/bandit_camp.png")
         else:
             self.base_health = 33
             self.base_defence = 6

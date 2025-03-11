@@ -2,7 +2,7 @@ import pygame
 import random
 from maps import yorktown
 class Terrain(pygame.sprite.Sprite):
-    def __init__(self,form,starting_rect,generation=7,fixed_textute=None) -> None:
+    def __init__(self,form,starting_rect,generation=7,fixed_texture=None) -> None:
         super().__init__()
         self.form = form
         self.generation = generation
@@ -18,12 +18,12 @@ class Terrain(pygame.sprite.Sprite):
         elif self.form == 2: # Fertile land, good for farms
             self.movement_cost = 1
             self.move_type = 1
-            if fixed_textute is None:
+            if fixed_texture is None:
                 if random.randint(0,3) == 0:
                     self.look = pygame.image.load("images/fertile_land.png")
                 else:
                     self.look = pygame.image.load("images/fertile_land2.png")
-            elif fixed_textute == 2.5:
+            elif fixed_texture == 2.5:
                 self.look = pygame.image.load("images/fertile_land2.png")
             else:
                 self.look = pygame.image.load("images/fertile_land.png")

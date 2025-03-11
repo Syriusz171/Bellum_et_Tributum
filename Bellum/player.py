@@ -5,6 +5,7 @@ class Player(pygame.sprite.Sprite):
         super(Player,self).__init__()
         self.number = number
         self.defeted = False
+        self.defeted_tell_not = False
         self.name = name
         self.lumber = 50
         self.food = 50

@@ -6,6 +6,7 @@ from text import Text
 import copy
 from particle import Particle
 from random import choice
+from village import Village
 import random
 class Army(Unit,pygame.sprite.Sprite):
     def __init__(self,formation,owner,starting_rect,x=None,y=None,is_defending=False) -> None:
@@ -20,8 +21,10 @@ class Army(Unit,pygame.sprite.Sprite):
         self.starting_rect = starting_rect
         self.in_village = None
         self.target_location = [0,0]
-        self.distance = 90000000
+        self.distance = 9000000
         self.is_defending = is_defending
+
+        self.is_village = False
         """
         Formations:
         0 - elite
@@ -41,7 +44,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.siege_bonus = 0
             self.anti_infantry_bonus = 0
             self.anti_cav_bonus = 2
-            self.movement_type = 1
+            self.movement_type = [1]
             self.banner = pygame.image.load("images/Spear.png")
         elif self.formation == 0:
             self.base_march = 3
@@ -52,7 +55,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.siege_bonus = -1
             self.anti_infantry_bonus = 2
             self.anti_cav_bonus = 0
-            self.movement_type = 1
+            self.movement_type = [1]
             self.banner = pygame.image.load("images/guard.png")
         elif self.formation == 2:
             self.base_march = 3
@@ -63,7 +66,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.siege_bonus = -3
             self.anti_infantry_bonus = 2
             self.anti_cav_bonus = -3
-            self.movement_type = 1
+            self.movement_type = [1]
             self.banner = pygame.image.load("images/Bow.png")
         elif self.formation == 4:
             self.base_march = 2.5
@@ -74,7 +77,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.siege_bonus = 20
             self.anti_infantry_bonus = -7
             self.anti_cav_bonus = -11
-            self.movement_type = 1
+            self.movement_type = [1]
             self.banner = pygame.image.load("images/catapult.png")
         elif self.formation == 3:
             self.base_march = 4
@@ -85,7 +88,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.siege_bonus = 3
             self.anti_infantry_bonus = 4
             self.anti_cav_bonus = 0
-            self.movement_type = 1
+            self.movement_type = [1]
             self.banner = pygame.image.load("images/Horse.png")
         elif self.formation == 7:
             self.base_march = 3.5
@@ -96,7 +99,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.siege_bonus = -3
             self.anti_infantry_bonus = 0
             self.anti_cav_bonus = -3
-            self.movement_type = 1
+            self.movement_type = [1]
             self.banner = pygame.image.load("images/Militia.png")
         elif self.formation == 100:
             self.base_march = 3
@@ -107,7 +110,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.siege_bonus = -3
             self.anti_infantry_bonus = 1
             self.anti_cav_bonus = -2
-            self.movement_type = 1
+            self.movement_type = [1]
             self.banner = pygame.image.load("images/Settler.png")
         elif self.formation == 201:
             self.base_march = 3.5
@@ -120,7 +123,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.anti_cav_bonus = -0
             self.anti_transport_bonus = 0
             self.anti_ram_bonus = -3
-            self.movement_type = 2
+            self.movement_type = [2]
             self.banner = pygame.image.load("images/Transport_boat.png")
         elif self.formation == 202:
             self.base_march = 3.5
@@ -133,7 +136,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.anti_cav_bonus = -0
             self.anti_ram_bonus = 3
             self.anti_transport_bonus = 4
-            self.movement_type = 2
+            self.movement_type = [2]
             self.banner = pygame.image.load("images/Ram_boat.png")
         elif self.formation == 400:
             self.base_march = 3.5
@@ -146,7 +149,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.anti_cav_bonus = -3
             self.anti_ram_bonus = 0
             self.anti_transport_bonus = 0
-            self.movement_type = 1
+            self.movement_type = [1,5]
             self.banner = pygame.image.load("images/Alpinist.png")
         self.health = self.base_health
         self.hurt = 0
@@ -273,15 +276,17 @@ class Army(Unit,pygame.sprite.Sprite):
                                     can_move = False
                                     Text.add_text(texts,"Not enough movement!")
                                 else:
-                                    can_move = True
+                                    #can_move = True
+                                    pass
                             else:
+                                if arm.owner.is_AI != True:
+                                    Text.add_text(texts,"Cannot move: Wrong terrain type1!")
                                 can_move = False
-                                Text.add_text(texts,"Cannot move: Wrong terrain type!")
                     else:
                         if arm.is_boat == False:
                             if arm.march >= 1:
                                 cost = 1
-                                can_move = True
+                                #can_move = True
                             else:
                                 Text.add_text(texts,"Cannot move: Not enough movement!")
                                 can_move = False
@@ -313,11 +318,11 @@ class Army(Unit,pygame.sprite.Sprite):
                 if collision_terrain == False and arm.movement_type != 1:
                     if terrain_exception == False or arm.on_boat == False or arm.is_boat == False:
                         can_move = False
-                        Text.add_text(texts,"Cannot move: Wrong terrain type!")
+                        Text.add_text(texts,"Cannot move: Wrong terrain type2!")
                 if collision_terrain and arm.is_boat:
                     if collider_terrain.move_type != 2:
                         can_move = False
-                        Text.add_text(texts,"Cannot move: Wrong terrain type!")
+                        Text.add_text(texts,"Cannot move2: Wrong terrain type3!")
                 if collision_enemy:
                     if boat_enemy is not None:
                         collider_enemy = boat_enemy
@@ -621,10 +626,12 @@ class Army(Unit,pygame.sprite.Sprite):
         armies_testing = armies.copy()
         can_move = True
         terrain_exception = False
-        x = army.x
-        y = army.y
+        x = army.rect.centerx
+        y = army.rect.centery
         arm = army
         armies_testing.remove(army)
+        if arm.owner.is_AI == False:
+            Text.add_text(texts,"Trying to move!")
         for vil in villages:
             if vil.owner == arm.owner:
                 villages1.remove(vil)
@@ -657,13 +664,16 @@ class Army(Unit,pygame.sprite.Sprite):
             collision_village = False
             collision1_village = False
             boat_enemy = None
+            boat_our = None
             for army2 in armies_testing: 
-                collision1 = army2.rect.collidepoint(x+16,y-16)
+                collision1 = army2.rect.collidepoint(x+5,y)
                 if collision1 and army2 != arm:
                     collision = True
                     colliders.add(army)
+                    if army2.is_boat:
+                        boat_our = army2
             for army2 in enemy_armies: 
-                collision1_enemy = army2.rect.collidepoint(x+20,y-16)
+                collision1_enemy = army2.rect.collidepoint(x+5,y)
                 if collision1_enemy:
                     collision_enemy = True
                     collider_enemy = army2
@@ -671,14 +681,14 @@ class Army(Unit,pygame.sprite.Sprite):
                         boat_enemy = army2
                         break
             for ter in terrains: 
-                collision_terrain = ter.rect.collidepoint(x+16,y-16)
+                collision_terrain = ter.rect.collidepoint(x+5,y)
                 if collision_terrain:
                     collider_terrain = ter
                     if debug:
                         Text.add_text(texts,collider_terrain.form)
                     break
             for vil in villages1: 
-                collision1_village = vil.rect.collidepoint(x+16,y-16)
+                collision1_village = vil.rect.collidepoint(x+5,y)
                 if collision1_village:
                     collision_village = True
                     collider_village = vil
@@ -704,16 +714,17 @@ class Army(Unit,pygame.sprite.Sprite):
                                 if arm.owner.is_AI != True:
                                     Text.add_text(texts,"Not enough movement!")
                             else:
-                                can_move = True
+                                pass
+                                #can_move = True
                         else:
-                            can_move = False
                             if arm.owner.is_AI != True:
-                                Text.add_text(texts,"Cannot move: Wrong terrain type!")
+                                Text.add_text(texts,"Cannot move: Wrong terrain type1!")
+                            can_move = False
                 else:
                     if arm.is_boat == False:
                         if arm.march >= 1:
                             cost = 1
-                            can_move = True
+                            #can_move = True
                         else:
                             if arm.owner.is_AI != True:
                                 Text.add_text(texts,"Cannot move: Not enough movement!")
@@ -753,12 +764,12 @@ class Army(Unit,pygame.sprite.Sprite):
                 if terrain_exception == False or arm.on_boat == False or arm.is_boat == False:
                     can_move = False
                     if arm.owner.is_AI != True:
-                        Text.add_text(texts,"Cannot move: Wrong terrain type!")
+                        Text.add_text(texts,"Cannot move: Wrong terrain type2!")
             if collision_terrain and arm.is_boat:
                 if collider_terrain.move_type != 2:
                     can_move = False
                     if arm.owner.is_AI != True:
-                        Text.add_text(texts,"Cannot move: Wrong terrain type!")
+                        Text.add_text(texts,"Cannot move: Wrong terrain type3!")
             if collision_enemy:
                 if boat_enemy is not None:
                     collider_enemy = boat_enemy
@@ -802,3 +813,268 @@ class Army(Unit,pygame.sprite.Sprite):
                 if arm.is_boat:
                     for boat in arm.units_boat:
                         boat.march = arm.march
+    def move_all(players,armies,villages,terrains,direction,texts):
+        entities = armies.copy()
+        for self in armies:
+            armies1 = armies.copy()
+            armies1.remove(self)
+            self.on_boat = False
+            if self.is_boat:
+                self.units_boat.empty()
+                unit = pygame.sprite.spritecollideany(self,armies1)
+                if unit is not None:
+                    if unit != self:
+                        self.units_boat.add(unit)
+                        unit.on_boat = True
+        for vil in villages:
+            entities.add(vil)
+        for ent in entities:
+            ent.moved = False
+        for arm in armies:
+            entities_false = entities.copy()
+            entities_false.remove(arm)
+            arm.direction = direction
+            if arm.owner.active and arm.selected and arm.march >= 0.5:
+                if direction == Direction.UP:
+                    x = arm.rect.centerx
+                    y = arm.rect.centery -32
+                elif direction == Direction.BOTTOM:
+                    x = arm.rect.centerx
+                    y = arm.rect.centery +32
+                elif direction == Direction.RIGHT:
+                    x = arm.rect.centerx+32
+                    y = arm.rect.centery
+                elif direction == Direction.LEFT:
+                    x = arm.rect.centerx-32
+                    y = arm.rect.centery
+                else:
+                    Text.add_text(texts,"ERROR: No direction given! Report it to Syriusz171!")
+                    break
+                x+=1
+                y+=1
+                colliders = pygame.sprite.Group()
+                allies = pygame.sprite.Group()
+                allied_boats = pygame.sprite.Group()
+                allied_towns = pygame.sprite.Group()
+                enemies = pygame.sprite.Group()
+                cost = 1
+                #===== VILLAGES + ARMIES COLLISIONS
+                for ent in entities_false:
+                    coll = ent.rect.collidepoint(x,y)
+                    if coll:
+                        colliders.add(ent)
+                        if ent.owner == arm.owner:
+                            if ent.is_village:
+                                allied_towns.add(ent)
+                            elif ent.is_boat == False:
+                                allies.add(ent)
+                            else:
+                                allied_boats.add(ent)
+                        else:
+                            enemies.add(ent)
+                can_move = True
+                collided = False
+                #===== TERRAIN COLLISION =====#
+                for terr in terrains:
+                    coll = terr.rect.collidepoint(x,y)
+                    if coll:
+                        collided = True
+                        cost = terr.movement_cost
+                        if terr.move_type not in arm.movement_type and arm.movement_type != -1:
+                            if len(allied_boats) == 0:
+                                if terr.move_type != 2:
+                                    if arm.owner.is_AI != True:
+                                        Text.add_text(texts,"Cannot move: Wrong terrains type!")
+                                else:
+                                    if arm.owner.is_AI != True:
+                                        Text.add_text(texts,"In order to sail you need a few builded boats!")
+                                can_move = False
+                                continue
+                            else: # There is boat!
+                                cost = 1
+                if 1 not in arm.movement_type and collided == False:
+                    if arm.owner.is_AI != True:
+                        Text.add_text(texts,"This unit cannot go on land!")
+                        can_move = False
+                        continue
+                if can_move == False:
+                    continue
+                if len(allies) >= 1:
+                    for ally in allies:
+                        pass
+                        #if ally.selected == False:
+                        #   ARMY SWAPPING will go here
+                    if arm.owner.is_AI != True:
+                        Text.add_text(texts,"Cannot increase pressure of armies (stack them)!")
+                    continue
+                if len(enemies) >= 1:
+                    town = None
+                    boat = None
+                    land_army = None
+                    for enemy in enemies:
+                        if enemy.is_boat:
+                            boat = enemy
+                        elif enemy.is_village:
+                            town = enemy
+                        else:
+                            land_army = enemy
+                    if boat is not None:
+                        land_army = boat
+                    #There is an army:
+                    if land_army is not None:
+                        battle = Unit.attack(arm,land_army,True,texts,town)
+                        if battle == False:
+                            continue
+                    else:
+                        battle = Unit.attack(arm,town,True,texts)
+                        if battle == False:
+                            continue
+                if cost > arm.march:
+                    if arm.owner.is_AI != True:
+                        Text.add_text(texts,"Cannot move: Not enough movement!")
+                    continue
+                if arm.direction == Direction.UP:
+                    arm.rect.move_ip(0,-32)
+                elif arm.direction == Direction.BOTTOM:
+                    arm.rect.move_ip(0,32)
+                elif arm.direction == Direction.LEFT:
+                    arm.rect.move_ip(-32,0)
+                elif arm.direction == Direction.RIGHT:
+                    arm.rect.move_ip(32,0)
+                if arm.is_boat:
+                    for army in arm.units_boat:
+                        Army.move_me(army,players,armies,villages,terrains,direction,texts)
+                arm.march -= cost
+                if arm.owner.is_AI != True:
+                    Text.add_text(texts,f"Movement left {arm.march}")
+
+    def move_me(arm,players,armies,villages,terrains,direction,texts):
+        entities = armies.copy()
+        for self in armies:
+            armies1 = armies.copy()
+            armies1.remove(self)
+            if self.is_boat:
+                self.on_boat = False
+                self.units_boat.empty()
+                unit = pygame.sprite.spritecollideany(self,armies)
+                if unit is not None:
+                    self.units_boat.add(unit)
+                    unit.on_boat = True
+        for vil in villages:
+            entities.add(vil)
+        army_currect = pygame.sprite.GroupSingle()
+        army_currect.add(arm)
+        arm.direction = direction
+        for ent in entities:
+            ent.moved = False
+            if arm.owner.active and arm.selected and arm.march >= 0.5:
+                if direction == Direction.UP:
+                    x = arm.rect.centerx
+                    y = arm.rect.centery -32
+                elif direction == Direction.BOTTOM:
+                    x = arm.rect.centerx
+                    y = arm.rect.centery +32
+                elif direction == Direction.RIGHT:
+                    x = arm.rect.centerx+32
+                    y = arm.rect.centery
+                elif direction == Direction.LEFT:
+                    x = arm.rect.centerx
+                    y = arm.rect.centery -32
+                else:
+                    if arm.owner.is_AI != True:
+                        Text.add_text(texts,"ERROR: No direction given! Report it to Syriusz171!")
+                    break
+                x+=1
+                y+=1
+                colliders = pygame.sprite.Group()
+                allies = pygame.sprite.Group()
+                allied_boats = pygame.sprite.Group()
+                allied_towns = pygame.sprite.Group()
+                enemies = pygame.sprite.Group()
+                cost = 1
+                #===== VILLAGES + ARMIES COLLISIONS
+                for ent in entities:
+                    coll = ent.rect.collidepoint(x,y)
+                    if coll:
+                        colliders.add(ent)
+                        if ent.owner == arm.owner:
+                            if ent.is_village:
+                                allied_towns.add(ent)
+                            elif ent.is_boat == False:
+                                allies.add(ent)
+                            else:
+                                allied_boats.add(ent)
+                        else:
+                            enemies.add(arm)
+                #===== TERRAIN COLLISION =====#
+                for terr in terrains:
+                    coll = terr.rect.collidepoint(x,y)
+                    if coll:
+                        cost = terr.movement_cost
+                        if terr.move_type not in arm.movement_type and arm.movement_type != -1:
+                            if len(allied_boats) == 0:
+                                if terr.move_type == 2:
+                                    if arm.owner.is_AI != True:
+                                        Text.add_text(texts,"Cannot move: Wrong terrain type!")
+                                else:
+                                    if arm.owner.is_AI != True:
+                                        Text.add_text(texts,"In order to sail you need a few builded boats!")
+                                continue
+                            else: # There is boat!
+                                cost = 1
+                        else:
+                            cost = terr.movement_cost
+                    else:
+                        if 1 not in arm.movement_type:
+                            if arm.owner.is_AI != True:
+                                Text.add_text(texts,"This unit cannot go on land!")
+                            continue
+                if len(allies) >= 1:
+                    for ally in allies:
+                        pass
+                        #if ally.selected == False:
+                        #   ARMY SWAPPING will go here
+                    if arm.owner.is_AI != True:
+                        Text.add_text(texts,"Cannot increase pressure of armies (stack them)!")
+                    continue
+                if len(enemies) >= 1:
+                    town = None
+                    boat = None
+                    land_army = None
+                    for enemy in enemies:
+                        if enemy.is_boat:
+                            boat = enemy
+                        elif enemy.is_village:
+                            town = enemy
+                        else:
+                            land_army = enemy
+                    if boat is not None:
+                        land_army = boat
+                    #There is an army:
+                    if land_army is not None:
+                        battle = Unit.attack(arm,land_army,True,texts,town)
+                        if battle == False:
+                            continue
+                    else:
+                        battle = Unit.attack(arm,town,False,texts)
+                        if battle == False:
+                            continue
+                if cost < arm.march:
+                    if arm.owner.is_AI != True:
+                        Text.add_text(texts,"Cannot move: Not enough movement!")
+                    continue
+                if arm.direction == Direction.UP:
+                    arm.rect.move_ip(0,-32)
+                elif arm.direction == Direction.BOTTOM:
+                    arm.rect.move_ip(0,32)
+                elif arm.direction == Direction.LEFT:
+                    arm.rect.move_ip(-32,0)
+                elif arm.direction == Direction.RIGHT:
+                    arm.rect.move_ip(32,0)
+                arm.march -= cost
+
+                
+
+
+                
+
