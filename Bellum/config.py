@@ -17,4 +17,4 @@ class Config():
         # Controls if the AI has small chance of spawning spearman instead of militia.
         self.allow_AI_spearman = True
         # Force April Fools mode! Forces game to load jokes!
-        self.force_jokes = True
+        self.force_jokes = False
