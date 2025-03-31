@@ -81,13 +81,13 @@ armies = pygame.sprite.Group()
 villages = pygame.sprite.Group()
 villages_ = pygame.sprite.Group()
 #----
+date_of_today = datetime.datetime.now()
 armies_ = pygame.sprite.Group()   #armies_ is sprites that belong to the player that has a turn now
 def start(bonus_starting_gold,modes,map,map_name=None):
     #===== AI TEST =====#
     player2.is_AI = config.playerNr2AI
     if map_name in ["yorktown"]:
-        date_of_today = datetime.datetime.now()
-        if date_of_today.month == 4 and date_of_today.day == 1:
+        if date_of_today.month == 4 and date_of_today.day == 1 or config.force_jokes:
             player_bandit = Player(3,"Germans")
         else:
             player_bandit = Player(3,"Bandits")
@@ -232,36 +232,11 @@ quick_text = font.render("Start",False,(35,35,36))
 REFRESH = pygame.USEREVENT + 1
 CHECK_VICTORY = pygame.USEREVENT + 2
 pygame.time.set_timer(CHECK_VICTORY,2500)
-pygame.time.set_timer(REFRESH,4000)
+pygame.time.set_timer(REFRESH,400)
 game_turn = 1
 while game_on:
     """
-    while menu == 1:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    game_on = False
-            elif event.type == pygame.QUIT:
-                game_on = False
-            elif event.type == pygame.MOUSEBUTTONUP:
                 print("Kliczek będzie wspaniały!")
-                kliczek_collide = pygame.sprite.spritecollideany(kliczek,buttons)
-                if kliczek_collide is not None:
-                    if kliczek_collide.type == 1:
-                        menu = 0
-                        terrains.empty()
-                        terrains = Terrain.generate("flats")
-                        start_quick.activate_button(False)
-                        show_production.activate_button(True)
-        screen.blit(background_image2,(0,0))
-        for b in buttons:
-            if b.active:
-                screen.blit(b.picture,b.rect)
-        for ter in terrains:
-            screen.blit(ter.look,ter.rect)
-        pygame.display.flip()
-        if game_on == False:
-            break
         """
     mouse = pygame.mouse.get_pos()
     kliczek.move_kliczek(mouse)
@@ -455,7 +430,7 @@ while game_on:
                     Text.deactivate_text(texts,"vill_type")
                     break
                 break
-            for arm in armies:
+            """for arm in armies:
                 armies1 = armies.copy()
                 armies1.remove(arm)
                 if arm.is_boat and arm.formation not in [201,202,203]:
@@ -466,7 +441,7 @@ while game_on:
                     collision_during_turn = pygame.sprite.spritecollideany(arm,armies1)
                     if collision_during_turn is not None:
                         not_boated.remove(collision_during_turn)
-                        arm.units_boat.add(not_boated)
+                        arm.units_boat.add(not_boated)"""
         elif event.type == CHECK_VICTORY:
             if was_defeated == False:
                 for p in players:
@@ -627,11 +602,18 @@ while game_on:
         screen.blit(spear_text,(631,100))
         screen.blit(bow_text,(631,120))
     #Particle.decay(particles)
+    for arm in armies_:
+        if arm.owner.is_AI > 0:
+            please_wait = font_big.render(f"Please wait!",False,(142,130,130))
+            screen.blit(please_wait,(70,600))
     Particle.render_particles(particles,screen)
     Text.print_text(texts,screen)
     if was_defeated != False:
         if was_defeated.defeted_tell_not != True:
-            defeated_text = font_big.render(f"{was_defeated.name} has been defeated!",False,(150,31,30))
+            if date_of_today.month == 4 and date_of_today.day == 1 or config.force_jokes:
+                defeated_text = font_big.render(f"{was_defeated.name}\'s country has experienced a rapid unsheduled disassembly!",False,(178,35,35))
+            else:
+                defeated_text = font_big.render(f"{was_defeated.name} has been defeated!",False,(150,31,30))
             screen.blit(defeated_text,(320,180))
     if menu == 0:
         turn_text = font_small.render(f"Turn {game_turn}",False,(33,33,220))

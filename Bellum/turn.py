@@ -27,13 +27,17 @@ class Turn(Army):
                     Village.turns_left_change(villages)
                     Army.summon_militia_global(players,armies,texts,config)
                     #Army.pathfind(p,armies,villages,terrains,particles)
+                    for pe in players:
+                        pe.active = True
                     game_turn += 1
                     for p in players:
                         if p.is_AI == 1:
                             for army in p.armies:
-                                for i in range(1):
+                                for i in range(3):
                                     direction = army.drunk_move_army(terrains,armies,villages)
-                                    Army.move_only_self(army,direction,p.armies,terrains,armies,texts,villages)
+                                    Army.move_me(army,players,armies,villages,terrains,direction,texts)
+                    for pe in players:
+                        pe.active = False
                     for p in players:
                         if p.number == 1:
                             if p.defeted == False:
@@ -43,6 +47,8 @@ class Turn(Army):
                                 villages_= player1.villages.copy()
                                 Text.add_text(texts,f"{p.name} turn")
                                 return armies_, villages_,game_turn
+                            else:
+                                return  [p.armies,p.villages,game_turn]
             elif p.active == False and activate_next:
                 if p.defeted == False:
                     p.activate()
@@ -52,3 +58,5 @@ class Turn(Army):
                     activate_next = False
                     turn_return = [armies_,villages_,game_turn]
                     return turn_return
+                else:
+                    return  [p.armies,p.villages,game_turn]

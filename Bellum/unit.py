@@ -87,12 +87,14 @@ class Unit():
                 if len(self.units_boat) > 0:
                     there_self_units = True
                     for unit in self.units_boat:
-                        self.attack += unit.base_attack * 0.65
+                        if unit.is_boat != True:
+                            self.attack += unit.base_attack * 0.50
             if enemy.is_boat:
                 if len(enemy.units_boat) > 0:
                     there_enemy_units = True
                     for unit in enemy.units_boat:
-                        enemy.defence += enemy.base_defence * 0.65
+                        if unit.is_boat != True:
+                            enemy.defence += unit.base_defence * 0.65
             if  self.health *2 < self.base_health:
                 self.attack -= 1
             if  enemy.health *2 < enemy.base_health:
@@ -118,18 +120,21 @@ class Unit():
                 for unit in self.units_boat:
                     damage_unit = damage_self
                     if enemy.anti_transport_bonus > 0:
-                        damage_unit = enemy.anti_transport_bonus * (random.randint(0,4) *0,30 + 1)
+                        damage_unit = enemy.anti_transport_bonus * (random.randint(0,4) *0.30 + 1)
                     unit.health -= damage_unit
                     Text.add_text(texts,f"Attacker passager health is {unit.health}!")
                     unit.check_if_die()
+                    break
             if there_enemy_units:
                 for unit in enemy.units_boat:
                     damage_unit = damage_enemy
                     if self.anti_transport_bonus > 0:
-                        damage_unit = self.anti_transport_bonus * (random.randint(0,4) *0,30 + 1)
+                        damage_unit = self.anti_transport_bonus * random.randint(0,4) *0.30 + 1
+                    print(damage_unit)
                     unit.health -= damage_unit
-                    Text.add_text(texts,f"Attacker passager health is {unit.health}!")
+                    Text.add_text(texts,f"Defender passager health is {unit.health}!")
                     unit.check_if_die()
+                    break
             Text.add_text(texts,f"Attacker health is {self.health}")
             Text.add_text(texts,f"Defender health is {enemy.health}")
             self.march = 0

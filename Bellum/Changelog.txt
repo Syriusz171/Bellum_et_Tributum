@@ -2,8 +2,9 @@
 - Changed AnI villages (not cities) to be slightly stronger,
 - Added port villages that can build ships,
 - Changed militia's defence from 12.5 to 13,
-- Started movement system rewrite
+- Made movement system rewrite
 - Enabled Yorktown map since now player are given ability to navigate the water,
-- Added bandits player on 'Yorktown' map.
-- Added automatic AnI turn rolling.
+- Added bandits player on 'Yorktown' map,
+- Added automatic AnI turn rolling,
+- Added JOKES!
 - Fixed one issue with combat.
