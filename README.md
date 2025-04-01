@@ -13,8 +13,8 @@ The game is about founding villages and conscripting armies and fighting using t
 - multi-army movement (and yes, it DOES excist) works badly when one army moves onto the tile where was another moving army
 - Game sometimes crashes when terrain is generated (I think that it is fixed but I am not sure).
 ### Plans (or rather dreams of mine):
-- Mode to fight bots (a dream)
-- Water and water transport (somehow work in progress)
+- Mode to fight bots (badly completed!)
+- Water and water transport (partially done)
 - More resourses like army-specific supplies, salt, stone etc (that has to be done, right? Right?)
 - Local resourses (that is resourses being stored in villages) and resourse trasport system (i guess it is a dream)
 - Unit upkeep (armies would need to be moved with supplies) (dream)
