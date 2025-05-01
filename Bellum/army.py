@@ -36,6 +36,7 @@ class Army(Unit,pygame.sprite.Sprite):
         
         """
         if self.formation == 1:
+            self.name = "Spear infantry"
             self.base_march = 3
             self.base_attack = 20.5
             self.base_defence = 25
@@ -47,6 +48,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.movement_type = [1]
             self.banner = pygame.image.load("images/Spear.png")
         elif self.formation == 0:
+            self.name = "Guard"
             self.base_march = 3
             self.base_attack = 22
             self.base_defence = 26
@@ -58,6 +60,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.movement_type = [1]
             self.banner = pygame.image.load("images/guard.png")
         elif self.formation == 2:
+            self.name = "Archers"
             self.base_march = 3
             self.base_attack = 19
             self.base_defence = 27
@@ -69,6 +72,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.movement_type = [1]
             self.banner = pygame.image.load("images/Bow.png")
         elif self.formation == 4:
+            self.name = "Catapult"
             self.base_march = 2.5
             self.base_attack = 25
             self.base_defence = 20
@@ -80,6 +84,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.movement_type = [1]
             self.banner = pygame.image.load("images/catapult.png")
         elif self.formation == 3:
+            self.name = "Light cavalry"
             self.base_march = 4
             self.base_attack = 22
             self.base_defence = 22
@@ -91,6 +96,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.movement_type = [1]
             self.banner = pygame.image.load("images/Horse.png")
         elif self.formation == 7:
+            self.name = "Militia"
             self.base_march = 3.5
             self.base_attack = 16.5
             self.base_defence = 13
@@ -102,6 +108,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.movement_type = [1]
             self.banner = pygame.image.load("images/Militia.png")
         elif self.formation == 100:
+            self.name = "Settlers"
             self.base_march = 3
             self.base_attack = 5
             self.base_defence = 10
@@ -113,6 +120,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.movement_type = [1]
             self.banner = pygame.image.load("images/Settler.png")
         elif self.formation == 201:
+            self.name = "Hulk"
             self.base_march = 3.5
             self.base_attack = 8.5
             self.base_defence = 15.5
@@ -126,6 +134,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.movement_type = [2]
             self.banner = pygame.image.load("images/Transport_boat.png")
         elif self.formation == 202:
+            self.name = "Ramming Ship"
             self.base_march = 3.5
             self.base_attack = 20
             self.base_defence = 15
@@ -139,6 +148,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.movement_type = [2]
             self.banner = pygame.image.load("images/Ram_boat.png")
         elif self.formation == 400:
+            self.name = "Alpinist unit"
             self.base_march = 3.5
             self.base_attack = 20
             self.base_defence = 15
@@ -1102,5 +1112,10 @@ class Army(Unit,pygame.sprite.Sprite):
             arm.march -= cost
             if arm.owner.is_AI != True:
                 Text.add_text(texts,f"Movement left {arm.march}")
+    def Id_to_name(input_ID):
+        IDs = {0:"Guard",1:"Spear infantry",2:"Archers",3:"Light cavalry",4:"Catapult",7:"Militia",100:"Settlers",201:"Hulk",202:"Ramming ship",400:"Alpinistic unit"}
+        for ID, name in IDs.items():
+            if ID == input_ID:
+                return name
     
 

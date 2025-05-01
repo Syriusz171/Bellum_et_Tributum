@@ -219,9 +219,12 @@ def start(bonus_starting_gold,modes,map,map_name=None):
 # ------------------ Terrain
 terrains = Terrain.generate("Start_menu")
 #-------------------
+show_selected = False
+#--------------------
 REAL_show_production = False
 menu = 1
 selected_type = 0
+spawn_type = 0
 #
 players = pygame.sprite.Group()
 players.add(player1)
@@ -270,6 +273,9 @@ while game_on:
                         army.on_boat = False
                     Village.unselect_villages(villages,texts)
                     Text.deactivate_text(texts,"vill_type")
+                    selected_type = 0
+                    spawn_type = 0
+                    show_selected = False
                 do_input = False
                 special_input = 'return'
                 #====Moving====#
@@ -286,6 +292,14 @@ while game_on:
                 Army.unselect(armies_,texts)
                 Village.unselect_villages(villages,texts)
                 #====End====#
+            elif event.key == pygame.K_LEFT:
+                selected_type -= 1
+                if selected_type < 1:
+                    selected_type = 8
+            elif event.key == pygame.K_RIGHT:
+                selected_type += 1
+                if selected_type > 8:
+                    selected_type = 1
             elif event.key == pygame.K_BACKSPACE:
                 if do_input:
 
@@ -298,6 +312,7 @@ while game_on:
             elif event.key == pygame.K_SPACE:
                 print(selected_type)
                 new_village = None
+                #========Town founding=======#
                 for arm in armies_:
                     if arm.formation == 100 and arm.selected:
                         can_found_village = True
@@ -358,6 +373,7 @@ while game_on:
                                         type1 = 202
                                     else:
                                         type1 = selected_type
+                                    spawn_type = type1
                                     if type1 >= 200 and type1 <= 250:
                                         if vil.vill_type != 20:
                                             Text.add_text(texts,"Must be build in port town!")
@@ -366,6 +382,7 @@ while game_on:
                                     if new_army is not None:
                                         armies.add(new_army)
                                         armies_.add(new_army)
+                                        show_selected = False
                                         Text.deactivate_text(texts,"conscript")
                                         Village.unselect_villages(villages,texts)
                                         Player.get_armied(vil.owner,new_army)
@@ -418,6 +435,17 @@ while game_on:
             game_on = False
         elif event.type == REFRESH:
             Player.check_production(villages,players)
+            if selected_type == 5:
+                type1 = 100
+            elif selected_type == 6:
+                type1 = 400
+            elif selected_type == 7:
+                type1 = 201
+            elif selected_type == 8:
+                type1 = 202
+            else:
+                type1 = selected_type
+            spawn_type = type1
             for arm in armies_:
                 if arm.owner.is_AI > 0:
                     particles.empty()
@@ -426,6 +454,8 @@ while game_on:
                     villages_ = turn_return[1]
                     game_turn = turn_return[2]
                     selected_type = 0
+                    spawn_type = 0
+                    show_selected = False
                     Village.unselect_villages(villages,texts)
                     Text.deactivate_text(texts,"vill_type")
                     break
@@ -457,6 +487,10 @@ while game_on:
 
             if clicked_village is not None and len(kliczek_collide) == 0:
                 clicked_village.select_village(villages,texts)
+                if clicked_village.selected == False:
+                    show_selected = False
+                else:
+                    show_selected = True
                 Text.activate_text(texts,"conscipt")
                     
             if kliczek_button is not None:
@@ -562,6 +596,7 @@ while game_on:
                     print(kliczek_collide2.selected)
                     if kliczek_collide2.formation == 100:
                         Text.activate_text(texts,"vill_type")
+    #========BLITING========#
     if menu != 1:
         screen.blit(background_image, (0,0))
     else:
@@ -608,6 +643,12 @@ while game_on:
             screen.blit(please_wait,(70,600))
     Particle.render_particles(particles,screen)
     Text.print_text(texts,screen)
+
+    if show_selected and spawn_type != 0:
+        Unitname = Army.Id_to_name(spawn_type)
+        show_selected_text = font_small.render(f"Selected unit {selected_type}: The {Unitname}",False,(31,31,200))
+        screen.blit(show_selected_text,(490,200))
+
     if was_defeated != False:
         if was_defeated.defeted_tell_not != True:
             if date_of_today.month == 4 and date_of_today.day == 1 or config.force_jokes:

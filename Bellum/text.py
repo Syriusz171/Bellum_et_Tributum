@@ -50,7 +50,6 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,"8 -> Ram boat:","conscipt",False,None,550,650)
         Text.add_text(texts,"Press \'c\' to cancel;","conscipt",False,None,550,680)
         Text.add_text(texts,"Press \'Space\' to conscipt army;","conscipt",False,None,550,706)
-
     def activate_text(texts,type_act):
         for t in texts:
             if t.type == type_act:
