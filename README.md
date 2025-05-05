@@ -1,6 +1,6 @@
 # Bellum et Tributum
 The world's worst turn-based strategy game! The name is temporary and it will be changed!  
-## **WARMING**  
+## **WARNING**  
 The game is <ins>**not**</ins> completed!  
 Requires Python and Pygame to be installed on your computer!
 ### Game modes:  
