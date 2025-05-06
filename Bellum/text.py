@@ -30,6 +30,8 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,"O ---> Village ownership visibility","keys",False,None,550,560)
         Text.add_text(texts,"P ---> Army ownership visibility","keys",False,None,550,600)
         Text.add_text(texts,"Right Shift ---> Clear chat","keys",False,None,550,640)
+        Text.add_text(texts,"F1 ---> Save armies","keys",False,None,550,675)
+        Text.add_text(texts,"TAB ---> Switch to saved armies","keys",False,None,550,710)
         Text.add_text(texts,"Village types:","vill_type",False,None,550,400)
         Text.add_text(texts,"1 -> Lumber:","vill_type",False,None,550,430)
         Text.add_text(texts,"2 -> Food:","vill_type",False,None,550,460)

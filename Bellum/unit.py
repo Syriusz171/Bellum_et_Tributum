@@ -48,23 +48,8 @@ class Unit():
                 self.attack -= 3
             if enemy.owner.food == 0:
                 enemy.defence -= 3
-                #Morale
-            if enemy.morale >= 12 and enemy.morale <20:
-                enemy.defence += 1
-            elif enemy.morale > 20:
-                enemy.defence += 2
-            elif enemy.morale <= 8 and enemy.morale > 0:
-                enemy.defence -= 1
-            elif enemy.morale < 0:
-                enemy.defence -= 2
-            if self.morale >= 12 and self.morale <20:
-                self.attack += 1
-            elif self.morale > 20:
-                self.attack += 2
-            elif self.morale <= 8 and self.morale > 0:
-                self.attack -= 1
-            elif self.morale < 0:
-                self.attack -= 2
+                #=====Morale=====#
+            Unit.morale_combat(self,enemy)
             if self.is_boat:
                 if enemy.formation in [202]:
                     self.attack += self.anti_ram_bonus
@@ -95,10 +80,11 @@ class Unit():
                     for unit in enemy.units_boat:
                         if unit.is_boat != True:
                             enemy.defence += unit.base_defence * 0.50
-            if  self.health *2 < self.base_health:
-                self.attack -= 1
-            if  enemy.health *2 < enemy.base_health:
-                enemy.defence -= 1
+            #-----HEALTH
+            if self.health < self.base_health * 0.8:
+                self.attack -= self.base_attack * (self.health/self.base_health*0.9)
+            if enemy.health < enemy.base_health * 0.8:
+                enemy.defence -= enemy.base_defence * (enemy.health/enemy.base_health*0.9)
             self.attack += random.randint(-2,2)
             if self.formation == 1 or self.formation == 2 or self.formation == 0 or self.formation == 100:
                 enemy.defence += enemy.anti_infantry_bonus
@@ -268,6 +254,7 @@ class Unit():
     def add_group(added,group):
         if added is not None:
             group.add(added)
+    #========== MORALE ==========#
     def morale_change(army,enemy,location):
         x = location[0]
         y = location[1]
@@ -277,6 +264,33 @@ class Unit():
         for me in enemy:
             if me.rect.colliderect((x-64,y-64,x+64,y+64)):
                 me.morale -= 1
+    def morale_combat(attacker,defender):
+        if attacker.morale > 12 and attacker.morale <=20:
+            attacker.attack += 1
+        elif attacker.morale > 20 and attacker.morale <=30:
+            attacker.attack += 2
+        elif attacker.morale > 30 and attacker.morale <=100:
+            attacker.attack += 2.5
+        elif attacker.morale > 100:
+            attacker.attack += 3.5
+        elif attacker.morale < 8 and attacker.morale >= 0:
+            attacker.attack -= 1
+        elif attacker.morale < 0:
+            attacker.attack -= 2
+
+        
+        if defender.morale > 12 and defender.morale <=20:
+            defender.defence += 1
+        elif defender.morale > 20 and defender.morale <=30:
+            defender.defence += 2
+        elif defender.morale > 30 and defender.morale <=100:
+            defender.defence += 2.5
+        elif defender.morale > 100:
+            defender.defence += 3.5
+        elif defender.morale < 8 and defender.morale >=0:
+            defender.defence -= 1
+        elif defender.morale < 0:
+            defender.defence -= 2
     def check_if_die(self):
         if self.health <= 0:
             self.kill()

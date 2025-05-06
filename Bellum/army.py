@@ -931,6 +931,10 @@ class Army(Unit,pygame.sprite.Sprite):
                     if arm.owner.is_AI != True:
                         Text.add_text(texts,"Cannot increase pressure of armies (stack them)!")
                     continue
+                if cost > arm.march:
+                    if arm.owner.is_AI != True:
+                        Text.add_text(texts,"Cannot move: Not enough movement!")
+                    continue
                 if len(enemies) >= 1:
                     town = None
                     boat = None
@@ -950,13 +954,9 @@ class Army(Unit,pygame.sprite.Sprite):
                         if battle == False:
                             continue
                     else:
-                        battle = Unit.attack(arm,town,True,texts)
+                        battle = Unit.attack(arm,town,False,texts)
                         if battle == False:
                             continue
-                if cost > arm.march:
-                    if arm.owner.is_AI != True:
-                        Text.add_text(texts,"Cannot move: Not enough movement!")
-                    continue
                 if arm.direction == Direction.UP:
                     arm.rect.move_ip(0,-32)
                 elif arm.direction == Direction.BOTTOM:

@@ -21,6 +21,7 @@ class Player(pygame.sprite.Sprite):
         self.p_gold = 0
         self.active = False
         self.armies = pygame.sprite.Group()
+        self.F1armies = pygame.sprite.Group()
         self.villages = pygame.sprite.Group()
         self.is_AI = AI
     def check_production(villages,players):

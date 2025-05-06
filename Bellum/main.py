@@ -18,7 +18,7 @@ HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 config = Config()
-pygame.display.set_caption("Bellum et Tributum Dev -0.9 Build 4")
+pygame.display.set_caption("Bellum et Tributum Dev -0.9 Build 5")
 icon_of_BeT = pygame.image.load("images/city.png")
 pygame.display.set_icon(icon_of_BeT)
 pygame.init()
@@ -27,13 +27,15 @@ background_image = pygame.image.load("images/Background.png")
 background_image2 = pygame.image.load("images/Bellum_menu_neo.png")
 player1 = Player(1,"Player1")
 player2 = Player(2,config.playerNr2Name)
+player = player1
 font = pygame.font.SysFont("Times New Roman",20)
 font_big = pygame.font.SysFont("Segoe Print Bold",36)
 font_small = pygame.font.SysFont("Times New Roman",12)
 texts = pygame.sprite.Group()
 particles = pygame.sprite.Group()
+Particle.starting_menu_particles(particles)
 Text.init_texts(texts)
-version = font.render("version: Dev -0.9 Build 4",False,(160,200,200))
+version = font.render("version: Dev -0.9 Build 5",False,(160,200,200))
 #army = Army(2,1)
 visible_village_owner = False
 visible_army_owner = True
@@ -215,6 +217,7 @@ def start(bonus_starting_gold,modes,map,map_name=None):
     for vil in player1.villages:
         villages_.add(vil)
     Text.add_text(texts,(f"{player1.name} turn"))
+    particles.empty()
     return terrains
 # ------------------ Terrain
 terrains = Terrain.generate("Start_menu")
@@ -255,6 +258,9 @@ while game_on:
                     armies_ = turn_return[0]
                     villages_ = turn_return[1]
                     game_turn = turn_return[2]
+                    for army in armies_:#Active player
+                        player = army.owner
+                        break
                     selected_type = 0
                     not_boated = armies.copy()
                     for arm in armies:
@@ -292,6 +298,16 @@ while game_on:
                 Army.unselect(armies_,texts)
                 Village.unselect_villages(villages,texts)
                 #====End====#
+                #====Saving Armies====#
+            elif event.key == pygame.K_F1:
+                player.F1armies.empty()
+                for army in player.armies:
+                    if army.selected:
+                        player.F1armies.add(army)
+            elif event.key == pygame.K_TAB:
+                Army.unselect(armies_,texts)
+                for army in player.F1armies:
+                    army.selected = True
             elif event.key == pygame.K_LEFT:
                 selected_type -= 1
                 if selected_type < 1:
@@ -361,7 +377,7 @@ while game_on:
                                 if vil.vill_type != 60 and vil.can_conscript_turns > 0:
                                     Text.add_text(texts,f"This village cannot create army in the next {vil.can_conscript_turns} turns!")
                                 elif vil.health <= 0:
-                                    Text.add_text(texts,"This village is ruined! Cannot create army!")
+                                    Text.add_text(texts,"This village is ruined! Cannot conscript the army!")
                                 else:
                                     if selected_type == 5:
                                         type1 = 100
@@ -453,6 +469,9 @@ while game_on:
                     armies_ = turn_return[0]
                     villages_ = turn_return[1]
                     game_turn = turn_return[2]
+                    for army in armies_:#Active player
+                        player = army.owner
+                        break
                     selected_type = 0
                     spawn_type = 0
                     show_selected = False
@@ -564,6 +583,7 @@ while game_on:
                         handicap2.activate_button(False)
                         handicap1.activate_button(False)
                         alpinist_off.activate_button(False)
+
                         if input_text.lower() == "map":
                             map = "deserted"
                             modes = [1]
@@ -642,6 +662,7 @@ while game_on:
             please_wait = font_big.render(f"Please wait!",False,(142,130,130))
             screen.blit(please_wait,(70,600))
     Particle.render_particles(particles,screen)
+    Particle.rotate_them(particles)
     Text.print_text(texts,screen)
 
     if show_selected and spawn_type != 0:
