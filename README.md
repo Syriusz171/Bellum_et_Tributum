@@ -10,7 +10,7 @@ Requires Python and Pygame to be installed on your computer!
   
 The game is about founding villages and conscripting armies and fighting using them!  
 ### Known issues  
-- multi-army movement (and yes, it DOES excist) works badly when one army moves onto the tile where was another moving army
+- Multi-army movement (and yes, it DOES excist) works badly when one army moves onto the tile where was another moving army
 - Game sometimes crashes when terrain is generated (I think that it is fixed but I am not sure).
 ### Plans (or rather dreams of mine):
 - Mode to fight bots (badly completed!)
