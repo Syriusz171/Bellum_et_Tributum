@@ -26,6 +26,7 @@ class Turn(Army):
                     Player.mk2_collect_global(players)
                     Village.turns_left_change(villages)
                     Army.summon_militia_global(players,armies,texts,config)
+                    Army.spawn_at_enemy_points(players,armies,terrains,texts,config)
                     #Army.pathfind(p,armies,villages,terrains,particles)
                     for pe in players:
                         pe.active = True

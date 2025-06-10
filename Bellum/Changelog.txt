@@ -1,11 +1,11 @@
 Added:
-- When clicked on a town, it will show the ID and the name of selected unit,
-- Allowed to change selected unit by using left and right arrow keys,
-- F1 key now saves selected armies,
-- Use of TAB to switch to F1 armies,
-- Little dagger particle next to version.
+- Invasion mode (endless attacks of alcoholic armies),
+- Bastion map for this mode,
+- AI starts with additional archer,
 Changed:
-- Morale bonus now can be bigger,
-- Armies loose strength when below 80% health.
-Fixed:
--Fixed bug where villages were destroyed and armies not moving after victory.
+- Coast map now enabled by default,
+- AI (or AnI as I call it) can now make other units,
+- Increased spearman spawn rate,
+- AI villages now get bonus 8 health and 4 strength (instead of 4 and 2),
+- AI archers and low health units are not less likely to attack,
+- Moved buttons for pre-made maps to left side of the menu.

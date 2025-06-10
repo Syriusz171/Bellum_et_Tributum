@@ -1,8 +1,8 @@
 import pygame
 import random
-from maps import yorktown
+from maps import yorktown, bastion
 class Terrain(pygame.sprite.Sprite):
-    def __init__(self,form,starting_rect,generation=7,fixed_texture=None) -> None:
+    def __init__(self,form,starting_rect,generation=7,fixed_texture=None,owner=None) -> None:
         super().__init__()
         self.form = form
         self.generation = generation
@@ -10,6 +10,8 @@ class Terrain(pygame.sprite.Sprite):
         self.x = starting_rect[0]
         self.y = starting_rect[1]
         self.rect = pygame.Rect(starting_rect[0]+1,starting_rect[1],30,30)
+        
+        self.owner = owner
         #Move type 0 = impassable, 1 = land unit passable, 2 = water, 5 = mountain
         if self.form == 1: #Woods, good for lumberjacks
             self.movement_cost = 1.5
@@ -73,6 +75,7 @@ class Terrain(pygame.sprite.Sprite):
             self.movement_cost = 4
             self.move_type = 6
             self.look = pygame.image.load("images/enemy_spawn_tile.png")
+        #self.rect = self.look.get_rect(bottomleft=starting_rect)
     def generate(type,map_name = None):
         terrain_list = pygame.sprite.Group()
         """
@@ -464,6 +467,8 @@ class Terrain(pygame.sprite.Sprite):
                         new_terrain = None
                     elif map_terrain[b][a] in [2.5,2.6]:
                         new_terrain = Terrain(2,location,1,map_terrain[b][a])
+                    elif int(map_terrain[b][a]) > 410:
+                        new_terrain = Terrain(41,location,owner=map_terrain[b][a])
                     else:
                         new_terrain = Terrain(map_terrain[b][a],location)
                     if new_terrain is not None:
@@ -505,6 +510,10 @@ class Terrain(pygame.sprite.Sprite):
             map_terrain_data = yorktown.terrain_map
             map_village_data = yorktown.villages
             map_army_data = yorktown.armies
+        elif name == "bastion":
+            map_terrain_data = bastion.terrain_map
+            map_village_data = bastion.villages
+            map_army_data = bastion.armies
         return [map_terrain_data, map_village_data, map_army_data]
     def similar_terrains_check(terrain):
         if terrain in [4,40]:

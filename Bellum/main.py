@@ -18,7 +18,7 @@ HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 config = Config()
-pygame.display.set_caption("Bellum et Tributum Dev -0.9 Build 5")
+pygame.display.set_caption("Bellum et Tributum Dev -0.9 Build 6")
 icon_of_BeT = pygame.image.load("images/city.png")
 pygame.display.set_icon(icon_of_BeT)
 pygame.init()
@@ -35,7 +35,7 @@ texts = pygame.sprite.Group()
 particles = pygame.sprite.Group()
 Particle.starting_menu_particles(particles)
 Text.init_texts(texts)
-version = font.render("version: Dev -0.9 Build 5",False,(160,200,200))
+version = font.render("version: Dev -0.9 Build 6",False,(160,200,200))
 #army = Army(2,1)
 visible_village_owner = False
 visible_army_owner = True
@@ -53,13 +53,18 @@ handicap1 = Button(5,(22*32+16,12*32+18),False)
 handicap2 = Button(6,(2*32+16,12*32+18),False)
 alpinist_off = Button(400,(17*32+1,12*32+16),False)
 generate_map = Button(20,(20*32+1,12*32+16),False)
-yorktown_map = Button(15,(18*32+16,14*32+18),False)
-map_buttons.add(yorktown_map)
-buttons.add(yorktown_map)
-if config.developer_mode:
-    test_map_button = Button(14,(8*32+16,3*32+18),False)
-    buttons.add(test_map_button)
-    map_buttons.add(test_map_button)
+yorktown_map = Button(15,(9*32+16,14*32+18),False)
+bastion_map_icon = Button(16,(9*32+16,10*32+18),False)
+def add_map_button(button,maps=map_buttons,all_buttons=buttons):
+    maps.add(button)
+    maps.add(button)
+    all_buttons.add(button)
+add_map_button(yorktown_map)
+add_map_button(bastion_map_icon)
+#if config.developer_mode:
+test_map_button = Button(14,(8*32+16,3*32+18),False)
+buttons.add(test_map_button)
+map_buttons.add(test_map_button)
 buttons.add(generate_map)
 buttons.add(start_quick)
 buttons.add(alpinist_off)
@@ -101,6 +106,12 @@ def start(bonus_starting_gold,modes,map,map_name=None):
         return_list = Terrain.generate(map,map_name)
         villages_return = return_list[1]
         terrains = return_list[0]
+        for terrain in terrains:
+            if terrain.form == 41:
+                for p in players:
+                    if int(terrain.owner[-1]) == p.number:
+                        terrain.owner = p
+                        break
         armies_return = return_list[2]
         for vil in villages_return:
             if vil[3] == 1:
@@ -199,6 +210,9 @@ def start(bonus_starting_gold,modes,map,map_name=None):
             if collision is not None:
                 collision.kill()
             army = Army.conscript(1,player2,(10*32,14*32),False,texts,True)
+            player2.get_armied(army)
+            armies.add(army)
+            army = Army.conscript(2,player2,(4*32,13*32),False,texts,True)
             player2.get_armied(army)
             armies.add(army)
             army = Army.conscript(1,player2,(2*32,12*32),False,texts,is_defending=True)
@@ -551,7 +565,7 @@ while game_on:
                             player1.gold_handicap = 0
                 elif kliczek_button.type == 400 and menu == 1:
                     enable_alpinist = alpinist_off.update_button()
-                if kliczek_button.type in [11,12,13,14,15] and kliczek_button.active:
+                if kliczek_button.type in [11,12,13,14,15,16] and kliczek_button.active:
                     modes = [1]
                     map_name = None
                     if kliczek_button.type == 12: #Map selection 3 I AD 2025 19:40
@@ -561,9 +575,13 @@ while game_on:
                     elif kliczek_button.type == 15:
                         map = "manual"
                         map_name = "yorktown"
+                        #map_name = "bastion"
                     elif kliczek_button.type == 14:
                         map = "coast"
                         modes.append("Dev")
+                    elif kliczek_button.type == 16:
+                        map = "manual"
+                        map_name = "bastion"
                     else:
                         map = "track"
                     Text.add_text(texts,f"Selected \'{map}\' map!")

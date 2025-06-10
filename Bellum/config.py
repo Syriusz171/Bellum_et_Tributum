@@ -14,7 +14,9 @@ class Config():
         self.playerNr2AI = 1
         # Difficulty, requires player2 to be AI! Max value is 7. Controls how often AI spawns troops. Default value is 2.
         self.difficulty = 7
-        # Controls if the AI has small chance of spawning spearman instead of militia.
+        # Controls if the AI has a chance of spawning a spearman unit instead of militia one. Does not apply to invasion mode.
         self.allow_AI_spearman = True
+        # Controls if AI can make other units.
+        self.allow_AI_units = True
         # Force April Fools mode! Forces game to load jokes!
         self.force_jokes = False

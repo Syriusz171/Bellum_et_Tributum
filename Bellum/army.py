@@ -486,6 +486,25 @@ class Army(Unit,pygame.sprite.Sprite):
     def draw_armies(self,screen,armies): #DEPRACADED!
         for army in armies:
             screen.blit(self.banner, self.rect)
+    def spawn_at_enemy_points(players,armies,terrains,texts,config):
+        for terrain in terrains:
+            if terrain.form == 41:
+                if random.randint(1,40+config.difficulty) > 20:
+                    who_to_select = random.randint(1,100)
+                    if who_to_select > 91:
+                        new_army = Army.conscript(7,terrain.owner,(terrain.x,terrain.y+32),False,texts)
+                    elif who_to_select > 30:
+                        new_army = Army.conscript(1,terrain.owner,(terrain.x,terrain.y+32),False,texts)
+                    elif who_to_select > 15:
+                        new_army = Army.conscript(3,terrain.owner,(terrain.x,terrain.y+32),False,texts)
+                    elif who_to_select > 12:
+                        new_army = Army.conscript(4,terrain.owner,(terrain.x,terrain.y+32),False,texts)
+                    elif who_to_select > 11:
+                        new_army = Army.conscript(2,terrain.owner,(terrain.x,terrain.y+32),False,texts)
+                    else:
+                        new_army = Army.conscript(0,terrain.owner,(terrain.x,terrain.y+32),False,texts)
+                    armies.add(new_army)
+                    new_army.owner.armies.add(new_army)
     def summon_militia_global(players,armies,texts,config): #Militia at 14:02 17 II AD 2025
         for player in players:
             if player.is_AI == 1:
@@ -496,9 +515,21 @@ class Army(Unit,pygame.sprite.Sprite):
                             continue
                         else:
                             if random.randint(1,8-config.difficulty) == 1:
-                                if config.allow_AI_spearman == True and random.randint(1,7) == 1:
+                                if config.allow_AI_spearman == True and random.randint(1,4) == 1:
                                     new_army = Army.conscript(1,player,(village.x,village.y),False,texts)
-                                elif random.randint(1,3) == 1 and village.vill_type == 20:
+                                elif config.allow_AI_units and random.randint(1,10) == 1:
+                                    what_unit = random.randint(0,20)
+                                    if what_unit in [3,4,5]:
+                                        new_army = Army.conscript(4,player,(village.x,village.y),False,texts)
+                                    elif what_unit == 2:
+                                        new_army = Army.conscript(2,player,(village.x,village.y),False,texts)
+                                    elif what_unit == 0:
+                                        new_army = Army.conscript(0,player,(village.x,village.y),False,texts)
+                                    elif what_unit == 6:
+                                        new_army = Army.conscript(400,player,(village.x,village.y),False,texts)
+                                    else:
+                                        new_army = Army.conscript(3,player,(village.x,village.y),False,texts)
+                                elif random.randint(1,4) < 3 and village.vill_type == 20:
                                     new_army = Army.conscript(202,player,(village.x,village.y),False,texts)
                                 else:
                                     new_army = Army.conscript(7,player,(village.x,village.y),False,texts)
@@ -604,7 +635,12 @@ class Army(Unit,pygame.sprite.Sprite):
                     can_move_north = False
 
             if len(priorities) != 0:
-                if random.randint(1,5) == 1:
+                not_attacking_chance_bonus = 0
+                if arm.formation == 2:
+                    not_attacking_chance_bonus = 1
+                if arm.health/arm.base_health < 0.3:
+                    not_attacking_chance_bonus +=2
+                if random.randint(1,5+not_attacking_chance_bonus) > 4:
                     pass
                 else:
                     direction_of_move = choice(priorities)
@@ -871,6 +907,7 @@ class Army(Unit,pygame.sprite.Sprite):
                 if x >= 800 or y > 800 or x <0 or y<=0:
                     if arm.owner.is_AI != True:
                         Text.add_text(texts,"You cannot leave the map!")
+                    break
                 x+=1
                 y+=1
                 colliders = pygame.sprite.Group()
@@ -1015,6 +1052,7 @@ class Army(Unit,pygame.sprite.Sprite):
             if x >= 800 or y > 800 or x <0 or y<=0:
                 if arm.owner.is_AI != True:
                     Text.add_text(texts,"You cannot leave the map!")
+                return
             x+=1
             y+=1
             colliders = pygame.sprite.Group()

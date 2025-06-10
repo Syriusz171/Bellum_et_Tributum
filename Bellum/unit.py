@@ -93,7 +93,6 @@ class Unit():
             enemy.defence += random.randint(-2,2)
             damage_self = (1.5*((enemy.defence*1.1+1)-self.attack*0.60))+4
             damage_enemy = (1.5*((self.attack*1.1+1)-enemy.defence*0.60))
-            print(f"{damage_enemy} juj")
             if damage_self < 4:
                 damage_self = 4
             if damage_enemy < 4:
