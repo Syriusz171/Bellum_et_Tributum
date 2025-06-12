@@ -7,7 +7,7 @@ Changed:
 - AI (or AnI as I call it) can now make other units,
 - Increased spearman spawn rate,
 - AI villages now get bonus 8 health and 4 strength (instead of 4 and 2),
-- AI archers and low health units are not less likely to attack,
+- AI archers and low health units are less likely to attack,
 - Moved buttons for pre-made maps to left side of the menu,
 - Made new prices for armies, (and code for that is now better)
 - Villages' taxes have been rised by 0.05 and port town's by 0.1,
