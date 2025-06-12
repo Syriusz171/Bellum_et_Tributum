@@ -306,6 +306,39 @@ class Unit():
         else:
             if unit.owner.is_AI != 1:
                 Text.add_text(texts,"No direction given! Report it to Syriusz171")
+    def buy(costList,player,texts=None):
+        '''Takes input of cost list and player. Checks if the player can afford the cost,
+        if so, it is taken from the player. Returns True or False values.
+        Can output texts.'''
+        if costList[0] > player.gold:
+            if texts is not None:
+                Text.add_text(texts,"Not enough gold!")
+            return False
+        if costList[1] > player.lumber:
+            if texts is not None:
+                if random.randint(0,11) == 0:
+                    Text.add_text(texts,"More wood is needed!")
+                else:
+                    Text.add_text(texts,"Not enough lumber!")
+            return False
+        if costList[2] > player.food:
+            if texts is not None:
+                Text.add_text(texts,"Not enough food!")
+            return False
+        if costList[3] > player.spear:
+            if texts is not None:
+                Text.add_text(texts,"Not enough spears!")
+            return False
+        if costList[4] > player.bow:
+            if texts is not None:
+                Text.add_text(texts,"Not enough bows!")
+            return False
+        player.gold -= costList[0]
+        player.lumber -= costList[1]
+        player.food -= costList[2]
+        player.spear -= costList[3]
+        player.bow -= costList[4]
+        return True
     def bandit_get_killed(town,killer):
         town.kill()
         killer.gold += random.randint(20,25)

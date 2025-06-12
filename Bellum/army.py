@@ -86,7 +86,7 @@ class Army(Unit,pygame.sprite.Sprite):
         elif self.formation == 3:
             self.name = "Light cavalry"
             self.base_march = 4
-            self.base_attack = 22
+            self.base_attack = 22.5
             self.base_defence = 22
             self.base_health = 100
             self.village_bonus = 1
@@ -408,67 +408,10 @@ class Army(Unit,pygame.sprite.Sprite):
         player = owner
         constription_possible = None
         if normal_hire == True: #Normal hire is units that cost, if False units will be free
-            if type == 1:
-                if player.gold >= 3 and player.food >= 7 and player.spear >= 20:
-                    player.gold -= 3
-                    player.food -= 7
-                    player.spear -= 20
-                    constription_possible = True
-                else:
-                    constription_possible = False
-            elif type == 2:
-                if player.gold >= 5 and player.food >= 7 and player.bow >= 4 and player.lumber >= 1:
-                    player.gold -= 5
-                    player.food -= 7
-                    player.bow -= 4
-                    player.lumber -= 1
-                    constription_possible = True
-                else:
-                    constription_possible = False
-            elif type == 3:
-                if player.gold >= 10 and player.food >= 10 and player.spear >= 16:
-                    player.gold -= 10
-                    player.food -= 10
-                    player.spear -= 16
-                    constription_possible = True
-                else:
-                    constription_possible = False
-            elif type == 4:
-                if player.gold >= 15 and player.food >= 3 and player.lumber >= 10:
-                    player.gold -= 15
-                    player.food -= 3
-                    player.lumber -= 10
-                    constription_possible = True
-                else:
-                    constription_possible = False
-            elif type == 100:
-                if player.gold >= 10:
-                    player.gold -= 10
-                    constription_possible = True
-                    #Text.add_text(texts,constription_possible)
-                else:
-                    constription_possible = False
-            elif type == 201:
-                if player.gold >= 22 and player.food >= 4 and player.lumber >= 20:
-                    player.gold -= 22
-                    player.food -= 4
-                    player.lumber -= 20
-                    constription_possible = True
-            elif type == 202:
-                if player.gold >= 32 and player.food >= 10 and player.lumber >= 30 and player.bow >= 1 and player.spear >= 2:
-                    player.gold -= 32
-                    player.food -= 10
-                    player.lumber -= 30
-                    player.bow -= 1
-                    player.spear -= 2
-                    constription_possible = True
-            elif type == 400:
-                if player.gold >= 30 and player.food >= 12 and player.lumber >= 6 and player.bow >= 2:
-                    player.gold -= 30
-                    player.food -= 12
-                    player.lumber -= 6
-                    player.bow -= 2
-                    constription_possible = True
+            if Unit.buy(Army.conscript_get_cost(type),owner,texts):
+                constription_possible = True
+            else:
+                constription_possible = False
         else:
             constription_possible = True
         if constription_possible:
@@ -1155,5 +1098,28 @@ class Army(Unit,pygame.sprite.Sprite):
         for ID, name in IDs.items():
             if ID == input_ID:
                 return name
+    def conscript_get_cost(ID):
+        # GOLD, LUMBER, FOOD, SPEARS, BOWS
+        if ID == 0:
+            return(70,20,25,30,5)
+        elif ID == 1:
+            return (10,1,7,20,0)
+        elif ID == 2:
+            return (15,5,5,0,4)
+        elif ID == 3:
+            return (25,1,15,20,0)
+        elif ID == 4:
+            return (30,20,8,1,0)
+        elif ID == 7:
+            return (5,0,15,5,0)
+        elif ID == 100:
+            return (20,0,0,0,0)
+        elif ID == 201:
+            return (30,20,2,0,0)
+        elif ID == 202:
+            return (40,25,10,10,1)
+        elif ID == 400:
+            return (30,10,10,10,3)
     
+
 

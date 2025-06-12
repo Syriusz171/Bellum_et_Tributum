@@ -49,24 +49,24 @@ class Village(Unit,pygame.sprite.Sprite):
         if vill_type == 1:
             self.p_lumber = 5
             self.food_usage = 1
-            self.tax = 0.1
+            self.tax = 0.15
             self.banner = pygame.image.load("images/village_lumber.png")
         if vill_type == 2:
             self.p_food = 6
             self.food_usage = 1
-            self.tax = 0.1
+            self.tax = 0.15
             self.banner = pygame.image.load("images/village_food.png")
         if vill_type == 3:
             self.lumber_usage_for_spear = 1
             self.food_usage = 1
-            self.tax = 0.15
+            self.tax = 0.2
             self.p_spear = 5
             self.banner = pygame.image.load("images/village_spear.png")
         elif vill_type == 4:
             self.lumber_usage_for_bow = 1.05
             self.food_usage = 1
             self.p_bow = 1
-            self.tax = 0.15
+            self.tax = 0.2
             self.banner = pygame.image.load("images/village_bow.png")
         elif vill_type == 5:
             self.lumber_usage_for_mining = 1
@@ -78,14 +78,14 @@ class Village(Unit,pygame.sprite.Sprite):
             self.lumber_usage_for_mining = 0.75
             self.food_usage = 1.15
             self.p_gold = 6
-            self.tax = 0.15
+            self.tax = 0.2
             self.banner = pygame.image.load("images/village_salt.png")
         elif vill_type == 20:
             self.lumber_usage_for_bow = 0.525
             self.p_bow = 0.5
             self.lumber_usage_for_spear = 0.2
             self.p_spear = 1
-            self.tax = 2.9
+            self.tax = 3.0
             self.food_usage = 2
             self.banner = pygame.image.load("images/port_town.png")
         self.health = self.base_health
