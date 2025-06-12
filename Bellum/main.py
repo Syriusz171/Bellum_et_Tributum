@@ -93,6 +93,8 @@ armies_ = pygame.sprite.Group()   #armies_ is sprites that belong to the player 
 def start(bonus_starting_gold,modes,map,map_name=None):
     #===== AI TEST =====#
     player2.is_AI = config.playerNr2AI
+    if map_name in ["bastion"]:
+        player2.is_AI = True
     if map_name in ["yorktown"]:
         if date_of_today.month == 4 and date_of_today.day == 1 or config.force_jokes:
             player_bandit = Player(3,"Germans")
