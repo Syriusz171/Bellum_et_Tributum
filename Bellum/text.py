@@ -1,4 +1,5 @@
 import pygame
+import currect_language
 class Text(pygame.sprite.Sprite):
     def __init__(self,text,type="chat",active=True,time_left = 160,p_x=300,p_y=550):
         super().__init__()
@@ -23,9 +24,9 @@ class Text(pygame.sprite.Sprite):
         print(new_text.text)
         texts.add(new_text)   
     def init_texts(texts):
-        Text.add_text(texts,"W,S,A,D ---> Move army","keys",False,None,550,400)
-        Text.add_text(texts,"Mouse click ---> Select/Deselect army","keys",False,None,550,440)
-        Text.add_text(texts,"Minus ---> Deselect player's armies","keys",False,None,540,480)
+        Text.add_text(texts,currect_language.wsad,"keys",False,None,550,400)
+        Text.add_text(texts,currect_language.mouse_key1,"keys",False,None,550,440)
+        Text.add_text(texts,currect_language.minus_key,"keys",False,None,540,480)
         Text.add_text(texts,"Enter ---> Turn","keys",False,None,550,520)
         Text.add_text(texts,"O ---> Village ownership visibility","keys",False,None,550,560)
         Text.add_text(texts,"P ---> Army ownership visibility","keys",False,None,550,600)

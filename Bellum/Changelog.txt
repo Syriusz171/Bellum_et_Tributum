@@ -1,15 +1,8 @@
-Added:
-- Invasion mode (endless attacks of alcoholic armies),
-- Bastion map for this mode,
-- AI starts with additional archer,
-Changed:
-- Coast map now enabled by default,
-- AI (or AnI as I call it) can now make other units,
-- Increased spearman spawn rate,
-- AI villages now get bonus 8 health and 4 strength (instead of 4 and 2),
-- AI archers and low health units are less likely to attack,
-- Moved buttons for pre-made maps to left side of the menu,
-- Made new prices for armies, (and code for that is now better)
-- Villages' taxes have been rised by 0.05 and port town's by 0.1,
-- Buffed attack of cavarly by 0.5,
-- Player start with 65 gold at the start (instead of 55),
+Main.py file is now Main.pyw
+army1.py has been removed since it was 100% useless
+Started work on translation
+Started making configs better
+Made Bastion map better
+Fixed:
+- File should now run without VScode
+- Fixed boats moving and leaving units on water

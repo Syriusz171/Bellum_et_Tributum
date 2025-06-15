@@ -8,6 +8,8 @@ from particle import Particle
 from random import choice
 from village import Village
 import random
+import currect_language
+#Rip army1.py 15.06.2025
 class Army(Unit,pygame.sprite.Sprite):
     def __init__(self,formation,owner,starting_rect,x=None,y=None,is_defending=False) -> None:
         super(Army,self).__init__()
@@ -36,7 +38,7 @@ class Army(Unit,pygame.sprite.Sprite):
         
         """
         if self.formation == 1:
-            self.name = "Spear infantry"
+            self.name = currect_language.spearman
             self.base_march = 3
             self.base_attack = 20.5
             self.base_defence = 25
@@ -947,7 +949,8 @@ class Army(Unit,pygame.sprite.Sprite):
                     arm.rect.move_ip(32,0)
                 if arm.is_boat:
                     for army in arm.units_boat:
-                        Army.move_me(army,players,armies,villages,terrains,direction,texts)
+                        Unit.just_move(army,direction,texts)
+                        #Army.move_me(army,players,armies,villages,terrains,direction,texts)
                 arm.march -= cost
                 if arm.owner.is_AI != True:
                     Text.add_text(texts,f"Movement left {arm.march}")
