@@ -59,12 +59,11 @@ rich_center_button = Button(13,(18*32+16,10*32+18),False)
 small_input = Button(1,(12*32+16,12*32+18),False)
 handicap1 = Button(5,(22*32+16,12*32+18),False)
 handicap2 = Button(6,(2*32+16,12*32+18),False)
-alpinist_off = Button(400,(17*32+1,12*32+16),False)
+alpinist_off = Button(400,(17*32-16,11*32+16),False)
 generate_map = Button(20,(20*32+1,12*32+16),False)
 yorktown_map = Button(15,(9*32+16,14*32+18),False)
 bastion_map_icon = Button(16,(9*32+16,10*32+18),False)
 def add_map_button(button,maps=map_buttons,all_buttons=buttons):
-    maps.add(button)
     maps.add(button)
     all_buttons.add(button)
 add_map_button(yorktown_map)
@@ -100,7 +99,7 @@ date_of_today = datetime.datetime.now()
 armies_ = pygame.sprite.Group()   #armies_ is sprites that belong to the player that has a turn now
 def start(bonus_starting_gold,modes,map,map_name=None):
     #===== AI TEST =====#
-    player2.is_AI = config.playerNr2AI
+    player2.is_AI = enable_AI_button.checked
     if map_name in ["bastion"]:
         player2.is_AI = True
     if map_name in ["yorktown"]:
@@ -240,8 +239,12 @@ def start(bonus_starting_gold,modes,map,map_name=None):
         armies_.add(arm)
     for vil in player1.villages:
         villages_.add(vil)
+    #===== Adding Buttons =====#
+    show_city_owner = Button("city_owner_vis",(819,700),True,"images/show_city_ownership.png")
+    buttons.add(show_city_owner)
     Text.add_text(texts,(f"{player1.name} turn"))
     particles.empty()
+    enable_AI_button.kill()
     return terrains
 # ------------------ Terrain
 terrains = Terrain.generate("Start_menu")
@@ -503,18 +506,6 @@ while game_on:
                     Text.deactivate_text(texts,"vill_type")
                     break
                 break
-            """for arm in armies:
-                armies1 = armies.copy()
-                armies1.remove(arm)
-                if arm.is_boat and arm.formation not in [201,202,203]:
-                    arm.is_boat = False
-                elif arm.formation in [201,202,203]:
-                    arm.units_boat.empty()
-                    arm.is_boat = True
-                    collision_during_turn = pygame.sprite.spritecollideany(arm,armies1)
-                    if collision_during_turn is not None:
-                        not_boated.remove(collision_during_turn)
-                        arm.units_boat.add(not_boated)"""
         elif event.type == CHECK_VICTORY:
             if was_defeated == False:
                 for p in players:
@@ -562,6 +553,9 @@ while game_on:
                     small_input.activate_button(True)
                     handicap2.activate_button(True)
                     handicap1.activate_button(True)
+                    enable_AI_button = Button("AI_or_not",(17*32-16,13*32+16),True,"images/AI_off.png")
+                    buttons.add(enable_AI_button)
+                    enable_AI_button.update_button()
                 if kliczek_button.type == 6 or kliczek_button.type == 5 and menu == 1:
                     if kliczek_button.update_button():
                         if kliczek_button.type == 6:
@@ -575,6 +569,13 @@ while game_on:
                             player1.gold_handicap = 0
                 elif kliczek_button.type == 400 and menu == 1:
                     enable_alpinist = alpinist_off.update_button()
+                if kliczek_button.type == "city_owner_vis" and kliczek_button.active:
+                    if visible_village_owner:
+                        visible_village_owner = False
+                    else:
+                        visible_village_owner = True
+                elif kliczek_button.type == "AI_or_not":
+                    enable_AI_button.update_button()
                 if kliczek_button.type in [11,12,13,14,15,16] and kliczek_button.active:
                     modes = [1]
                     map_name = None

@@ -584,7 +584,9 @@ class Army(Unit,pygame.sprite.Sprite):
                 if arm.formation == 2:
                     not_attacking_chance_bonus = 1
                 if arm.health/arm.base_health < 0.3:
-                    not_attacking_chance_bonus +=2
+                    not_attacking_chance_bonus += 2
+                    if arm.health/arm.base_health < 0.1:
+                        not_attacking_chance_bonus += 1
                 if random.randint(1,5+not_attacking_chance_bonus) > 4:
                     pass
                 else:
