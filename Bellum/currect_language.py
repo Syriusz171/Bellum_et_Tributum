@@ -11,6 +11,7 @@ turn = "Turn"
 wsad = "W,S,A,D ---> Move army"
 mouse_key1 = "Mouse click ---> Select/Deselect army"
 minus_key = "Minus ---> Deselect player's armies"
+enter_key = "Enter ---> Turn"
 
 #===== ARMIES =====#
 spearman = "Spear infantry"

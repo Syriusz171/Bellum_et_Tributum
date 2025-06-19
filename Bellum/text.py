@@ -27,7 +27,7 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,currect_language.wsad,"keys",False,None,550,400)
         Text.add_text(texts,currect_language.mouse_key1,"keys",False,None,550,440)
         Text.add_text(texts,currect_language.minus_key,"keys",False,None,540,480)
-        Text.add_text(texts,"Enter ---> Turn","keys",False,None,550,520)
+        Text.add_text(texts,currect_language.enter_key,"keys",False,None,550,520)
         Text.add_text(texts,"O ---> Village ownership visibility","keys",False,None,550,560)
         Text.add_text(texts,"P ---> Army ownership visibility","keys",False,None,550,600)
         Text.add_text(texts,"Right Shift ---> Clear chat","keys",False,None,550,640)

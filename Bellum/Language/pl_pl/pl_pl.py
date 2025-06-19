@@ -12,6 +12,7 @@ turn = "Tura"
 wsad = "W,S,A,D ---> Ruch armii"
 mouse_key1 = "Przycisk myszy ---> Zaznacz/Odznacz armię"
 minus_key = "Minus ---> Odznacz armie gracza"
+enter_key = "Enter ---> Następna kolejka"
 
 #===== ARMIES/ARMIE =====#
 spearman = "Włócznicy"
