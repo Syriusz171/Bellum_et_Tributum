@@ -12,4 +12,5 @@ Added:
 Fixed:
 - File should now run without VScode
 - Fixed boats moving and leaving units on water
+- New buttons being created each time "start" button was clicked,
 - Fixed issue with button original picture being a rect, not surface.

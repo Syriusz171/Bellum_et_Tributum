@@ -26,7 +26,7 @@ HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 config = Config()
-pygame.display.set_caption("Bellum et Tributum Dev -0.9 Build 6")
+pygame.display.set_caption("Bellum et Tributum Dev -0.9 Build 7")
 icon_of_BeT = pygame.image.load("images/city.png")
 pygame.display.set_icon(icon_of_BeT)
 pygame.init()
@@ -43,7 +43,7 @@ texts = pygame.sprite.Group()
 particles = pygame.sprite.Group()
 Particle.starting_menu_particles(particles)
 Text.init_texts(texts)
-version = font.render(f"{currect_language.version}: Dev -0.9 Build 6",False,(160,200,200))
+version = font.render(f"{currect_language.version}: Dev -0.9 Build 7",False,(160,200,200))
 #army = Army(2,1)
 visible_village_owner = False
 visible_army_owner = True
@@ -244,7 +244,6 @@ def start(bonus_starting_gold,modes,map,map_name=None):
     buttons.add(show_city_owner)
     Text.add_text(texts,(f"{player1.name} turn"))
     particles.empty()
-    enable_AI_button.kill()
     return terrains
 # ------------------ Terrain
 terrains = Terrain.generate("Start_menu")
@@ -543,19 +542,20 @@ while game_on:
                                 do_input = False
                             else:
                                 do_input = True
-                    start_quick.activate_button(False)
-                    generate_map.activate_button(True)
-                    alpinist_off.activate_button(True)
-                    flats_button.activate_button(True)
-                    track_map_button.activate_button(True)
-                    rich_center_button.activate_button(True)
-                    Button.activate_group(map_buttons,True)
-                    small_input.activate_button(True)
-                    handicap2.activate_button(True)
-                    handicap1.activate_button(True)
-                    enable_AI_button = Button("AI_or_not",(17*32-16,13*32+16),True,"images/AI_off.png")
-                    buttons.add(enable_AI_button)
-                    enable_AI_button.update_button()
+                    else:
+                        start_quick.activate_button(False)
+                        generate_map.activate_button(True)
+                        alpinist_off.activate_button(True)
+                        flats_button.activate_button(True)
+                        track_map_button.activate_button(True)
+                        rich_center_button.activate_button(True)
+                        Button.activate_group(map_buttons,True)
+                        small_input.activate_button(True)
+                        handicap2.activate_button(True)
+                        handicap1.activate_button(True)
+                        enable_AI_button = Button("AI_or_not",(17*32-16,13*32+16),True,"images/AI_off.png")
+                        buttons.add(enable_AI_button)
+                        enable_AI_button.update_button()
                 if kliczek_button.type == 6 or kliczek_button.type == 5 and menu == 1:
                     if kliczek_button.update_button():
                         if kliczek_button.type == 6:
@@ -567,7 +567,7 @@ while game_on:
                             player2.gold_handicap = 0
                         else:
                             player1.gold_handicap = 0
-                elif kliczek_button.type == 400 and menu == 1:
+                if kliczek_button.type == 400 and menu == 1:
                     enable_alpinist = alpinist_off.update_button()
                 if kliczek_button.type == "city_owner_vis" and kliczek_button.active:
                     if visible_village_owner:
@@ -616,9 +616,13 @@ while game_on:
                         if input_text.lower() == "map":
                             map = "deserted"
                             modes = [1]
+                            map_name = None
                         elif input_text.lower() == "dallas": # Respect paid 8 II AD 2025
                             Text.add_text(texts,"Rest in peace president Kennedy!")
                         terrains = start(config.starting_gold,modes,map,map_name)
+                        buttons.remove(enable_AI_button)
+                        enable_AI_button.kill()
+                        print(enable_AI_button)
                         Text.deactivate_text(texts,"keys")
                     else:
                         Text.add_text(texts,"Select a map!") 
