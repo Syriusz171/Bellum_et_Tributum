@@ -6,6 +6,7 @@
 beginning = "Begin"
 version = "version"
 turn = "Turn"
+player1_default_name = "Player1"
 
 #===== TEXTS =====#
 wsad = "W,S,A,D ---> Move army"

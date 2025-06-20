@@ -7,6 +7,7 @@
 beginning = "Start"
 version = "wersja"
 turn = "Tura"
+player1_default_name = "Gracz1"
 
 #===== TEXTS/Teksty =====#
 wsad = "W,S,A,D ---> Ruch armii"
