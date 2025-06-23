@@ -1,16 +1,14 @@
-Main.py file is now Main.pyw
-army1.py has been removed since it was 100% useless
-Started work on translation
-Started making configs better
-Made Bastion map better
-Armies below 10% health attack even more rare!
 Added:
-- Button that enables AI, no more config for that!
-- Button that turns on city ownership overlay!
-  - The 'o' key still works fine,
-  - This is first non-menu button added since 17 December 2024 (before project was on Github)
+- Searock tile (i have no better name for it):
+  - It is a water tile with movement cost of 1.5,
+  - There is small chance (1/12) it will appear on water tile next to the land,
+  - The chance increases for each adjacent mountain,
+  - Cannot appear when is surrounded with 4 mountains,
+- Island tile (Work in progress):
+  - Cannot be found (yet),
+  - Same as empty tile but with hopefully better appearance!
+  - Villages found on it get +1 base defence strength.
+Changed:
+- Ships' movement points increased from 3.5 to 4.
 Fixed:
-- File should now run without VScode
-- Fixed boats moving and leaving units on water
-- New buttons being created each time "start" button was clicked,
-- Fixed issue with button original picture being a rect, not surface.
+- Fixed issue when armies could not disembark on not-empty tiles (forests,ore deposits etc)

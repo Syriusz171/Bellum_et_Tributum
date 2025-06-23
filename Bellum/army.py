@@ -111,7 +111,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.banner = pygame.image.load("images/Militia.png")
         elif self.formation == 100:
             self.name = "Settlers"
-            self.base_march = 3
+            self.base_march = 4
             self.base_attack = 5
             self.base_defence = 10
             self.base_health = 50
@@ -123,7 +123,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.banner = pygame.image.load("images/Settler.png")
         elif self.formation == 201:
             self.name = "Hulk"
-            self.base_march = 3.5
+            self.base_march = 4
             self.base_attack = 8.5
             self.base_defence = 15.5
             self.base_health = 60
@@ -711,8 +711,6 @@ class Army(Unit,pygame.sprite.Sprite):
                                 can_move = False
                                 if arm.owner.is_AI != True:
                                     Text.add_text(texts,"Not enough movement!")
-                            else:
-                                pass
                                 #can_move = True
                         else:
                             if arm.owner.is_AI != True:
@@ -890,6 +888,9 @@ class Army(Unit,pygame.sprite.Sprite):
                                 if terr.move_type != 2:
                                     if arm.owner.is_AI != True:
                                         Text.add_text(texts,"Cannot move: Wrong terrains type!")
+                                        if arm.is_boat:
+                                            for army in arm.units_boat:
+                                                Army.move_me(army,players,armies,villages,terrains,direction,texts)
                                 else:
                                     if arm.owner.is_AI != True:
                                         Text.add_text(texts,"In order to sail you need a few builded boats!")

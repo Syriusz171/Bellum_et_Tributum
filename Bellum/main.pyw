@@ -26,7 +26,7 @@ HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 config = Config()
-pygame.display.set_caption("Bellum et Tributum Dev -0.8 Build 1")
+pygame.display.set_caption("Bellum et Tributum Dev -0.8 Build 2")
 icon_of_BeT = pygame.image.load("images/city.png")
 pygame.display.set_icon(icon_of_BeT)
 pygame.init()
@@ -43,7 +43,7 @@ texts = pygame.sprite.Group()
 particles = pygame.sprite.Group()
 Particle.starting_menu_particles(particles)
 Text.init_texts(texts)
-version = font.render(f"{currect_language.version}: Dev -0.8 Build 1",False,(160,200,200))
+version = font.render(f"{currect_language.version}: Dev -0.8 Build 2",False,(160,200,200))
 #army = Army(2,1)
 visible_village_owner = False
 visible_army_owner = True
@@ -389,6 +389,9 @@ while game_on:
                                         Player.get_villaged(arm.owner,new_village)
                                         arm.kill()
                                         Text.deactivate_text(texts,"vill_type")
+                                        if army_terrain_collide is not None:
+                                            if army_terrain_collide.form == 190:
+                                                new_village.base_defence += 1
                         else:
                             Text.add_text(texts,"Cannot stack villages!")
                 for vil in villages_:

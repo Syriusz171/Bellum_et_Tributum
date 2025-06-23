@@ -75,6 +75,14 @@ class Terrain(pygame.sprite.Sprite):
             self.movement_cost = 4
             self.move_type = 6
             self.look = pygame.image.load("images/enemy_spawn_tile.png")
+        elif self.form == 101:
+            self.movement_cost = 1.5
+            self.move_type = 2
+            self.look = pygame.image.load("images/water_rocks1.png")
+        elif self.form == 190:
+            self.movement_cost = 1
+            self.move_type = 1
+            self.look = pygame.image.load("images/island_sand1.png")
         #self.rect = self.look.get_rect(bottomleft=starting_rect)
     def generate(type,map_name = None):
         terrain_list = pygame.sprite.Group()
@@ -307,10 +315,12 @@ class Terrain(pygame.sprite.Sprite):
                             neo_terrain = Terrain(form,(ter.x,ter.y-32,32,32),ter.generation+1)
                             terrain_list.add(neo_terrain)
                             terrain_list_neo.add(neo_terrain)
-                    else:
-                        print("ME")
                     ter.gen = False
                     terrain_list_neo.remove(ter)#"""
+            for terrain in terrain_list:
+                if terrain.form == 10:
+                    if Terrain.seaRocks_check_coast(terrain.x,terrain.y,terrain_list):
+                        Terrain.change_terrain_form(terrain,101,terrain_list)
             return terrain_list
         elif type == "Start_menu":
             for i in range(6):
@@ -523,3 +533,47 @@ class Terrain(pygame.sprite.Sprite):
                 return 4
         else:
             return terrain
+    def seaRocks_check_coast(x,y,terrains):
+        collider_east = None
+        collider_north = None
+        collider_south = None
+        collider_west = None
+        chance = 0
+        for terr in terrains:
+            collision_south = terr.rect.collidepoint(x,y+16)
+            if collision_south:
+                if terr.move_type != 2:
+                    collider_south = terr
+                    if terr.move_type != 1:
+                        chance =+ 2
+                    continue           
+            collision_north = terr.rect.collidepoint(x,y-16)
+            if collision_north:
+                if terr.move_type != 2:
+                    collider_north = terr
+                    if terr.move_type != 1:
+                        chance =+ 2
+                    continue
+            collision_east = terr.rect.collidepoint(x+16,y)
+            if collision_east:
+                if terr.move_type != 2:
+                    collider_east = terr
+                    if terr.move_type != 1:
+                        chance =+ 2
+                    continue
+            collision_west = terr.rect.collidepoint(x-16,y)
+            if collision_west:
+                if terr.move_type != 2:
+                    collider_west = terr
+                    if terr.move_type != 1:
+                        chance =+ 2
+        if (collider_west is not None or collider_east is not None or collider_north is not None or collider_south is not None) and chance != 8:
+            if random.randint(1,12+chance) >= 12:
+                return True
+        return False 
+    def change_terrain_form(terrain,new_type,terrains):
+        x = terrain.x
+        y = terrain.y
+        terrain.kill()
+        new_terrain = Terrain(new_type,(x,y))
+        terrains.add(new_terrain)
