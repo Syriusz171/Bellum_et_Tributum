@@ -17,7 +17,7 @@ from button import Button
 from village import Village
 from turn import Turn
 from text import Text
-from config import Config
+import config
 from particle import Particle
 import datetime
 
@@ -25,7 +25,6 @@ WIDHT = 839
 HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
-config = Config()
 pygame.display.set_caption("Bellum et Tributum Dev -0.8 Build 2")
 icon_of_BeT = pygame.image.load("images/city.png")
 pygame.display.set_icon(icon_of_BeT)
@@ -68,10 +67,14 @@ def add_map_button(button,maps=map_buttons,all_buttons=buttons):
     all_buttons.add(button)
 add_map_button(yorktown_map)
 add_map_button(bastion_map_icon)
-#if config.developer_mode:
-test_map_button = Button(14,(8*32+16,3*32+18),False)
-buttons.add(test_map_button)
-map_buttons.add(test_map_button)
+lakes_map_button = Button(14,(18*32+16,14*32+18),False)
+if config.developer_mode:
+    test_map_button = Button("test_map",(8*32+16,3*32+18),False,"images/test_map_icon.png")
+    test_map_button.map = "test"
+    add_map_button(test_map_button)
+    # Test map shall return!
+buttons.add(lakes_map_button)
+map_buttons.add(lakes_map_button)
 buttons.add(generate_map)
 buttons.add(start_quick)
 buttons.add(alpinist_off)
@@ -280,7 +283,7 @@ while game_on:
             elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                 if menu == 0:
                     particles.empty()
-                    turn_return = Turn.turn(players,armies,villages,texts,terrains,particles,config,game_turn)
+                    turn_return = Turn.turn(players,armies,villages,texts,terrains,particles,game_turn)
                     armies_ = turn_return[0]
                     villages_ = turn_return[1]
                     game_turn = turn_return[2]
@@ -494,7 +497,7 @@ while game_on:
             for arm in armies_:
                 if arm.owner.is_AI > 0:
                     particles.empty()
-                    turn_return = Turn.turn(players,armies,villages,texts,terrains,particles,config,game_turn)
+                    turn_return = Turn.turn(players,armies,villages,texts,terrains,particles,game_turn)
                     armies_ = turn_return[0]
                     villages_ = turn_return[1]
                     game_turn = turn_return[2]
@@ -579,7 +582,7 @@ while game_on:
                         visible_village_owner = True
                 elif kliczek_button.type == "AI_or_not":
                     enable_AI_button.update_button()
-                if kliczek_button.type in [11,12,13,14,15,16] and kliczek_button.active:
+                if (kliczek_button.type in [11,12,13,14,15,16] or kliczek_button in map_buttons) and kliczek_button.active:
                     modes = [1]
                     map_name = None
                     if kliczek_button.type == 12: #Map selection 3 I AD 2025 19:40
@@ -591,14 +594,19 @@ while game_on:
                         map_name = "yorktown"
                         #map_name = "bastion"
                     elif kliczek_button.type == 14:
-                        map = "coast"
+                        map = "lakes"
                         modes.append("Dev")
                     elif kliczek_button.type == 16:
                         map = "manual"
                         map_name = "bastion"
-                    else:
+                    elif kliczek_button.type == 11:
                         map = "track"
-                    Text.add_text(texts,f"Selected \'{map}\' map!")
+                    else:
+                        map = kliczek_button.map
+                    if map != "manual":
+                        Text.add_text(texts,f"Selected \'{map}\' map!")
+                    else:
+                        Text.add_text(texts,f"Selected \'{map_name}\' map!")
                 if kliczek_button.type == 20 and menu == 1:
                     if map is not None or input_text.lower() == "map":
                     #start_quick.activate_button(False)

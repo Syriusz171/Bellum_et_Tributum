@@ -10,5 +10,10 @@ Added:
   - Villages found on it get +1 base defence strength.
 Changed:
 - Ships' movement points increased from 3.5 to 4.
+- Pre-made maps now show thieir name instead of 'manual'.
 Fixed:
 - Fixed issue when armies could not disembark on not-empty tiles (forests,ore deposits etc)
+
+#===== Dev info =====#
+Removed:
+- Config class,

@@ -5,7 +5,7 @@ from village import Village
 from unit import Unit
 from text import Text
 class Turn(Army):
-    def turn(players,armies,villages,texts,terrains,particles,config,game_turn):
+    def turn(players,armies,villages,texts,terrains,particles,game_turn):
         activate_next = False
         armies_ = None
         #for arm in armies:
@@ -25,8 +25,8 @@ class Turn(Army):
                     Player.check_production(villages,players)
                     Player.mk2_collect_global(players)
                     Village.turns_left_change(villages)
-                    Army.summon_militia_global(players,armies,texts,config)
-                    Army.spawn_at_enemy_points(players,armies,terrains,texts,config)
+                    Army.summon_militia_global(players,armies,texts)
+                    Army.spawn_at_enemy_points(players,armies,terrains,texts)
                     #Army.pathfind(p,armies,villages,terrains,particles)
                     for pe in players:
                         pe.active = True

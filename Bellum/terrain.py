@@ -106,9 +106,7 @@ class Terrain(pygame.sprite.Sprite):
                     if new_terrain is not None:
                         terrain_list.add(new_terrain)
             return terrain_list"""
-        if False:
-            pass
-        elif type=="flats":
+        if type=="flats":
             change_needed = True
             terrain_list = pygame.sprite.Group()
             new_terrain = None
@@ -216,7 +214,7 @@ class Terrain(pygame.sprite.Sprite):
                     terrain_list_neo.remove(ter)
             return terrain_list
 
-        elif type=="coast":
+        elif type=="lakes":
             change_needed = True
             terrain_list = pygame.sprite.Group()
             waters = pygame.sprite.Group()

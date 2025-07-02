@@ -9,6 +9,7 @@ from random import choice
 from village import Village
 import random
 import currect_language
+import config
 #Rip army1.py 15.06.2025
 class Army(Unit,pygame.sprite.Sprite):
     def __init__(self,formation,owner,starting_rect,x=None,y=None,is_defending=False) -> None:
@@ -431,7 +432,7 @@ class Army(Unit,pygame.sprite.Sprite):
     def draw_armies(self,screen,armies): #DEPRACADED!
         for army in armies:
             screen.blit(self.banner, self.rect)
-    def spawn_at_enemy_points(players,armies,terrains,texts,config):
+    def spawn_at_enemy_points(players,armies,terrains,texts):
         for terrain in terrains:
             if terrain.form == 41:
                 if random.randint(1,40+config.difficulty) > 20:
@@ -450,7 +451,7 @@ class Army(Unit,pygame.sprite.Sprite):
                         new_army = Army.conscript(0,terrain.owner,(terrain.x,terrain.y+32),False,texts)
                     armies.add(new_army)
                     new_army.owner.armies.add(new_army)
-    def summon_militia_global(players,armies,texts,config): #Militia at 14:02 17 II AD 2025
+    def summon_militia_global(players,armies,texts): #Militia at 14:02 17 II AD 2025
         for player in players:
             if player.is_AI == 1:
                 for village in player.villages:
