@@ -112,7 +112,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.banner = pygame.image.load("images/Militia.png")
         elif self.formation == 100:
             self.name = "Settlers"
-            self.base_march = 4
+            self.base_march = 3
             self.base_attack = 5
             self.base_defence = 10
             self.base_health = 50
@@ -138,7 +138,7 @@ class Army(Unit,pygame.sprite.Sprite):
             self.banner = pygame.image.load("images/Transport_boat.png")
         elif self.formation == 202:
             self.name = "Ramming Ship"
-            self.base_march = 3.5
+            self.base_march = 4
             self.base_attack = 20
             self.base_defence = 15
             self.base_health = 80

@@ -1,12 +1,13 @@
 import pygame
 import copy
 class Button(pygame.sprite.Sprite):
-    def __init__(self,type,center,active=False,image=None,checked=True):
+    def __init__(self,type,center,active=False,image=None,checked=True,tags=None):
         super().__init__()
         self.active = active
         self.checked = checked
         self.type = type
         self.center = center
+        self.tags = tags
         if image is not None:
             self.picture = pygame.image.load(image)
             self.rect = self.picture.get_rect(center=center)
@@ -80,4 +81,14 @@ class Button(pygame.sprite.Sprite):
             color_mask = (79,5,20)
         self.picture = copy.copy(self.og_picture)
         self.picture.fill(color_mask,special_flags=pygame.BLEND_RGB_ADD)
+    def action_tag(buttons,tag,action):
+        #Action must be: "kill", "off" or "on"!
+        for i in buttons:
+            if tag in i.tags:
+                if action == "off":
+                    i.active = False
+                elif action == "on":
+                    i.active = True
+                elif action == "kill":
+                    i.kill()
         

@@ -15,6 +15,7 @@ mouse_key1 = "Przycisk myszy ---> Zaznacz/Odznacz armię"
 minus_key = "Minus ---> Odznacz armie gracza"
 enter_key = "Enter ---> Następna kolejka"
 o_key = "O ---> Pokaż właścicieli osad"
+clear_chat = "Chat wyczyszczony!"
 
 #===== ARMIES/ARMIE =====#
 spearman = "Włócznicy"

@@ -25,7 +25,7 @@ class Particle(pygame.sprite.Sprite):
                 part.picture = pygame.transform.rotate(part.og_picture,part.angle)
     def decay(particles):
         for part in particles:
-            if part.time_to_decay != -1:
+            if part.time_to_decay >= 0:
                 part.time_to_decay -= 1
                 if part.time_to_decay == 0:
                     part.kill()

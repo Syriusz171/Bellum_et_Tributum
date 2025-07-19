@@ -4,8 +4,11 @@ from army import Army
 from village import Village
 from unit import Unit
 from text import Text
+from particle import Particle
 class Turn(Army):
     def turn(players,armies,villages,texts,terrains,particles,game_turn):
+        part = Particle((200,600),"sword",20,-1,rotate=5)
+        particles.add(part)
         activate_next = False
         armies_ = None
         #for arm in armies:
