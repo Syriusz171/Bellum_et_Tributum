@@ -1,13 +1,14 @@
 import pygame
 import copy
 class Button(pygame.sprite.Sprite):
-    def __init__(self,type,center,active=False,image=None,checked=True,tags=None):
+    def __init__(self,type,center,active=False,image=None,checked=True,tags=None,text=None):
         super().__init__()
         self.active = active
         self.checked = checked
         self.type = type
         self.center = center
         self.tags = tags
+        self.text = text
         if image is not None:
             self.picture = pygame.image.load(image)
             self.rect = self.picture.get_rect(center=center)
@@ -91,4 +92,11 @@ class Button(pygame.sprite.Sprite):
                     i.active = True
                 elif action == "kill":
                     i.kill()
+    def blit_buttons(buttons,screen):
+        for b in buttons:
+            if b.active:
+                screen.blit(b.picture,b.rect)
+                if b.text is not None:
+                    #b.picture.blit(b.text,(b.rect.centery,b.rect.x+4))
+                    screen.blit(b.text,(b.rect.left+7,b.rect.centery-10))
         

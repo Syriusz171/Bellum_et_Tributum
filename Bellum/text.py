@@ -3,7 +3,8 @@ import currect_language
 class Text(pygame.sprite.Sprite):
     def __init__(self,text,type="chat",active=True,time_left = 160,p_x=300,p_y=550):
         super().__init__()
-        self.text = str(text)
+        #self.text = str(text)
+        self.text = text
         if type == "chat":
             self.text_font = pygame.font.SysFont("Times New Roman",24)
         elif type == "keys":

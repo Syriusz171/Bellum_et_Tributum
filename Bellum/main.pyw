@@ -51,56 +51,6 @@ buttons = pygame.sprite.Group()
 map_buttons = pygame.sprite.Group()
 show_production = Button(2,(819,740),False)
 keys_button = Button(3,(819,740),True)
-def init_buttons():
-    start_quick = Button(1,(12*32+16,12*32+18),True,group=("main_menu"))
-    flats_button = Button("flats",(14*32+16,10*32+18),False,"images/flats_map_icon.png",["map_button","start"])
-    track_map_button = Button("track",(14*32+16,14*32+18),False,"images/track_map_icon.png",("map_button","start"))
-    rich_center_button = Button("rich_center",(18*32+16,10*32+18),False,"images/rich_center_icon.png",("map_button","start"))
-    small_input = Button(1,(12*32+16,12*32+18),False,group=("start"))
-    handicap1 = Button(5,(22*32+16,12*32+18),False,group=("start"))
-    handicap2 = Button(6,(2*32+16,12*32+18),False,group=("start"))
-    alpinist_off = Button(400,(17*32-16,11*32+16),False,group=("alpinist_switch","start"))
-    generate_map = Button(20,(20*32+1,12*32+16),False,group=("start"))
-    yorktown_map = Button(15,(9*32+16,14*32+18),False,group=("start"))
-    bastion_map_icon = Button(16,(9*32+16,10*32+18),False,group=("start"))
-    def add_map_button(button,maps=map_buttons,all_buttons=buttons):
-        maps.add(button)
-        all_buttons.add(button)
-    add_map_button(yorktown_map)
-    add_map_button(bastion_map_icon)
-    add_map_button(flats_button)
-    lakes_map_button = Button("lakes",(18*32+16,14*32+18),False,"images/lakes_map_icon.png",("map_button","start"))
-    if config.developer_mode:
-        test_map_button = Button("test_map",(8*32+16,3*32+18),False,"images/test_map_icon.png",("map_button","start"))
-        test_map_button.map = "test"
-        add_map_button(test_map_button)
-    buttons.add(lakes_map_button)
-    map_buttons.add(lakes_map_button)
-    buttons.add(generate_map)
-    buttons.add(start_quick)
-    buttons.add(alpinist_off)
-    buttons.add(show_production)
-    buttons.add(keys_button)
-    buttons.add(flats_button)
-    buttons.add(track_map_button)
-    buttons.add(small_input)
-    buttons.add(handicap2)
-    buttons.add(handicap1)
-    buttons.add(rich_center_button)
-do_input = False
-special_input = None
-input_text = currect_language.player1_default_name
-map = None
-gen_button_text = font.render(currect_language.beginning,False,(35,35,36))
-was_defeated = False
-kliczek = Kliczek()
-armies = pygame.sprite.Group()
-#----
-villages = pygame.sprite.Group()
-villages_ = pygame.sprite.Group()
-#----
-date_of_today = datetime.datetime.now()
-armies_ = pygame.sprite.Group()   #armies_ is sprites that belong to the player that has a turn now
 def start(bonus_starting_gold,modes,map,map_name=None):
     #===== AI TEST =====#
     player2.is_AI = enable_AI_button.checked
@@ -249,6 +199,56 @@ def start(bonus_starting_gold,modes,map,map_name=None):
     Text.add_text(texts,(f"{player1.name} turn"))
     particles.empty()
     return terrains
+
+def init_buttons():
+    start_quick = Button(1,(12*32+16,12*32+18),True,tags=("main_menu"),text=font.render("Start",False,(35,35,36)))
+    flats_button = Button("flats",(14*32+16,10*32+18),False,"images/flats_map_icon.png",["map_button","start"])
+    track_map_button = Button("track",(14*32+16,14*32+18),False,"images/track_map_icon.png",("map_button","start"))
+    rich_center_button = Button("rich_center",(18*32+16,10*32+18),False,"images/rich_center_icon.png",("map_button","start"))
+    small_input = Button(1,(12*32+16,12*32+18),False,tags=("start"))
+    handicap1 = Button(5,(22*32+16,12*32+18),False,tags=("start"))
+    handicap2 = Button(6,(2*32+16,12*32+18),False,tags=("start"))
+    alpinist_off = Button(400,(17*32-16,11*32+16),False,tags=("alpinist_switch","start"))
+    generate_map = Button(20,(20*32+1,12*32+16),False,tags=("start"),text=font.render(currect_language.beginning,False,(35,35,36)))
+    yorktown_map = Button(15,(9*32+16,14*32+18),False,tags=("start"))
+    bastion_map_icon = Button(16,(9*32+16,10*32+18),False,tags=("start"))
+    def add_map_button(button,maps=map_buttons,all_buttons=buttons):
+        maps.add(button)
+        all_buttons.add(button)
+    add_map_button(yorktown_map)
+    add_map_button(bastion_map_icon)
+    add_map_button(flats_button)
+    lakes_map_button = Button("lakes",(18*32+16,14*32+18),False,"images/lakes_map_icon.png",("map_button","start"))
+    if config.developer_mode:
+        test_map_button = Button("test_map",(8*32+16,3*32+18),False,"images/test_map_icon.png",("map_button","start"))
+        test_map_button.map = "test"
+        add_map_button(test_map_button)
+    buttons.add(lakes_map_button)
+    map_buttons.add(lakes_map_button)
+    buttons.add(generate_map)
+    buttons.add(start_quick)
+    buttons.add(alpinist_off)
+    buttons.add(show_production)
+    buttons.add(keys_button)
+    buttons.add(flats_button)
+    buttons.add(track_map_button)
+    buttons.add(small_input)
+    buttons.add(handicap2)
+    buttons.add(handicap1)
+    buttons.add(rich_center_button)
+do_input = False
+special_input = None
+input_text = currect_language.player1_default_name
+map = None
+was_defeated = False
+kliczek = Kliczek()
+armies = pygame.sprite.Group()
+#----
+villages = pygame.sprite.Group()
+villages_ = pygame.sprite.Group()
+#----
+date_of_today = datetime.datetime.now()
+armies_ = pygame.sprite.Group()   #armies_ is sprites that belong to the player that has a turn now
 # ------------------ Terrain
 terrains = Terrain.generate("Start_menu")
 #-------------------
@@ -264,16 +264,13 @@ players.add(player1)
 players.add(player2)
 player1.activate()
 #(12*32+16,12*32+18)
-quick_text = font.render("Start",False,(35,35,36))
 REFRESH = pygame.USEREVENT + 1
 CHECK_VICTORY = pygame.USEREVENT + 2
 pygame.time.set_timer(CHECK_VICTORY,2500)
 pygame.time.set_timer(REFRESH,400)
 game_turn = 1
+init_buttons()
 while game_on:
-    """
-                print("Kliczek będzie wspaniały!")
-        """
     mouse = pygame.mouse.get_pos()
     kliczek.move_kliczek(mouse)
     for event in pygame.event.get():
@@ -520,10 +517,14 @@ while game_on:
                         p.defeted = True
         elif event.type == pygame.MOUSEBUTTONUP:
             #===== Kliczek collides here =====#
+            active_button = None
             kliczek_button = pygame.sprite.spritecollideany(kliczek,buttons)
+            clicked_buttons = pygame.sprite.spritecollide(kliczek,buttons,False)
             clicked_village = pygame.sprite.spritecollideany(kliczek,villages)
-            #kliczek_collide = pygame.sprite.spritecollideany(kliczek,armies)
             kliczek_collide = pygame.sprite.spritecollide(kliczek,armies,False)
+            for b in clicked_buttons:
+                if b.active:
+                    active_button = b
 
             if clicked_village is not None and len(kliczek_collide) == 0:
                 clicked_village.select_village(villages,texts)
@@ -543,16 +544,17 @@ while game_on:
                     Text.activate_text(texts,"keys")
 
                 if kliczek_button.type == 1 and menu == 1:
-                    if start_quick.active == False:
-                        if small_input.active:
+                    if active_button.active == False:
+                        if active_button.active:
                             if do_input:
                                 do_input = False
                             else:
                                 do_input = True
                     else:
                         for button in buttons:
-                            if "start" in button.group:
-                                Button.activate_button(button,True)
+                            if button.tags is not None:
+                                if "start" in button.tags:
+                                    Button.activate_button(button,True)
                         Button.activate_group(map_buttons,True)
                         enable_AI_button = Button("AI_or_not",(17*32-16,13*32+16),True,"images/AI_off.png")
                         buttons.add(enable_AI_button)
@@ -570,7 +572,7 @@ while game_on:
                             player1.gold_handicap = 0
                 if kliczek_button.type == 400 and menu == 1:
                     for button in buttons:
-                        if button.group == "alpinist_switch":
+                        if button.tags == "alpinist_switch":
                             enable_alpinist = button.update_button()
                             break
                 if kliczek_button.type == "city_owner_vis" and kliczek_button.active:
@@ -580,7 +582,7 @@ while game_on:
                         visible_village_owner = True
                 elif kliczek_button.type == "AI_or_not":
                     enable_AI_button.update_button()
-                if (kliczek_button.type in [11,12,13,14,15,16] or kliczek_button in map_buttons or "map_button" in kliczek_button.group) and kliczek_button.active:
+                if (kliczek_button.type in [11,12,13,14,15,16] or kliczek_button in map_buttons or "map_button" in kliczek_button.tags) and kliczek_button.active:
                     modes = [1]
                     map_name = None #Map selection 3 I AD 2025 19:40
                     if kliczek_button.type == 15:
@@ -640,6 +642,7 @@ while game_on:
                     print(kliczek_collide2.selected)
                     if kliczek_collide2.formation == 100:
                         Text.activate_text(texts,"vill_type")
+    
     #========BLITING========#
     if menu != 1:
         screen.blit(background_image, (0,0))
@@ -659,16 +662,10 @@ while game_on:
             screen.blit(arm.new_banner,arm.rect)
         else:
             screen.blit(arm.banner,arm.rect)
-    for b in buttons:
-        if b.active:
-            screen.blit(b.picture,b.rect)
-    if start_quick.active:
-        screen.blit(quick_text,(12*32,12*32+2))
-    if generate_map.active:
-        screen.blit(gen_button_text,(generate_map.rect.left+2,generate_map.rect.centery-10))
-    if small_input.active:
+    Button.blit_buttons(buttons,screen)
+    '''if small_input.active:
             input_text_render = font.render(input_text,True,(25,25,25),(181,123,76))
-            screen.blit(input_text_render,(small_input.rect.left+8,small_input.rect.centery-10))
+            screen.blit(input_text_render,(small_input.rect.left+8,small_input.rect.centery-10))'''
     if REAL_show_production:
         gold_text = font.render(f"Gold:{round(player1.gold,2)}+{round(player1.p_gold,2)};{round(player2.gold,2)}+{player2.p_gold}",False,(160,200,200))
         lumber_text = font.render(f"Lumber:{round(player1.lumber)}+{round(player1.p_lumber,2)};{player2.lumber}+{player2.p_lumber}",False,(160,200,200))
@@ -710,4 +707,5 @@ while game_on:
 
     pygame.display.flip()
     FPS.tick(40)
+
 
