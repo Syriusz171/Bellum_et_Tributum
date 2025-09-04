@@ -85,13 +85,14 @@ class Button(pygame.sprite.Sprite):
     def action_tag(buttons,tag,action):
         #Action must be: "kill", "off" or "on"!
         for i in buttons:
-            if tag in i.tags:
-                if action == "off":
-                    i.active = False
-                elif action == "on":
-                    i.active = True
-                elif action == "kill":
-                    i.kill()
+            if i.tags is not None:
+                if tag in i.tags:
+                    if action == "off":
+                        i.active = False
+                    elif action == "on":
+                        i.active = True
+                    elif action == "kill":
+                        i.kill()
     def blit_buttons(buttons,screen):
         for b in buttons:
             if b.active:

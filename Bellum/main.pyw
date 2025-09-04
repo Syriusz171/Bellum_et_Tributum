@@ -202,10 +202,10 @@ def start(bonus_starting_gold,modes,map,map_name=None):
 
 def init_buttons():
     start_quick = Button(1,(12*32+16,12*32+18),True,tags=("main_menu"),text=font.render("Start",False,(35,35,36)))
-    flats_button = Button("flats",(14*32+16,10*32+18),False,"images/flats_map_icon.png",["map_button","start"])
-    track_map_button = Button("track",(14*32+16,14*32+18),False,"images/track_map_icon.png",("map_button","start"))
-    rich_center_button = Button("rich_center",(18*32+16,10*32+18),False,"images/rich_center_icon.png",("map_button","start"))
-    small_input = Button(1,(12*32+16,12*32+18),False,tags=("start"))
+    flats_button = Button("flats",(14*32+16,10*32+18),False,"images/flats_map_icon.png",tags=["map_button","start"])
+    track_map_button = Button("track",(14*32+16,14*32+18),False,"images/track_map_icon.png",tags=("map_button","start"))
+    rich_center_button = Button("rich_center",(18*32+16,10*32+18),False,"images/rich_center_icon.png",tags=("map_button","start"))
+    small_input = Button(1,(12*32+16,12*32+18),False,tags=("start"),text=font.render(currect_language.player1_default_name,False,(35,35,36)))
     handicap1 = Button(5,(22*32+16,12*32+18),False,tags=("start"))
     handicap2 = Button(6,(2*32+16,12*32+18),False,tags=("start"))
     alpinist_off = Button(400,(17*32-16,11*32+16),False,tags=("alpinist_switch","start"))
@@ -218,9 +218,12 @@ def init_buttons():
     add_map_button(yorktown_map)
     add_map_button(bastion_map_icon)
     add_map_button(flats_button)
-    lakes_map_button = Button("lakes",(18*32+16,14*32+18),False,"images/lakes_map_icon.png",("map_button","start"))
+    add_map_button(track_map_button)
+    add_map_button(rich_center_button)
+    lakes_map_button = Button("lakes",(18*32+16,14*32+18),False,"images/lakes_map_icon.png",tags=("map_button","start"))
+    add_map_button(lakes_map_button)
     if config.developer_mode:
-        test_map_button = Button("test_map",(8*32+16,3*32+18),False,"images/test_map_icon.png",("map_button","start"))
+        test_map_button = Button("test_map",(8*32+16,3*32+18),False,"images/test_map_icon.png",tags=("map_button","start"))
         test_map_button.map = "test"
         add_map_button(test_map_button)
     buttons.add(lakes_map_button)
@@ -551,10 +554,7 @@ while game_on:
                             else:
                                 do_input = True
                     else:
-                        for button in buttons:
-                            if button.tags is not None:
-                                if "start" in button.tags:
-                                    Button.activate_button(button,True)
+                        Button.action_tag(buttons,"start","on")
                         Button.activate_group(map_buttons,True)
                         enable_AI_button = Button("AI_or_not",(17*32-16,13*32+16),True,"images/AI_off.png")
                         buttons.add(enable_AI_button)
@@ -582,7 +582,7 @@ while game_on:
                         visible_village_owner = True
                 elif kliczek_button.type == "AI_or_not":
                     enable_AI_button.update_button()
-                if (kliczek_button.type in [11,12,13,14,15,16] or kliczek_button in map_buttons or "map_button" in kliczek_button.tags) and kliczek_button.active:
+                if ((kliczek_button.type in [11,12,13,14,15,16] or kliczek_button in map_buttons or "map_button" in kliczek_button.tags)) and kliczek_button.active:
                     modes = [1]
                     map_name = None #Map selection 3 I AD 2025 19:40
                     if kliczek_button.type == 15:
@@ -597,7 +597,7 @@ while game_on:
                     elif kliczek_button.type == 11:
                         map = "track"
                     else:
-                        map = kliczek_button.map
+                        map = kliczek_button.type
                     if map != "manual":
                         Text.add_text(texts,f"Selected \'{map}\' map!")
                     else:
@@ -611,6 +611,8 @@ while game_on:
                         keys_button.activate_button(False)
                         show_production.activate_button(True)
                         Button.action_tag(buttons,"start","kill")
+                        Button.action_tag(buttons,"map_button","kill")
+                        Button.action_tag(buttons,"main_menu","kill")
 
                         if input_text.lower() == "map":
                             map = "deserted"
