@@ -98,6 +98,6 @@ class Button(pygame.sprite.Sprite):
             if b.active:
                 screen.blit(b.picture,b.rect)
                 if b.text is not None:
-                    #b.picture.blit(b.text,(b.rect.centery,b.rect.x+4))
-                    screen.blit(b.text,(b.rect.left+7,b.rect.centery-10))
+                    screen.blit(b.text[1].render(b.text[0],False,b.text[2]),(b.rect.left+7,b.rect.centery-b.text[1].get_ascent()/2))#-b.text[1].get_ascent()
+                    #screen.blit(b.text,(b.rect.left+7,b.rect.centery-10))
         

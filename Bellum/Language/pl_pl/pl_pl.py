@@ -5,9 +5,11 @@
 
 #===== GENERAL/Ogólne =====#
 beginning = "Start"
+Freeplay = "Gra swobodna"
 version = "wersja"
 turn = "Tura"
 player1_default_name = "Gracz1"
+player2_default_name = "Gracz2"
 
 #===== TEXTS/Teksty =====#
 wsad = "W,S,A,D ---> Ruch armii"

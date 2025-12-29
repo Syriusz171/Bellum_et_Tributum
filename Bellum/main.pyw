@@ -1,3 +1,4 @@
+import webbrowser
 import pygame
 from translation import Translation
 import os
@@ -10,7 +11,7 @@ from player import Player
 import random
 from army import Army
 from unit import Unit
-from Direction import Direction
+from Enums.Direction import Direction
 from kliczek import Kliczek
 from terrain import Terrain
 from button import Button
@@ -20,6 +21,7 @@ from text import Text
 import config
 from particle import Particle
 import datetime
+#from Enums.Fonts import Fonts
 
 WIDHT = 839
 HEIGHT = 800
@@ -33,11 +35,12 @@ FPS = pygame.time.Clock()
 background_image = pygame.image.load("images/Background.png")
 background_image2 = pygame.image.load("images/Bellum_menu_neo.png")
 player1 = Player(1,"Player1")
-player2 = Player(2,config.playerNr2Name)
+player2 = Player(2,"Player2")
 player = player1
 font = pygame.font.SysFont("Times New Roman",20)
 font_big = pygame.font.SysFont("Segoe Print Bold",36)
 font_small = pygame.font.SysFont("Times New Roman",12)
+font_lbuttons = pygame.font.SysFont("Times New Roman",16)
 texts = pygame.sprite.Group()
 particles = pygame.sprite.Group()
 Particle.starting_menu_particles(particles)
@@ -51,9 +54,14 @@ buttons = pygame.sprite.Group()
 map_buttons = pygame.sprite.Group()
 show_production = Button(2,(819,740),False)
 keys_button = Button(3,(819,740),True)
+#===== Text input
+text_inputing_object = None
+
 def start(bonus_starting_gold,modes,map,map_name=None):
     #===== AI TEST =====#
     player2.is_AI = enable_AI_button.checked
+
+    terrains = pygame.sprite.Group()
     if map_name in ["bastion"]:
         player2.is_AI = True
     if map_name in ["yorktown"]:
@@ -140,12 +148,13 @@ def start(bonus_starting_gold,modes,map,map_name=None):
         armies.add(army2)
         city1 = Village.locate_village(60,player1,(22*32,13*32),True)
         city2 = Village.locate_village(60,player2,(2*32,13*32),True)
-        collider3 = pygame.sprite.spritecollideany(city1,terrains)
-        if collider3 is not None:
-            collider3.kill()
-        collider1 = pygame.sprite.spritecollideany(city2,terrains)
-        if collider1 is not None:
-            collider1.kill()
+        if terrains is not None:
+            collider3 = pygame.sprite.spritecollideany(city1,terrains)
+            if collider3 is not None:
+                collider3.kill()
+            collider1 = pygame.sprite.spritecollideany(city2,terrains)
+            if collider1 is not None:
+                collider1.kill()
         #===== AI bonus =====#
         if player2.is_AI:
             village = Village.locate_village(3,player2,(10*32,14*32),True)
@@ -181,14 +190,10 @@ def start(bonus_starting_gold,modes,map,map_name=None):
             army = Army.conscript(1,player2,(2*32,12*32),False,texts,is_defending=True)
             player2.get_armied(army)
             armies.add(army)
-            
-        print(city1)
         villages.add(city1)
         villages.add(city2)
         player1.get_villaged(city1)
         player2.get_villaged(city2)
-    player1.name = input_text
-    print(player1.name)
     for arm in player1.armies:
         armies_.add(arm)
     for vil in player1.villages:
@@ -201,15 +206,16 @@ def start(bonus_starting_gold,modes,map,map_name=None):
     return terrains
 
 def init_buttons():
-    start_quick = Button(1,(12*32+16,12*32+18),True,tags=("main_menu"),text=font.render("Start",False,(35,35,36)))
+    start_quick = Button(1,(12*32+16,12*32+18),True,tags=("main_menu"),text=[currect_language.Freeplay,font_lbuttons,(35,35,36)])
     flats_button = Button("flats",(14*32+16,10*32+18),False,"images/flats_map_icon.png",tags=["map_button","start"])
     track_map_button = Button("track",(14*32+16,14*32+18),False,"images/track_map_icon.png",tags=("map_button","start"))
     rich_center_button = Button("rich_center",(18*32+16,10*32+18),False,"images/rich_center_icon.png",tags=("map_button","start"))
-    small_input = Button(1,(12*32+16,12*32+18),False,tags=("start"),text=font.render(currect_language.player1_default_name,False,(35,35,36)))
-    handicap1 = Button(5,(22*32+16,12*32+18),False,tags=("start"))
-    handicap2 = Button(6,(2*32+16,12*32+18),False,tags=("start"))
+    player1_name_input = Button(4,(12*32+16,17*32),False,tags=["start","player1name"],text=[currect_language.player1_default_name,font,(35,35,36),True])
+    player2_name_input = Button(4,(12*32+16,19*32+18),False,tags=["start","player2name"],text=[currect_language.player2_default_name,font,(35,35,36),True])
+    handicap1 = Button(5,(15*32+16,17*32),False,tags=("start"))
+    handicap2 = Button(6,(15*32+16,19*32+18),False,tags=("start"))
     alpinist_off = Button(400,(17*32-16,11*32+16),False,tags=("alpinist_switch","start"))
-    generate_map = Button(20,(20*32+1,12*32+16),False,tags=("start"),text=font.render(currect_language.beginning,False,(35,35,36)))
+    generate_map = Button(20,(20*32+1,12*32+16),False,tags=("start"),text=[currect_language.beginning,font,(35,35,36)])
     yorktown_map = Button(15,(9*32+16,14*32+18),False,tags=("start"))
     bastion_map_icon = Button(16,(9*32+16,10*32+18),False,tags=("start"))
     def add_map_button(button,maps=map_buttons,all_buttons=buttons):
@@ -223,8 +229,8 @@ def init_buttons():
     lakes_map_button = Button("lakes",(18*32+16,14*32+18),False,"images/lakes_map_icon.png",tags=("map_button","start"))
     add_map_button(lakes_map_button)
     if config.developer_mode:
-        test_map_button = Button("test_map",(8*32+16,3*32+18),False,"images/test_map_icon.png",tags=("map_button","start"))
-        test_map_button.map = "test"
+        test_map_button = Button("volcanic_island",(8*32+16,3*32+18),False,"images/test_map_icon.png",tags=("map_button","start"))
+        #test_map_button.map = "test"
         add_map_button(test_map_button)
     buttons.add(lakes_map_button)
     map_buttons.add(lakes_map_button)
@@ -235,13 +241,14 @@ def init_buttons():
     buttons.add(keys_button)
     buttons.add(flats_button)
     buttons.add(track_map_button)
-    buttons.add(small_input)
+    buttons.add(player1_name_input)
+    buttons.add(player2_name_input)
     buttons.add(handicap2)
     buttons.add(handicap1)
     buttons.add(rich_center_button)
 do_input = False
 special_input = None
-input_text = currect_language.player1_default_name
+input_text = None
 map = None
 was_defeated = False
 kliczek = Kliczek()
@@ -476,9 +483,11 @@ while game_on:
                     input_text += event.unicode
                 elif special_input == 'backspace':
                     input_text = input_text[:-1]
-                    print(type(input_text))
                 elif special_input == 'return':
                     do_input = False
+                    text_inputing_object = None
+                if text_inputing_object is not None:
+                    text_inputing_object.text[0] = input_text
                 special_input = None
         elif event.type == pygame.QUIT:
             game_on = False
@@ -536,7 +545,16 @@ while game_on:
                 else:
                     show_selected = True
                 Text.activate_text(texts,"conscipt")
-                    
+            if active_button is not None:
+                if active_button.text is not None:
+                    if text_inputing_object is not None or active_button != text_inputing_object:
+                        if len(active_button.text)==4 and active_button.text[3]:
+                            input_text = active_button.text[0]
+                            text_inputing_object = active_button
+                            do_input = True
+                    else:
+                        text_inputing_object = None
+                        do_input = False
             if kliczek_button is not None:
                 if kliczek_button.type == 2 and menu == 0:
                     if REAL_show_production:
@@ -554,6 +572,7 @@ while game_on:
                             else:
                                 do_input = True
                     else:
+                        Button.action_tag(buttons,"main_menu","kill") #TO DO: Make button to get back to the main menu
                         Button.action_tag(buttons,"start","on")
                         Button.activate_group(map_buttons,True)
                         enable_AI_button = Button("AI_or_not",(17*32-16,13*32+16),True,"images/AI_off.png")
@@ -571,10 +590,10 @@ while game_on:
                         else:
                             player1.gold_handicap = 0
                 if kliczek_button.type == 400 and menu == 1:
-                    for button in buttons:
-                        if button.tags == "alpinist_switch":
-                            enable_alpinist = button.update_button()
-                            break
+                    #for button in buttons:
+                    if active_button.tags is not None and "alpinist_switch" in active_button.tags:
+                        enable_alpinist = active_button.update_button()
+                        break
                 if kliczek_button.type == "city_owner_vis" and kliczek_button.active:
                     if visible_village_owner:
                         visible_village_owner = False
@@ -582,43 +601,47 @@ while game_on:
                         visible_village_owner = True
                 elif kliczek_button.type == "AI_or_not":
                     enable_AI_button.update_button()
-                if ((kliczek_button.type in [11,12,13,14,15,16] or kliczek_button in map_buttons or "map_button" in kliczek_button.tags)) and kliczek_button.active:
-                    modes = [1]
-                    map_name = None #Map selection 3 I AD 2025 19:40
-                    if kliczek_button.type == 15:
-                        map = "manual"
-                        map_name = "yorktown"
-                    elif kliczek_button.type == 14:
-                        map = "lakes"
-                        modes.append("Dev")
-                    elif kliczek_button.type == 16:
-                        map = "manual"
-                        map_name = "bastion"
-                    elif kliczek_button.type == 11:
-                        map = "track"
-                    else:
-                        map = kliczek_button.type
-                    if map != "manual":
-                        Text.add_text(texts,f"Selected \'{map}\' map!")
-                    else:
-                        Text.add_text(texts,f"Selected \'{map_name}\' map!")
+                if active_button is not None and active_button.tags is not None:
+                    if ((active_button.type in [11,12,13,14,15,16] or kliczek_button in map_buttons or "map_button" in kliczek_button.tags)) and kliczek_button.active:
+                        modes = [1]
+                        map_name = None #Map selection 3 I AD 2025 19:40
+                        if kliczek_button.type == 15:
+                            map = "manual"
+                            map_name = "yorktown"
+                        elif kliczek_button.type == 14:
+                            map = "lakes"
+                            modes.append("Dev")
+                        elif kliczek_button.type == 16:
+                            map = "manual"
+                            map_name = "bastion"
+                        elif kliczek_button.type == 11:
+                            map = "track"
+                        else:
+                            map = kliczek_button.type
+                        if map != "manual":
+                            Text.add_text(texts,f"Selected \'{map}\' map!")
+                        else:
+                            Text.add_text(texts,f"Selected \'{map_name}\' map!")
                 if kliczek_button.type == 20 and menu == 1:
                     if map is not None or input_text.lower() == "map":
-                    #start_quick.activate_button(False)
                         terrains.empty()
                         menu = 0
-                        #Button.activate_group(map_buttons,False)
                         keys_button.activate_button(False)
                         show_production.activate_button(True)
+                        for b in buttons:
+                            if b.tags is not None:
+                                if "player1name" in b.tags:
+                                    player1.name = b.text[0]
+                                elif "player2name" in b.tags: #Integrated Player2 name input 24 XII AD 2025
+                                    player2.name = b.text[0]
                         Button.action_tag(buttons,"start","kill")
                         Button.action_tag(buttons,"map_button","kill")
                         Button.action_tag(buttons,"main_menu","kill")
-
-                        if input_text.lower() == "map":
+                        if player1.name == "map":
                             map = "deserted"
                             modes = [1]
                             map_name = None
-                        elif input_text.lower() == "dallas": # Respect paid 8 II AD 2025
+                        elif player1.name == "dallas": # Respect paid 8 II AD 2025
                             Text.add_text(texts,"Rest in peace president Kennedy!")
                         terrains = start(config.starting_gold,modes,map,map_name)
                         buttons.remove(enable_AI_button)

@@ -1,6 +1,6 @@
 import pygame
 from unit import Unit
-from Direction import Direction
+from Enums.Direction import Direction
 from player import Player
 from text import Text
 import copy
@@ -10,6 +10,7 @@ from village import Village
 import random
 import currect_language
 import config
+from StaticClasses.UnitF import UnitF
 #Rip army1.py 15.06.2025
 class Army(Unit,pygame.sprite.Sprite):
     def __init__(self,formation,owner,starting_rect,x=None,y=None,is_defending=False) -> None:
@@ -340,15 +341,15 @@ class Army(Unit,pygame.sprite.Sprite):
                     if boat_enemy is not None:
                         collider_enemy = boat_enemy
                 if collision_enemy and can_move and collision_village == False:
-                    battle = Unit.attack(arm,collider_enemy,True,texts)
+                    battle = UnitF.attack(arm,collider_enemy,True,texts)
                     if battle == False:
                         can_move = False
                 elif collision_enemy == False and can_move and collision_village:
-                    battle = Unit.attack(arm,collider_village,False,texts)
+                    battle = UnitF.attack(arm,collider_village,False,texts)
                     if battle == False:
                         can_move = False
                 elif collision_enemy and can_move and collision_village:
-                    battle = Unit.attack(arm,collider_enemy,True,texts,collider_village)
+                    battle = UnitF.attack(arm,collider_enemy,True,texts,collider_village)
                     if battle == False:
                         can_move = False
                         #"""
@@ -398,6 +399,7 @@ class Army(Unit,pygame.sprite.Sprite):
         self.selected = False
     def unselect(armies,texts):#Unselects all armies of player
         first = True
+        name = ""
         for arm in armies:
             if first:
                 name = arm.owner.name
@@ -411,7 +413,7 @@ class Army(Unit,pygame.sprite.Sprite):
         player = owner
         constription_possible = None
         if normal_hire == True: #Normal hire is units that cost, if False units will be free
-            if Unit.buy(Army.conscript_get_cost(type),owner,texts):
+            if UnitF.buy(Army.conscript_get_cost(type),owner,texts):
                 constription_possible = True
             else:
                 constription_possible = False
@@ -771,15 +773,15 @@ class Army(Unit,pygame.sprite.Sprite):
                 if boat_enemy is not None:
                     collider_enemy = boat_enemy
             if collision_enemy and can_move and collision_village == False:
-                battle = Unit.attack(arm,collider_enemy,True,texts)
+                battle = UnitF.attack(arm,collider_enemy,True,texts)
                 if battle == False:
                     can_move = False
             elif collision_enemy == False and can_move and collision_village:
-                battle = Unit.attack(arm,collider_village,False,texts)
+                battle = UnitF.attack(arm,collider_village,False,texts)
                 if battle == False:
                     can_move = False
             elif collision_enemy and can_move and collision_village:
-                battle = Unit.attack(arm,collider_enemy,True,texts,collider_village)
+                battle = UnitF.attack(arm,collider_enemy,True,texts,collider_village)
                 if battle == False:
                     can_move = False
                     #"""
@@ -936,11 +938,11 @@ class Army(Unit,pygame.sprite.Sprite):
                         land_army = boat
                     #There is an army:
                     if land_army is not None:
-                        battle = Unit.attack(arm,land_army,True,texts,town)
+                        battle = UnitF.attack(arm,land_army,True,texts,town)
                         if battle == False:
                             continue
                     else:
-                        battle = Unit.attack(arm,town,False,texts)
+                        battle = UnitF.attack(arm,town,False,texts)
                         if battle == False:
                             continue
                 if arm.direction == Direction.UP:
@@ -1078,11 +1080,11 @@ class Army(Unit,pygame.sprite.Sprite):
                     land_army = boat
                 #There is an army:
                 if land_army is not None:
-                    battle = Unit.attack(arm,land_army,True,texts,town)
+                    battle = UnitF.attack(arm,land_army,True,texts,town)
                     if battle == False:
                         return
                 else:
-                    battle = Unit.attack(arm,town,True,texts)
+                    battle = UnitF.attack(arm,town,True,texts)
                     if battle == False:
                         return
             if cost > arm.march:

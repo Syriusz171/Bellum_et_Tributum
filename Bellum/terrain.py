@@ -84,8 +84,10 @@ class Terrain(pygame.sprite.Sprite):
             self.move_type = 1
             self.look = pygame.image.load("images/island_sand1.png")
         #self.rect = self.look.get_rect(bottomleft=starting_rect)
-    def generate(type,map_name = None):
+    def generate(type,map_name = None,seed = None):
         terrain_list = pygame.sprite.Group()
+        if seed is not None:
+            random.seed(seed)
         """
         if type == "flats":
             for i in range(25):
@@ -404,11 +406,11 @@ class Terrain(pygame.sprite.Sprite):
                     ter.gen = False
                     terrain_list_neo.remove(ter)
             return terrain_list
-        elif type=="test":
+        elif type == "test":
+            terrain_list = pygame.sprite.Group()
             change_needed = True
             new_terrain = Terrain(4,(12*32-2,12*32),-1.2)
-            if new_terrain is not None:
-                terrain_list.add(new_terrain)
+            terrain_list.add(new_terrain)
             terrain_list_neo = terrain_list.copy()
             while change_needed:
                 if len(terrain_list_neo) == 0:
@@ -462,6 +464,76 @@ class Terrain(pygame.sprite.Sprite):
                     if new_terrain is not None:
                         terrain_list.add(new_terrain)
             return terrain_list
+        elif type == "volcanic_island":
+            # Creates an island with a massif in the middle and a small lake south. Mountains are rare but island is rich in salt and gold.
+            change_needed = True
+            terrain_list = pygame.sprite.Group()
+            new_terrain = None
+            for i in range(25):
+                for j in range(25):
+                    location = (i*32-1,j*32)
+                    number = random.randint(1,101)
+                    if j >= 11 and j <= 13 and i >= 11 and i <= 13:
+                        if i == 12 and j == 12:
+                            new_terrain = Terrain(40,location)
+                        else:
+                            new_terrain = Terrain(4,location)
+                        terrain_list.add(new_terrain)
+                    elif i == 24 or i == 0 or j < 2 or j > 22:
+                        if random.randint(0,49) != 0:
+                            new_terrain = Terrain(10,location,3)
+                            terrain_list.add(new_terrain)
+                    elif i == 12 and j == 15:
+                        new_terrain = Terrain(10,location,3)
+                        terrain_list.add(new_terrain)
+                    else:
+                        if number < 60:
+                            new_terrain = None
+                        elif number < 74:
+                            new_terrain = Terrain(1,location,5)
+                        elif number < 87:
+                            new_terrain = Terrain(2,location,5)
+                        elif number == 101:
+                            new_terrain = Terrain(4,location,4)
+                        else:
+                            if random.randint(1,13) <= 2:
+                                new_terrain = Terrain(3,location,8)
+                            else:
+                                new_terrain = Terrain(5,location,12)
+                        if new_terrain is not None:
+                            terrain_list.add(new_terrain)
+            terrain_list_neo = terrain_list.copy()
+            while change_needed:
+                if len(terrain_list_neo) == 0:
+                    change_needed = False
+                for ter in terrain_list_neo:
+                    if ter.do_gen and ter.form != 20:
+                        neo_terrain = None
+                        #Check
+                        if ter.check_gen(terrain_list,0,32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.rect.y+32,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,-32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x-32,ter.y,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,32,0):
+                            neo_terrain = Terrain(ter.form,(ter.x+32,ter.y,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                        if ter.check_gen(terrain_list,0,-32):
+                            neo_terrain = Terrain(ter.form,(ter.x,ter.y-32,32,32),ter.generation+1)
+                            terrain_list.add(neo_terrain)
+                            terrain_list_neo.add(neo_terrain)
+                    ter.gen = False
+                    terrain_list_neo.remove(ter)
+            for terrain in terrain_list:
+                if terrain.form == 10:
+                    if Terrain.seaRocks_check_coast(terrain.x,terrain.y,terrain_list):
+                        Terrain.change_terrain_form(terrain,101,terrain_list)
+            return terrain_list
+        #====Manual maps=====#
         elif type == "manual":
             returned = Terrain.get_map(map_name)
             villages = returned[1]

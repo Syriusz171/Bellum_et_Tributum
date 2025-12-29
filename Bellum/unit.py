@@ -2,7 +2,7 @@ import pygame
 import random
 import copy
 from text import Text
-from Direction import Direction
+from Enums.Direction import Direction
 class Unit():
     def __init__(self) -> None:
         super().__init__()
@@ -32,156 +32,7 @@ class Unit():
         self.is_boat = False
         self.village_defence_bonus = None
         self.moved = False
-    def attack(self,enemy1,is_enemy_army,texts,town=None,boat=None,enemy_boat=None): # First unit killed 17XII Anno Domini 2024
-        enemy = enemy1
-        kill_self = False
-        there_self_units = False
-        there_enemy_units = False
-        if self.can_attack and self.march > 0:
-            self.attack = self.base_attack
-            if enemy.formation == 1 or enemy.formation == 2 or enemy.formation == 0 or enemy.formation == 100:
-                self.attack += self.anti_infantry_bonus
-            elif enemy.formation == 3:
-                self.attack += self.anti_cav_bonus
-            enemy.defence = enemy.base_defence
-            if self.owner.food == 0:
-                self.attack -= 3
-            if enemy.owner.food == 0:
-                enemy.defence -= 3
-                #=====Morale=====#
-            Unit.morale_combat(self,enemy)
-            if self.is_boat:
-                if enemy.formation in [202]:
-                    self.attack += self.anti_ram_bonus
-                if enemy.formation in [201]:
-                    self.attack += self.anti_transport_bonus
-            if enemy.is_boat:
-                if self.formation in [202]:
-                    enemy.defence += enemy.anti_ram_bonus
-                if self.formation in [201]:
-                    enemy.defence += enemy.anti_transport_bonus
-                pass
-                #Finish here!
-            if town is not None:
-                self.attack += self.siege_bonus
-                if town.health > 0:
-                    enemy.defence += enemy.village_bonus
-                enemy.defence += town.base_defence*0.5
-            #===== BOAT =====#
-            if self.is_boat:
-                if len(self.units_boat) > 0:
-                    there_self_units = True
-                    for unit in self.units_boat:
-                        if unit.is_boat != True:
-                            self.attack += unit.base_attack * 0.50
-            if enemy.is_boat:
-                if len(enemy.units_boat) > 0:
-                    there_enemy_units = True
-                    for unit in enemy.units_boat:
-                        if unit.is_boat != True:
-                            enemy.defence += unit.base_defence * 0.50
-            #-----HEALTH
-            if self.health < self.base_health * 0.8:
-                self.attack -= self.base_attack * (self.health/self.base_health*0.9)
-            if enemy.health < enemy.base_health * 0.8:
-                enemy.defence -= enemy.base_defence * (enemy.health/enemy.base_health*0.9)
-            self.attack += random.randint(-2,2)
-            if self.formation == 1 or self.formation == 2 or self.formation == 0 or self.formation == 100:
-                enemy.defence += enemy.anti_infantry_bonus
-            if self.formation == 3:
-                enemy.defence += enemy.anti_cav_bonus
-            enemy.defence += random.randint(-2,2)
-            damage_self = (1.5*((enemy.defence*1.1+1)-self.attack*0.60))+4
-            damage_enemy = (1.5*((self.attack*1.1+1)-enemy.defence*0.60))
-            if damage_self < 4:
-                damage_self = 4
-            if damage_enemy < 4:
-                damage_enemy = 4
-            self.health -= damage_self
-            enemy.health -= damage_enemy
-            if town is not None:
-                town.health -= damage_enemy * 0.5
-                Text.add_text(texts,f"Village health is {town.health}")
-            if there_self_units:
-                for unit in self.units_boat:
-                    damage_unit = damage_self
-                    if enemy.anti_transport_bonus > 0:
-                        damage_unit = enemy.anti_transport_bonus * (random.randint(0,4) *0.30 + 1)
-                    unit.health -= damage_unit
-                    Text.add_text(texts,f"Attacker passager health is {unit.health}!")
-                    unit.check_if_die()
-                    break
-            if there_enemy_units:
-                for unit in enemy.units_boat:
-                    damage_unit = damage_enemy
-                    if self.anti_transport_bonus > 0:
-                        damage_unit = self.anti_transport_bonus * random.randint(0,4) *0.30 + 1
-                    print(damage_unit)
-                    unit.health -= damage_unit
-                    Text.add_text(texts,f"Defender passager health is {unit.health}!")
-                    unit.check_if_die()
-                    break
-            Text.add_text(texts,f"Attacker health is {self.health}")
-            Text.add_text(texts,f"Defender health is {enemy.health}")
-            self.march = 0
-            attacking_player = self.owner
-            if self.health > 0:
-                pass
-            else:
-                kill_self = True
-                Unit.morale_change(enemy.owner.armies,self.owner.armies,self.rect.bottomleft)
-                enemy.morale += 1
-            if enemy.health > 0:
-                if town is not None:
-                    if town.health < -10:
-                        town.health = -10
-                if kill_self:
-                    self.kill()
-                return False
-            else:
-                Unit.morale_change(self.owner.armies,enemy.owner.armies,enemy.rect.bottomleft)
-                self.morale += 1
-                if is_enemy_army:
-                    enemy.kill()
-                    if town is not None:
-                        if town.health <= 0:
-                            if town.vill_type != 30:
-                                town.change_owner(self.owner,texts)
-                            else:
-                               Unit.bandit_get_killed(enemy,attacking_player)
-                            if kill_self:
-                                self.kill()
-                            return True
-                        else:
-                            if kill_self:
-                                self.kill()
-                            return False
-                    if kill_self:
-                        self.kill()
-                elif town is None: # Territory of Player2 conquered 12I2025
-                    if enemy.vill_type != 30:
-                        enemy.change_owner(self.owner,texts)
-                    else:
-                        Unit.bandit_get_killed(enemy,attacking_player)
-                    if kill_self:
-                        self.kill()
-                    return True
-
-        else:
-            pass
-    def heal(armies,villages):
-        entities = armies.copy()
-        for v in villages:
-            entities.add(v)
-        for e in entities:
-            if e.health < -10:
-                e.health = -10
-            e.health += 2
-            if pygame.sprite.spritecollideany(e,villages) is not None:
-                e.health += 0.5
-            if e.health > e.base_health:
-                e.health = e.base_health
-                """
+    """
     def update_color(self):
         if self.owner == 1:
             if self.health == self.base_health:
@@ -253,43 +104,6 @@ class Unit():
     def add_group(added,group):
         if added is not None:
             group.add(added)
-    #========== MORALE ==========#
-    def morale_change(army,enemy,location):
-        x = location[0]
-        y = location[1]
-        for me in army:
-            if me.rect.colliderect((x-64,y-64,x+64,y+64)):
-                me.morale += 1
-        for me in enemy:
-            if me.rect.colliderect((x-64,y-64,x+64,y+64)):
-                me.morale -= 1
-    def morale_combat(attacker,defender):
-        if attacker.morale > 12 and attacker.morale <=20:
-            attacker.attack += 1
-        elif attacker.morale > 20 and attacker.morale <=30:
-            attacker.attack += 2
-        elif attacker.morale > 30 and attacker.morale <=100:
-            attacker.attack += 2.5
-        elif attacker.morale > 100:
-            attacker.attack += 3.5
-        elif attacker.morale < 8 and attacker.morale >= 0:
-            attacker.attack -= 1
-        elif attacker.morale < 0:
-            attacker.attack -= 2
-
-        
-        if defender.morale > 12 and defender.morale <=20:
-            defender.defence += 1
-        elif defender.morale > 20 and defender.morale <=30:
-            defender.defence += 2
-        elif defender.morale > 30 and defender.morale <=100:
-            defender.defence += 2.5
-        elif defender.morale > 100:
-            defender.defence += 3.5
-        elif defender.morale < 8 and defender.morale >=0:
-            defender.defence -= 1
-        elif defender.morale < 0:
-            defender.defence -= 2
     def check_if_die(self):
         if self.health <= 0:
             self.kill()
@@ -306,42 +120,3 @@ class Unit():
         else:
             if unit.owner.is_AI != 1:
                 Text.add_text(texts,"No direction given! Report it to Syriusz171")
-    def buy(costList,player,texts=None):
-        '''Takes input of cost list and player. Checks if the player can afford the cost,
-        if so, it is taken from the player. Returns True or False values.
-        Can output texts.'''
-        if costList[0] > player.gold:
-            if texts is not None:
-                Text.add_text(texts,"Not enough gold!")
-            return False
-        if costList[1] > player.lumber:
-            if texts is not None:
-                if random.randint(0,11) == 0:
-                    Text.add_text(texts,"More wood is needed!")
-                else:
-                    Text.add_text(texts,"Not enough lumber!")
-            return False
-        if costList[2] > player.food:
-            if texts is not None:
-                Text.add_text(texts,"Not enough food!")
-            return False
-        if costList[3] > player.spear:
-            if texts is not None:
-                Text.add_text(texts,"Not enough spears!")
-            return False
-        if costList[4] > player.bow:
-            if texts is not None:
-                Text.add_text(texts,"Not enough bows!")
-            return False
-        player.gold -= costList[0]
-        player.lumber -= costList[1]
-        player.food -= costList[2]
-        player.spear -= costList[3]
-        player.bow -= costList[4]
-        return True
-    def bandit_get_killed(town,killer):
-        town.kill()
-        killer.gold += random.randint(20,25)
-        killer.bow += 1
-        killer.spear += random.randint(5,16)
-        killer.food += random.randint(5,6)

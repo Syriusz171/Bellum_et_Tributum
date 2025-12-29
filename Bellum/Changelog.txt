@@ -5,16 +5,30 @@ Added:
   - The chance increases for each adjacent mountain,
   - Cannot appear when is surrounded with 4 mountains,
 - Island tile (Work in progress):
-  - Cannot be found (yet),
+  - Does not appear naturally (yet),
   - Same as empty tile but with hopefully better appearance!
   - Villages found on it get +1 base defence strength.
+- "Coast" map (now renamed to "Lakes") recived it's own button in the menu,
+- "Volcanic island" map:
+  - New experimental map, you may find it under "test" button,
+  - Has a large mountain in the middle, other mountains are rare,
+  - Surrounded by water, has a small lake below the central mountains.
+- Button to set name of the second player.
 Changed:
 - Ships' movement points increased from 3.5 to 4,
-- Pre-made maps now show thieir name instead of 'manual',
-- Started reworking buttons.
+- Pre-made maps ("Yorktown" and "Bastion") now show thieir name instead of 'manual',
+- Started reworking buttons (some changes invisible to the user) and changed their layout.
+- The main (and currently only) game mode is now called freeplay.
+Removed:
+- "playerNr2Name" config since it is now longer needed,
+- "civs" config for it was useless.
 Fixed:
-- Fixed issue when armies could not disembark on not-empty tiles (forests,ore deposits etc)
+- Fixed issue when armies could not disembark on not-empty tiles (forests,ore deposits etc),
+- Fixed an issue when armies could destroy villages.
 
 #===== Dev info =====#
 Removed:
 - Config class,
+- Moved some methods of Unit to StaticClasses/UnitF.py,
+- Moved Direction.py to Enums folder.
+

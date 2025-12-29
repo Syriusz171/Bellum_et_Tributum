@@ -4,6 +4,7 @@ from army import Army
 from village import Village
 from unit import Unit
 from text import Text
+from StaticClasses.UnitF import UnitF
 from particle import Particle
 class Turn(Army):
     def turn(players,armies,villages,texts,terrains,particles,game_turn):
@@ -23,7 +24,7 @@ class Turn(Army):
                 activate_next = True
                 p.activate()
                 if p.number == len(players):
-                    Army.heal(armies,villages)
+                    UnitF.heal(armies,villages)
                     Army.reset_march(armies)
                     Player.check_production(villages,players)
                     Player.mk2_collect_global(players)

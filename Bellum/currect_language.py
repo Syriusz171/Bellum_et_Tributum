@@ -4,9 +4,11 @@
 
 #===== GENERAL =====#
 beginning = "Begin"
+Freeplay = "Freeplay"
 version = "version"
 turn = "Turn"
 player1_default_name = "Player1"
+player2_default_name = "Player2"
 
 #===== TEXTS =====#
 wsad = "W,S,A,D ---> Move army"
