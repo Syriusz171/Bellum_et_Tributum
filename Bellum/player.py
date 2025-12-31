@@ -4,8 +4,8 @@ class Player(pygame.sprite.Sprite):
     def __init__(self,number,name,AI=0):
         super(Player,self).__init__()
         self.number = number
-        self.defeted = False
-        self.defeted_tell_not = False
+        self.defeated = False
+        self.defeated_tell_not = False
         self.name = name
         self.lumber = 50
         self.food = 50

@@ -17,8 +17,8 @@ class Turn(Army):
             #    arm.units_boat.empty()
             #    arm.units_boat = pygame.sprite.spritecollide(arm,armies,False)
         for p in players:
-            if p.defeted:
-                p.defeted_tell_not = True
+            if p.defeated:
+                p.defeated_tell_not = True
         for p in players:
             if p.active:
                 activate_next = True
@@ -45,7 +45,7 @@ class Turn(Army):
                         pe.active = False
                     for p in players:
                         if p.number == 1:
-                            if p.defeted == False:
+                            if p.defeated == False:
                                 player1 = p
                                 player1.activate()
                                 armies_ = player1.armies.copy()
@@ -55,7 +55,7 @@ class Turn(Army):
                             else:
                                 return  [p.armies,p.villages,game_turn]
             elif p.active == False and activate_next:
-                if p.defeted == False:
+                if p.defeated == False:
                     p.activate()
                     Text.add_text(texts,f"{p.name} turn")
                     armies_ = p.armies.copy()

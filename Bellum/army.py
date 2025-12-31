@@ -431,9 +431,9 @@ class Army(Unit,pygame.sprite.Sprite):
             Text.add_text(texts,"Army cannot be conscripted!")
             return None
 
-    def draw_armies(self,screen,armies): #DEPRACADED!
+    '''def draw_armies(self,screen,armies): #DEPRACADED!
         for army in armies:
-            screen.blit(self.banner, self.rect)
+            screen.blit(self.banner, self.rect)'''
     def spawn_at_enemy_points(players,armies,terrains,texts):
         for terrain in terrains:
             if terrain.form == 41:

@@ -203,6 +203,7 @@ def start(bonus_starting_gold,modes,map,map_name=None):
     buttons.add(show_city_owner)
     Text.add_text(texts,(f"{player1.name} turn"))
     particles.empty()
+    do_input = False
     return terrains
 
 def init_buttons():
@@ -480,7 +481,10 @@ while game_on:
                     visible_army_owner = True
             if do_input:
                 if special_input is None:
-                    input_text += event.unicode
+                    if len(input_text) < 72: #Yeah, that is a Fortran reference!
+                        input_text += event.unicode
+                    else:
+                        Text.add_text(texts,"Cannot add more that 72 characters! ")
                 elif special_input == 'backspace':
                     input_text = input_text[:-1]
                 elif special_input == 'return':
@@ -524,9 +528,9 @@ while game_on:
         elif event.type == CHECK_VICTORY:
             if was_defeated == False:
                 for p in players:
-                    if len(p.armies) == 0 and len(p.villages) == 0 and menu == 0 and p.defeted_tell_not == False:
+                    if len(p.armies) == 0 and len(p.villages) == 0 and menu == 0 and p.defeated_tell_not == False:
                         was_defeated = p
-                        p.defeted = True
+                        p.defeated = True
         elif event.type == pygame.MOUSEBUTTONUP:
             #===== Kliczek collides here =====#
             active_button = None
@@ -717,7 +721,7 @@ while game_on:
         screen.blit(show_selected_text,(490,200))
 
     if was_defeated != False:
-        if was_defeated.defeted_tell_not != True:
+        if was_defeated.defeated_tell_not != True:
             if date_of_today.month == 4 and date_of_today.day == 1 or config.force_jokes:
                 defeated_text = font_big.render(f"{was_defeated.name}\'s country has experienced a rapid unsheduled disassembly!",False,(178,35,35))
             else:

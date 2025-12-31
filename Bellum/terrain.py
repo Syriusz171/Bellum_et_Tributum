@@ -483,7 +483,7 @@ class Terrain(pygame.sprite.Sprite):
                         if random.randint(0,49) != 0:
                             new_terrain = Terrain(10,location,3)
                             terrain_list.add(new_terrain)
-                    elif i == 12 and j == 15:
+                    elif i == 12 and j == 16:
                         new_terrain = Terrain(10,location,3)
                         terrain_list.add(new_terrain)
                     else:
