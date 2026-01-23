@@ -1,6 +1,5 @@
 import pygame
 import random
-from maps import yorktown, bastion
 class Terrain(pygame.sprite.Sprite):
     def __init__(self,form,starting_rect,generation=7,fixed_texture=None,owner=None) -> None:
         super().__init__()
@@ -585,6 +584,7 @@ class Terrain(pygame.sprite.Sprite):
             
 
     def get_map(name):
+        from maps import yorktown, bastion
         name = name.lower()
         if name == "yorktown":
             map_terrain_data = yorktown.terrain_map

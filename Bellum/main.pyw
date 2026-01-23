@@ -23,11 +23,12 @@ from particle import Particle
 import datetime
 #from Enums.Fonts import Fonts
 
+VERSION = "Dev -0.8 Build 3"
 WIDHT = 839
 HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
-pygame.display.set_caption("Bellum et Tributum Dev -0.8 Build 2")
+pygame.display.set_caption(f"Bellum et Tributum {VERSION}")
 icon_of_BeT = pygame.image.load("images/city.png")
 pygame.display.set_icon(icon_of_BeT)
 pygame.init()
@@ -45,7 +46,7 @@ texts = pygame.sprite.Group()
 particles = pygame.sprite.Group()
 Particle.starting_menu_particles(particles)
 Text.init_texts(texts)
-version = font.render(f"{currect_language.version}: Dev -0.8 Build 2",False,(160,200,200))
+version = font.render(f"{currect_language.version}: {VERSION}",False,(160,200,200))
 #army = Army(2,1)
 visible_village_owner = False
 visible_army_owner = True
