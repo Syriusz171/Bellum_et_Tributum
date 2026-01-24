@@ -44,7 +44,7 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,"Press \'c\' to cancel;","vill_type",False,None,550,615)
         Text.add_text(texts,"Press \'Space\' to found village;","vill_type",False,None,550,637)
         Text.add_text(texts,"Army types:","conscipt",False,None,550,400)
-        Text.add_text(texts,"1 -> Spearman","conscipt",False,None,550,430)
+        Text.add_text(texts,f"1 -> {currect_language.spearman}","conscipt",False,None,550,430)
         Text.add_text(texts,"2 -> Archer:","conscipt",False,None,550,460)
         Text.add_text(texts,"3 -> Horseman:","conscipt",False,None,550,490)
         Text.add_text(texts,"4 -> Catapult:","conscipt",False,None,550,520)

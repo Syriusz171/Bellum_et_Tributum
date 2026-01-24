@@ -1,3 +1,7 @@
+#=================#
+#WARNING! This file is TEMPORARY! It will be erased when running the game!
+#In order to change translations go to data folder!
+
 # Welcome to the translation file for the default language, that is (hopefully British) English!
 # Main contributor: Syriusz171
 # Contributors: Syriusz171
