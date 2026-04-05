@@ -7,8 +7,10 @@ beginning = "Begin"
 Freeplay = "Freeplay"
 version = "version"
 turn = "Turn"
-player1_default_name = "Player1"
-player2_default_name = "Player2"
+Player1DefaultName = "Player1"
+Player2DefaultName = "Player2"
+PlayerDefeated = "has been defeated!"
+PlayerDefeatedAplFools = "\'s country has experienced a rapid unsheduled disassembly! "
 
 #===== TEXTS =====#
 wsad = "W,S,A,D ---> Move army"
@@ -18,5 +20,13 @@ enter_key = "Enter ---> Turn"
 o_key = "O ---> Village ownership visibility"
 clear_chat = "Chat have been cleared!"
 
+#===== CANNOT DO SOMETHING
+VillWrongTerrain = "This village cannot be found on that terrain! "
+VillNoCoast = "This settlement must be found on coast! "
+ArmyNoAlpinists = "Alpinist unit is disabled! "
+
 #===== ARMIES =====#
-spearman = "Spear infantry"
+spearman = "Spearmen"
+archer = "Archers"
+catapult = "Catapults"
+

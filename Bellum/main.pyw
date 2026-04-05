@@ -21,15 +21,28 @@ from text import Text
 import config
 from particle import Particle
 import datetime
+from StaticClasses import Logger
 #from Enums.Fonts import Fonts
 
 VERSION = "Dev -0.8 Build 3"
-WIDHT = 839
+WIDHT = 840
 HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 pygame.display.set_caption(f"Bellum et Tributum {VERSION}")
+Logger.InitLog(VERSION)
+
+
 icon_of_BeT = pygame.image.load("images/city.png")
+
+
+#Special days like april fools.
+date_of_today = datetime.datetime.now()
+
+AprilFools = False
+
+if date_of_today.month == 4 and date_of_today.day == 1 or config.force_jokes: AprilFools = True
+
 pygame.display.set_icon(icon_of_BeT)
 pygame.init()
 FPS = pygame.time.Clock()
@@ -66,7 +79,7 @@ def start(bonus_starting_gold,modes,map,map_name=None):
     if map_name in ["bastion"]:
         player2.is_AI = True
     if map_name in ["yorktown"]:
-        if date_of_today.month == 4 and date_of_today.day == 1 or config.force_jokes:
+        if AprilFools:
             player_bandit = Player(3,"Germans")
         else:
             player_bandit = Player(3,"Bandits")
@@ -81,7 +94,7 @@ def start(bonus_starting_gold,modes,map,map_name=None):
         for terrain in terrains:
             if terrain.form == 41:
                 for p in players:
-                    if int(terrain.owner[-1]) == p.number:
+                    if int(terrain.owner) == p.number:
                         terrain.owner = p
                         break
         armies_return = return_list[2]
@@ -140,7 +153,6 @@ def start(bonus_starting_gold,modes,map,map_name=None):
         #armies1 = pygame.sprite.Group()
         #armies1.add(army1)
         army2 = Army.conscript(0,player1,(22*32,13*32),False,texts)
-        print(army1.x/32,army1.y/32,army2.x/32,army2.y/32)
         #armies2 = pygame.sprite.Group()
         #armies2.add(army1)
         player1.get_armied(army2)
@@ -205,6 +217,7 @@ def start(bonus_starting_gold,modes,map,map_name=None):
     Text.add_text(texts,(f"{player1.name} turn"))
     particles.empty()
     do_input = False
+    Logger.WriteToLog(f"Started game successfully! Started turn {game_turn}.")
     return terrains
 
 def init_buttons():
@@ -212,8 +225,8 @@ def init_buttons():
     flats_button = Button("flats",(14*32+16,10*32+18),False,"images/flats_map_icon.png",tags=["map_button","start"])
     track_map_button = Button("track",(14*32+16,14*32+18),False,"images/track_map_icon.png",tags=("map_button","start"))
     rich_center_button = Button("rich_center",(18*32+16,10*32+18),False,"images/rich_center_icon.png",tags=("map_button","start"))
-    player1_name_input = Button(4,(12*32+16,17*32),False,tags=["start","player1name"],text=[currect_language.player1_default_name,font,(35,35,36),True])
-    player2_name_input = Button(4,(12*32+16,19*32+18),False,tags=["start","player2name"],text=[currect_language.player2_default_name,font,(35,35,36),True])
+    player1_name_input = Button(4,(12*32+16,17*32),False,tags=["start","player1name"],text=[currect_language.Player1DefaultName,font,(35,35,36),True])
+    player2_name_input = Button(4,(12*32+16,19*32+18),False,tags=["start","player2name"],text=[currect_language.Player2DefaultName,font,(35,35,36),True])
     handicap1 = Button(5,(15*32+16,17*32),False,tags=("start"))
     handicap2 = Button(6,(15*32+16,19*32+18),False,tags=("start"))
     alpinist_off = Button(400,(17*32-16,11*32+16),False,tags=("alpinist_switch","start"))
@@ -259,7 +272,6 @@ armies = pygame.sprite.Group()
 villages = pygame.sprite.Group()
 villages_ = pygame.sprite.Group()
 #----
-date_of_today = datetime.datetime.now()
 armies_ = pygame.sprite.Group()   #armies_ is sprites that belong to the player that has a turn now
 # ------------------ Terrain
 terrains = Terrain.generate("Start_menu")
@@ -287,10 +299,8 @@ while game_on:
     kliczek.move_kliczek(mouse)
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                game_on = False
                 #========================TURN========================#
-            elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
+            if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                 if menu == 0:
                     particles.empty()
                     turn_return = Turn.turn(players,armies,villages,texts,terrains,particles,game_turn)
@@ -365,7 +375,6 @@ while game_on:
                         text.kill()
                 Text.add_text(texts,"Chat cleared!")
             elif event.key == pygame.K_SPACE:
-                print(selected_type)
                 new_village = None
                 #========Town founding=======#
                 for arm in armies_:
@@ -470,6 +479,8 @@ while game_on:
                 selected_type = 7
             elif event.key == pygame.K_8:
                 selected_type = 8
+
+
             elif event.key == pygame.K_o:
                 if visible_village_owner:
                     visible_village_owner = False
@@ -480,6 +491,17 @@ while game_on:
                     visible_army_owner = False
                 else:
                     visible_army_owner = True
+
+            elif event.key == pygame.K_f:
+                PressedKeys = pygame.key.get_pressed()
+                if PressedKeys[pygame.K_LCTRL]:
+                    pygame.display.toggle_fullscreen() #
+
+
+
+            elif event.key == pygame.K_ESCAPE:
+                Logger.WriteToLog("Program terminated by user. ")
+                game_on = False
             if do_input:
                 if special_input is None:
                     if len(input_text) < 72: #Yeah, that is a Fortran reference!
@@ -495,6 +517,7 @@ while game_on:
                     text_inputing_object.text[0] = input_text
                 special_input = None
         elif event.type == pygame.QUIT:
+            Logger.WriteToLog("Program terminated by user. ")
             game_on = False
         elif event.type == REFRESH:
             Player.check_production(villages,players)
@@ -529,9 +552,14 @@ while game_on:
         elif event.type == CHECK_VICTORY:
             if was_defeated == False:
                 for p in players:
-                    if len(p.armies) == 0 and len(p.villages) == 0 and menu == 0 and p.defeated_tell_not == False:
-                        was_defeated = p
+                    if p.defeated == False and len(p.armies) == 0 and len(p.villages) == 0 and menu == 0:
+                        #was_defeated = p
                         p.defeated = True
+                        if AprilFools: #Unfinished!
+                            Text.add_text(texts,f"{was_defeated.name}{currect_language.PlayerDefeatedAplFools}","PlayerDef",True,None,340,180)
+                        else:
+                            Text.add_text(texts,f"{was_defeated.name}{currect_language.PlayerDefeated}","PlayerDef",True,None,340,180)
+                        Text.add_text("")
         elif event.type == pygame.MOUSEBUTTONUP:
             #===== Kliczek collides here =====#
             active_button = None
@@ -651,7 +679,6 @@ while game_on:
                         terrains = start(config.starting_gold,modes,map,map_name)
                         buttons.remove(enable_AI_button)
                         enable_AI_button.kill()
-                        print(enable_AI_button)
                         Text.deactivate_text(texts,"keys")
                     else:
                         Text.add_text(texts,"Select a map!") 
@@ -669,7 +696,6 @@ while game_on:
                     if config.debug_mode and kliczek_collide2.selected:
                         Text.add_text(texts,f"Morale is {kliczek_collide2.morale}")
                         Text.add_text(texts,f"Health is {kliczek_collide2.health}")
-                    print(kliczek_collide2.selected)
                     if kliczek_collide2.formation == 100:
                         Text.activate_text(texts,"vill_type")
     
@@ -721,13 +747,6 @@ while game_on:
         show_selected_text = font_small.render(f"Selected unit {selected_type}: The {Unitname}",False,(31,31,200))
         screen.blit(show_selected_text,(490,200))
 
-    if was_defeated != False:
-        if was_defeated.defeated_tell_not != True:
-            if date_of_today.month == 4 and date_of_today.day == 1 or config.force_jokes:
-                defeated_text = font_big.render(f"{was_defeated.name}\'s country has experienced a rapid unsheduled disassembly!",False,(178,35,35))
-            else:
-                defeated_text = font_big.render(f"{was_defeated.name} has been defeated!",False,(150,31,30))
-            screen.blit(defeated_text,(320,180))
     if menu == 0:
         turn_text = font_small.render(f"{currect_language.turn} {game_turn}",False,(33,33,220))
         screen.blit(turn_text,(798,655))
@@ -738,4 +757,4 @@ while game_on:
     pygame.display.flip()
     FPS.tick(40)
 
-
+Logger.WriteToLog("Program exited without error. ")

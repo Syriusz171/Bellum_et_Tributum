@@ -1,5 +1,6 @@
 import pygame
 import random
+from StaticClasses import Logger
 class Terrain(pygame.sprite.Sprite):
     def __init__(self,form,starting_rect,generation=7,fixed_texture=None,owner=None) -> None:
         super().__init__()
@@ -70,7 +71,7 @@ class Terrain(pygame.sprite.Sprite):
             self.movement_cost = 5
             self.move_type = 6
             self.look = pygame.image.load("images/mountain_high.png")
-        elif self.form == 41:
+        elif self.form == 41: #spawns enemies
             self.movement_cost = 4
             self.move_type = 6
             self.look = pygame.image.load("images/enemy_spawn_tile.png")
@@ -82,6 +83,9 @@ class Terrain(pygame.sprite.Sprite):
             self.movement_cost = 1
             self.move_type = 1
             self.look = pygame.image.load("images/island_sand1.png")
+        else:
+            self.look = pygame.image.load("images/TheTextureFail.png")
+            Logger.WriteToLog(f"ERROR: Terrain could not be loaded! Position: ({self.x},{self.y}), form: {form}!")
         #self.rect = self.look.get_rect(bottomleft=starting_rect)
     def generate(type,map_name = None,seed = None):
         terrain_list = pygame.sprite.Group()
@@ -542,14 +546,27 @@ class Terrain(pygame.sprite.Sprite):
             for a in range(25):
                 for b in range(25):
                     location = (a*32-1,b*32)
-                    if map_terrain[b][a] == 0:
+
+                    ReadType = map_terrain[b][a] #The terrain form read from the file; int.
+
+                    if ReadType == 0:
                         new_terrain = None
-                    elif map_terrain[b][a] in [2.5,2.6]:
-                        new_terrain = Terrain(2,location,1,map_terrain[b][a])
-                    elif int(map_terrain[b][a]) > 410:
-                        new_terrain = Terrain(41,location,owner=map_terrain[b][a])
+                    elif ReadType in [2.5,2.6]:
+                        new_terrain = Terrain(2,location,1,ReadType)
+                    elif ReadType > 410 and ReadType < 500:
+                        new_terrain = Terrain(41,location,owner=(ReadType%410)) # Types 411-499 are enemy spawn points, where owner is Readtype modulo of 410
                     else:
-                        new_terrain = Terrain(map_terrain[b][a],location)
+                        new_terrain = Terrain(ReadType,location)
+
+                    # if map_terrain[b][a] == 0:
+                    #     new_terrain = None
+                    # elif map_terrain[b][a] in [2.5,2.6]:
+                    #     new_terrain = Terrain(2,location,1,map_terrain[b][a])
+                    # elif 500 < int(map_terrain[b][a]) > 410:
+                    #     print("Here!")
+                    #     new_terrain = Terrain(41,location,owner=(map_terrain[b][a]%410))
+                    # else:
+                    #     new_terrain = Terrain(map_terrain[b][a],location)
                     if new_terrain is not None:
                         terrain_list.add(new_terrain)
             return [terrain_list, villages, armies]
@@ -647,3 +664,12 @@ class Terrain(pygame.sprite.Sprite):
         terrain.kill()
         new_terrain = Terrain(new_type,(x,y))
         terrains.add(new_terrain)
+    def GenerateFromFile(path: str):
+        if path.endswith(".json"):
+            # One day map files will either .py or .json
+            pass
+        elif path.endswith(".py"):
+            pass
+        else:
+            Logger.WriteToLog(f"#=====#\nERROR: Map loader failed to load the map:\n Map path: {path}\n Reason: Wrong file extension (must be either .json or .py)\n #=====#")
+            

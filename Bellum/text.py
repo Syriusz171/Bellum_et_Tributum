@@ -1,5 +1,5 @@
 import pygame
-import currect_language
+import currect_language as Lang
 class Text(pygame.sprite.Sprite):
     def __init__(self,text,type="chat",active=True,time_left = 160,p_x=300,p_y=550):
         super().__init__()
@@ -22,18 +22,20 @@ class Text(pygame.sprite.Sprite):
             new_text = Text(input_text)
         else:
             new_text = Text(input_text,type,active,time_left,p_x,p_y)
-        print(new_text.text)
+        #print(new_text.text)
         texts.add(new_text)   
     def init_texts(texts):
-        Text.add_text(texts,currect_language.wsad,"keys",False,None,550,400)
-        Text.add_text(texts,currect_language.mouse_key1,"keys",False,None,550,440)
-        Text.add_text(texts,currect_language.minus_key,"keys",False,None,540,480)
-        Text.add_text(texts,currect_language.enter_key,"keys",False,None,550,520)
-        Text.add_text(texts,currect_language.o_key,"keys",False,None,550,560)
+        Text.add_text(texts,Lang.wsad,"keys",False,None,550,400)
+        Text.add_text(texts,Lang.mouse_key1,"keys",False,None,550,440)
+        Text.add_text(texts,Lang.minus_key,"keys",False,None,540,480)
+        Text.add_text(texts,Lang.enter_key,"keys",False,None,550,520)
+        Text.add_text(texts,Lang.o_key,"keys",False,None,550,560)
         Text.add_text(texts,"P ---> Army ownership visibility","keys",False,None,550,600)
         Text.add_text(texts,"Right Shift ---> Clear chat","keys",False,None,550,640)
         Text.add_text(texts,"F1 ---> Save armies","keys",False,None,550,675)
         Text.add_text(texts,"TAB ---> Switch to saved armies","keys",False,None,550,710)
+
+        
         Text.add_text(texts,"Village types:","vill_type",False,None,550,400)
         Text.add_text(texts,"1 -> Lumber:","vill_type",False,None,550,430)
         Text.add_text(texts,"2 -> Food:","vill_type",False,None,550,460)
@@ -44,7 +46,7 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,"Press \'c\' to cancel;","vill_type",False,None,550,615)
         Text.add_text(texts,"Press \'Space\' to found village;","vill_type",False,None,550,637)
         Text.add_text(texts,"Army types:","conscipt",False,None,550,400)
-        Text.add_text(texts,f"1 -> {currect_language.spearman}","conscipt",False,None,550,430)
+        Text.add_text(texts,f"1 -> {Lang.spearman}","conscipt",False,None,550,430)
         Text.add_text(texts,"2 -> Archer:","conscipt",False,None,550,460)
         Text.add_text(texts,"3 -> Horseman:","conscipt",False,None,550,490)
         Text.add_text(texts,"4 -> Catapult:","conscipt",False,None,550,520)
@@ -54,6 +56,7 @@ class Text(pygame.sprite.Sprite):
         Text.add_text(texts,"8 -> Ram boat:","conscipt",False,None,550,650)
         Text.add_text(texts,"Press \'c\' to cancel;","conscipt",False,None,550,680)
         Text.add_text(texts,"Press \'Space\' to conscipt army;","conscipt",False,None,550,706)
+
     def activate_text(texts,type_act):
         for t in texts:
             if t.type == type_act:

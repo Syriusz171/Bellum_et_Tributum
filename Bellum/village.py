@@ -100,7 +100,6 @@ class Village(Unit,pygame.sprite.Sprite):
         if self.owner.is_AI == 1 and self.vill_type != 60:
             self.base_health += 8
             self.base_defence += 4
-            print(self.base_defence)
     def select_village(self,villages,texts):
         for vil in villages:
             vil.selected = False

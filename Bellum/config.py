@@ -17,6 +17,7 @@ allow_AI_spearman = True
 allow_AI_units = True
 # Force April Fools mode! Forces game to load jokes!
 force_jokes = False
+
 #===============================#
 # Language configs
 
@@ -24,3 +25,9 @@ force_jokes = False
 # Valid options: en_uk, pl_pl
 # Default option is en_uk, example: language = "en_uk"
 language = "en_uk"
+
+
+#=====LOGGING SETTINGS=====#
+
+# Turn logs, set to true, if you want logger to log turns.
+logger_log_turns = True

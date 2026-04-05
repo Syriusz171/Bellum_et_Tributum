@@ -91,7 +91,6 @@ class UnitF:
                     damage_unit = damage_enemy
                     if attacker.anti_transport_bonus > 0:
                         damage_unit = attacker.anti_transport_bonus * random.randint(0,4) *0.30 + 1
-                    print(damage_unit)
                     unit.health -= damage_unit
                     Text.add_text(texts,f"Defender passager health is {unit.health}!")
                     unit.check_if_die()

@@ -8,8 +8,8 @@ beginning = "Start"
 Freeplay = "Gra swobodna"
 version = "wersja"
 turn = "Tura"
-player1_default_name = "Gracz1"
-player2_default_name = "Gracz2"
+Player1DefaultName = "Gracz1"
+Player2DefaultName = "Gracz2"
 
 #===== TEXTS/Teksty =====#
 wsad = "W,S,A,D ---> Ruch armii"
@@ -21,3 +21,5 @@ clear_chat = "Chat wyczyszczony!"
 
 #===== ARMIES/ARMIE =====#
 spearman = "Włócznicy"
+archer = "Łucznicy"
+catapult = "Katapulty"

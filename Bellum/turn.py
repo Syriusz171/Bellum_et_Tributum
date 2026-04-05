@@ -2,20 +2,25 @@ import pygame
 from player import Player
 from army import Army
 from village import Village
+import config
 from unit import Unit
 from text import Text
 from StaticClasses.UnitF import UnitF
 from particle import Particle
+from StaticClasses import Logger
 class Turn(Army):
     def turn(players,armies,villages,texts,terrains,particles,game_turn):
         part = Particle((200,600),"sword",20,-1,rotate=5)
         particles.add(part)
         activate_next = False
         armies_ = None
-        #for arm in armies:
-            #if arm.is_boat:
-            #    arm.units_boat.empty()
-            #    arm.units_boat = pygame.sprite.spritecollide(arm,armies,False)
+        Text.deactivate_text(texts,"PlayerDef")
+
+        # TO DO: Rewrite turn ending system!
+        #for Player in players:
+            
+
+        
         for p in players:
             if p.defeated:
                 p.defeated_tell_not = True
@@ -24,6 +29,9 @@ class Turn(Army):
                 activate_next = True
                 p.activate()
                 if p.number == len(players):
+                    if config.logger_log_turns:
+                        Logger.WriteToLog(f"Ending turn {game_turn}.")
+
                     UnitF.heal(armies,villages)
                     Army.reset_march(armies)
                     Player.check_production(villages,players)
@@ -31,6 +39,7 @@ class Turn(Army):
                     Village.turns_left_change(villages)
                     Army.summon_militia_global(players,armies,texts)
                     Army.spawn_at_enemy_points(players,armies,terrains,texts)
+                    
                     #Army.pathfind(p,armies,villages,terrains,particles)
                     for pe in players:
                         pe.active = True
@@ -48,18 +57,25 @@ class Turn(Army):
                             if p.defeated == False:
                                 player1 = p
                                 player1.activate()
-                                armies_ = player1.armies.copy()
-                                villages_= player1.villages.copy()
+                                armies_ = player1.armies#.copy()
+                                villages_= player1.villages#.copy()
                                 Text.add_text(texts,f"{p.name} turn")
+                                
+                                #Logging
+                                if config.logger_log_turns:
+                                    Logger.WriteToLog(f"Started turn {game_turn}.")
+
                                 return armies_, villages_,game_turn
                             else:
+                                if config.logger_log_turns:
+                                    Logger.WriteToLog(f"Started turn {game_turn}.")
                                 return  [p.armies,p.villages,game_turn]
             elif p.active == False and activate_next:
                 if p.defeated == False:
                     p.activate()
                     Text.add_text(texts,f"{p.name} turn")
-                    armies_ = p.armies.copy()
-                    villages_ = p.villages.copy()
+                    armies_ = p.armies#.copy()
+                    villages_ = p.villages#.copy()
                     activate_next = False
                     turn_return = [armies_,villages_,game_turn]
                     return turn_return

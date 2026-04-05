@@ -200,7 +200,6 @@ class Army(Unit,pygame.sprite.Sprite):
                     if vil.owner == arm.owner:
                         villages1.remove(vil)
                 iterated = True
-            print(arm.selected)
             arm.direction = direction
             armies_testing = armies.copy()
             armies_testing.remove(arm)
