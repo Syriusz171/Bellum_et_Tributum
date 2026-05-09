@@ -8,11 +8,14 @@ Added:
     - Press Ctrl + F.
 
 Changed:
-
+- AI changes:
+    - Bot's chance to conscript militia militia lowered, it now spawns better units more frequently.
+    - Bot's armies have more chance to move
+    - Bot gets an extra town on "Yorktown" map.
 Removed:
 
 Fixed:
-
+- Game should no longer crash if player is eliminated.
 ### #===== Other changes =====#
 Added:  
 - Error handling when loading terrain:

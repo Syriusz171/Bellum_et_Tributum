@@ -464,7 +464,7 @@ class Army(Unit,pygame.sprite.Sprite):
                             if random.randint(1,8-config.difficulty) == 1:
                                 if config.allow_AI_spearman == True and random.randint(1,4) == 1:
                                     new_army = Army.conscript(1,player,(village.x,village.y),False,texts)
-                                elif config.allow_AI_units and random.randint(1,10) == 1:
+                                elif config.allow_AI_units and random.randint(1,5) == 1:
                                     what_unit = random.randint(0,20)
                                     if what_unit in [3,4,5]:
                                         new_army = Army.conscript(4,player,(village.x,village.y),False,texts)

@@ -24,6 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.F1armies = pygame.sprite.Group()
         self.villages = pygame.sprite.Group()
         self.is_AI = AI
+        self.played_turn = False
     def check_production(villages,players):
         Player.reset_production(players)
         for vil in villages:

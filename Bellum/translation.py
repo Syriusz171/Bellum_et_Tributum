@@ -14,12 +14,12 @@ class Translation():
         #Reading translation        
         for LangFile in LangFiles:
             if LangFile not in EnglishFiles:
-                with open((f"{LangFile}"),"r") as file:
+                with open((f"{LangFile}"),"r",encoding="utf-8") as file:
                     text_translated += file.read()
                     text_translated += "\n"
                     file.close(); 
         # Writing translation into currect_language.py
-        with open("currect_language.py","w") as lang:
+        with open("currect_language.py","w",encoding="utf-8") as lang:
             lang.write("#=================#\n#WARNING! This file is TEMPORARY! It will be erased when running the game!\n#In order to change translations go to data folder!\n\n")
             lang.write(text_translated)
             lang.close

@@ -13,7 +13,7 @@ version = "version"
 turn = "Turn"
 Player1DefaultName = "Player1"
 Player2DefaultName = "Player2"
-PlayerDefeated = "has been defeated!"
+PlayerDefeated = " has been defeated!"
 PlayerDefeatedAplFools = "\'s country has experienced a rapid unsheduled disassembly! "
 
 #===== TEXTS =====#

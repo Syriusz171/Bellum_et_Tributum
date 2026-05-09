@@ -30,6 +30,11 @@ HEIGHT = 800
 game_on = True
 screen = pygame.display.set_mode([WIDHT,HEIGHT])
 pygame.display.set_caption(f"Bellum et Tributum {VERSION}")
+
+try:
+    os.makedirs("Logs")
+except:
+    pass
 Logger.InitLog(VERSION)
 
 
@@ -74,6 +79,9 @@ text_inputing_object = None
 def start(bonus_starting_gold,modes,map,map_name=None):
     #===== AI TEST =====#
     player2.is_AI = enable_AI_button.checked
+
+
+    player1.played_turn = True
 
     terrains = pygame.sprite.Group()
     if map_name in ["bastion"]:
@@ -303,7 +311,8 @@ while game_on:
             if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                 if menu == 0:
                     particles.empty()
-                    turn_return = Turn.turn(players,armies,villages,texts,terrains,particles,game_turn)
+                    #turn_return = Turn.turn(players,armies,villages,texts,terrains,particles,game_turn)
+                    turn_return = Turn.ChangeActivePlayer(players,armies,villages,texts,terrains,particles,game_turn)
                     armies_ = turn_return[0]
                     villages_ = turn_return[1]
                     game_turn = turn_return[2]
@@ -535,7 +544,8 @@ while game_on:
             for arm in armies_:
                 if arm.owner.is_AI > 0:
                     particles.empty()
-                    turn_return = Turn.turn(players,armies,villages,texts,terrains,particles,game_turn)
+                    #turn_return = Turn.turn(players,armies,villages,texts,terrains,particles,game_turn)
+                    turn_return = Turn.ChangeActivePlayer(players,armies,villages,texts,terrains,particles,game_turn)
                     armies_ = turn_return[0]
                     villages_ = turn_return[1]
                     game_turn = turn_return[2]
@@ -556,10 +566,9 @@ while game_on:
                         #was_defeated = p
                         p.defeated = True
                         if AprilFools: #Unfinished!
-                            Text.add_text(texts,f"{was_defeated.name}{currect_language.PlayerDefeatedAplFools}","PlayerDef",True,None,340,180)
+                            Text.add_text(texts,f"{p.name}{currect_language.PlayerDefeatedAplFools}","PlayerDef",True,None,340,180)
                         else:
-                            Text.add_text(texts,f"{was_defeated.name}{currect_language.PlayerDefeated}","PlayerDef",True,None,340,180)
-                        Text.add_text("")
+                            Text.add_text(texts,f"{p.name}{currect_language.PlayerDefeated}","PlayerDef",True,None,340,180)
         elif event.type == pygame.MOUSEBUTTONUP:
             #===== Kliczek collides here =====#
             active_button = None
@@ -758,3 +767,5 @@ while game_on:
     FPS.tick(40)
 
 Logger.WriteToLog("Program exited without error. ")
+# except:
+#     Logger.WriteToLog("Program crashed!")
